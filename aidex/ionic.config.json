@@ -1,0 +1,7 @@
+{
+  "name": "aidex",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
