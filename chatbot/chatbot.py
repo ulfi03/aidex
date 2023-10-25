@@ -1,20 +1,29 @@
 import openai
 import os
 
-os.environ['REQUESTS_CA_BUNDLE'] = './cert/Corp-Prj-Root-CA.crt'
+#os.environ['REQUESTS_CA_BUNDLE'] = './cert/Corp-Prj-Root-CA.crt'          # for corp proxy
+os.environ['REQUESTS_CA_BUNDLE'] = './cert/Baltimore CyberTrust Root.crt' # for home proxy
 openai.api_key = "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"
 
-completion = openai.ChatCompletion.create(
-  model = "gpt-3.5-turbo",
-  temperature = 0.1, #kreativität des bots -> eher niedrig halten (er soll nur auf Grundlage
-                     #der gegebenen Informationen antworten)
-  max_tokens = 50, #maximale Kosten pro Anfrage
-  messages = [
-    {"role": "system", "content": "hier definieren was die aufgabe des bots ist"},
-    #falls Text zu lang, muss dieser auf mehrere Anfragen aufgeteilt werden
-    #integration in Bezahlungsmodell-> kostenlos bis x Zeichen, ab x Zeichen zahlungspflichtig
-    {"role": "user", "content": "Was ist deine Aufgabe?"}
+nachrichten = [
+    {"role": "system", "content": "Du wandelst Fließtexte in Karteikarten um"}
   ]
+
+nutzerEingabe = input("Stelle eine Frage: ")
+nachrichten.append({"role": "user", "content": nutzerEingabe})
+
+completion = openai.ChatCompletion.create( #with history
+  model = "gpt-3.5-turbo",
+  temperature = 0.0, 
+  max_tokens = 100, 
+  messages = nachrichten
+)
+response = openai.Completion.create( #no history
+  model="gpt-3.5-turbo-instruct",
+  prompt = nutzerEingabe,
+  max_tokens=100,
+  temperature=0
 )
 
-print(completion.choices[0])
+print(completion['choices'][0].message.content)
+print(response['choices'][0].text)
