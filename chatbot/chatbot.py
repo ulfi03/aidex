@@ -20,10 +20,15 @@ KarteikartenConverter = openai.ChatCompletion.create( #with history -> nachricht
       max_tokens = 500, 
       messages = nachrichten
     )
-print(KarteikartenConverter['choices'][0].message.content)
 
-while False:
-    nutzerEingabe = input("Stelle eine Frage: ")
+print(KarteikartenConverter['choices'][0].message.content)
+#regExp zum extrahieren der Frage: "Frage:(.*)"m -> Gruppe 1 ([1]-Rückgabe ist eine Array!
+#regExp zum extrahieren der Antwort: "Antwort:(.*)"m -> Gruppe 1 ([1]-Rückgabe ist eine Array!)
+#regExp zum splitten der Karteikarten: "\n"g -> Achtung! - nur bei jedem dritten auftreten splitten!
+
+
+while False: #auf true setzten für eine zusätzliche Chatfunktion mit dem Bot
+    nutzerEingabe = input("Stelle eine Frage oder formuliere eine Anweisung: ")
     nachrichten.append({"role": "user", "content": nutzerEingabe})
 
     completion = openai.ChatCompletion.create( #with history
