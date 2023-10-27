@@ -7,7 +7,7 @@ text = "Napoleon Bonaparte, als Kaiser Napoleon I. (französisch Napoléon Bonap
 
 os.environ['REQUESTS_CA_BUNDLE'] = './cert/Corp-Prj-Root-CA.crt'          # for corp proxy
 #os.environ['REQUESTS_CA_BUNDLE'] = './cert/Baltimore CyberTrust Root.crt' # for home proxy
-openai.api_key = "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"
+openai.api_key = "sk-zq6s0n5TE12LhN3u87RRkT3BlbkFJVprkTwSZJOnNcIEeHKOD"
 
 
 nachrichten = [
@@ -30,9 +30,9 @@ for (index, item) in enumerate(ausgabeChatbot):
       antwort = re.search("Antwort:(.*)", item)[1]
       formatierteAusgabe.append({frage + "\n" + antwort})
 
-print(formatierteAusgabe[1])
+print(formatierteAusgabe)
 
-while False: #auf true setzten für eine zusätzliche Chatfunktion mit dem Bot
+while True: #auf true setzten für eine zusätzliche Chatfunktion mit dem Bot
     nutzerEingabe = input("Stelle eine Frage oder formuliere eine Anweisung: ")
     nachrichten.append({"role": "user", "content": nutzerEingabe})
 
@@ -42,11 +42,13 @@ while False: #auf true setzten für eine zusätzliche Chatfunktion mit dem Bot
       max_tokens = 100, 
       messages = nachrichten
     )
+    """
     response = openai.Completion.create( #no history
       model="gpt-3.5-turbo-instruct",
       prompt = nutzerEingabe,
       max_tokens=100,
       temperature=0
     )
-    print("with history - "+ completion['choices'][0].message.content)
-    print("no history - " + response['choices'][0].text.strip())
+    """
+    print(completion['choices'][0].message.content)
+    #print("no history - " + response['choices'][0].text.strip())
