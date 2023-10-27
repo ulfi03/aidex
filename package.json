@@ -29,6 +29,7 @@
     "@capacitor/status-bar": "5.0.6",
     "@ionic/angular": "^7.5.0",
     "@ionic/cli": "^7.1.1",
+    "angular": "^1.8.3",
     "cordova-res": "^0.15.4",
     "g": "^2.0.1",
     "ionicons": "^7.2.1",
