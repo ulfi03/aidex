@@ -2,10 +2,17 @@ import openai
 import os
 import textract
 import PyPDF2
+import tiktoken
 
-os.environ['REQUESTS_CA_BUNDLE'] = './cert/Corp-Prj-Root-CA.crt'          # for corp proxy
-#os.environ['REQUESTS_CA_BUNDLE'] = './cert/Baltimore CyberTrust Root.crt' # for home proxy
-openai.api_key = "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"
+def get_token_count_message(string):
+    encoding = tiktoken.get_encoding("cl100k_base")
+    return len(encoding.encode(string))
+
+def get_token_count_chat(chatverlauf):
+    counter = 0
+    for message in chatverlauf:
+        counter += get_token_count_message(message["content"])
+    return counter
 
 text = ""
 fileNameArray = os.listdir("chatbot/documents")
@@ -22,15 +29,26 @@ nachrichten = [
     {"role": "system", "content": "Du bist ein Konverter: Du wandelst Fließtexte in Karteikarten um."},
   ]
 
-nachrichten.append({"role": "user", "content": "Die Karteikarten sollen eine knappe Frage haben und die dazugehörige Antwort. Bitte erstelle mindestens 50 unterschiedliche Karteikarten. Erstelle nun Karteikarten auf Grundlage dieses Textes:"+ text})
-print("Anfrage wird an Chatbot übergeben")
-KarteikartenConverter = openai.ChatCompletion.create(
-      model = "gpt-3.5-turbo-16k",
-      temperature = 0.3, 
-      max_tokens = 2000, 
+openai.api_key = "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"
+
+get_token_count_message(text)
+#implement token handling - models context length 16000
+#for now just cut
+text = text[0:20000]
+
+
+
+nachrichten = [
+    {"role": "system", "content": 'Du bist ein Konverter: Du wandelst Texte in Karteikarten um. Die Karteikarten sollen eine knappe Frage haben und die dazugehörige Antwort. Wähle die Fragen sowie Antworten nur auf Grundlage des Textes. Pro Frage eine Karteikarte. Folgendes Format: {"Frage": frage, "Antwort": antwort} und anschließend ein # als Separator der einzelnen Karteikarten.'},
+  ]
+nachrichten.append({"role": "user", "content": "Wandle folgenden Text in Karteikarten um: "+ text})
+
+
+KarteikartenConverter = openai.chat.completions.create(
+      model = "gpt-3.5-turbo-0125",
+      temperature = 0.1,  
       messages = nachrichten
     )
-print(KarteikartenConverter)
-print("This request used " + str(KarteikartenConverter['usage']['total_tokens']) + " tokens.")
-print("It used " + str(KarteikartenConverter['usage']['completion_tokens']) + " tokens for completion.")
-print("And it used " + str(KarteikartenConverter['usage']['prompt_tokens']) + " tokens for the prompt.")
+
+ausgabeChatbot = KarteikartenConverter.choices[0].message.content.strip().replace("\n", "").split("#")[:-1]
+print(ausgabeChatbot)
