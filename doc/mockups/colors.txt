@@ -1,2 +1,3 @@
 green: #20EFC0
-grey: #414141
+dark-grey: #121212 (background)
+grey: #414141 (widgets, e.g. toast)
