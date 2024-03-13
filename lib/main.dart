@@ -7,119 +7,382 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return const MaterialApp(
+      home: HomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class HomePageState extends State<HomePage> {
+  List<Folder> folders = [];
+  bool isSnackBarVisible = false;
 
-  void _incrementCounter() {
+  void addFolder(String name) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      folders.add(Folder(name: name));
     });
   }
 
+  void toggleSnackBarVisibility(bool visibility) {
+    setState(() {
+      isSnackBarVisible = visibility;
+    });
+  }
+
+  void _showCreateFolderDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      String folderName = '';
+      return SizedBox(
+        child: AlertDialog(
+          backgroundColor: const Color(0xFF414141), // Set background color to #414141
+          title: const Text(
+            'Create Folder',
+            style: TextStyle(
+              color: Colors.white, // Set text color to white
+              fontSize: 18,
+            ),
+          ),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Stack(
+                    alignment: Alignment.topLeft, 
+                    children: [
+                      TextField(
+                        onChanged: (value) {
+                          setState(() {
+                            folderName = value;
+                          });
+                        },
+                        maxLength: 21, // Set maximum length to 21 characters
+                        decoration: InputDecoration(
+                          hintText: 'Enter folder name',
+                          hintStyle: const TextStyle(
+                            color: Colors.white70, // Set hint text color to a lighter shade of white
+                          ),
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFF20EFC0), // Set border color to #20EFC0
+                            ),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFF20EFC0), // Set border color to #20EFC0 when focused
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFF20EFC0), // Set border color to #20EFC0 when enabled
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          errorText: folderName.isEmpty ? 'Please enter a folder name' : null, // Show error if folderName is empty
+                        ),
+                      ),
+                      Positioned(
+                        right: 8, // Adjust the left position of the character count
+                        bottom: 27, // Adjust the bottom position of the character count
+                        child: Text(
+                          '${folderName.length}/21', // Display character count
+                          style: const TextStyle(
+                            color: Color(0xFFCCCCCC), // Set text color to light gray
+                            fontSize: 12, // Set font size to 12
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8), // Add spacing between TextField and Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: Colors.white, // Set text color to white
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (folderName.isEmpty) {
+                            return; // Don't close the dialog if folderName is empty
+                          }
+                          addFolder(folderName);
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF20EFC0), // Set button background color to #20EFC0
+                        ),
+                        child: const Text(
+                          'Ok',
+                          style: TextStyle(
+                            color: Colors.white, // Set text color to white
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      );
+    },
+  );
+
+}
+
+
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+    return GestureDetector(
+      onTap: () {
+        if (isSnackBarVisible) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          toggleSnackBarVisibility(false);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text(
+            'All Decks',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+          ),
+          backgroundColor: const Color(0xFF121212),
+        ),
+        backgroundColor: const Color(0xFF121212),
+        body: SingleChildScrollView(
+          child: Wrap(
+            direction: Axis.horizontal,
+            children: folders.map((folder) => FolderItem(folder: folder)).toList(),
+          ),
+        ),
+        floatingActionButton: !isSnackBarVisible
+            ? FloatingActionButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: const Color(0xFF414141),
+                      content: FolderOptions(
+                        onManual: () {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          toggleSnackBarVisibility(false);
+                          _showCreateFolderDialog(context);
+                        },
+                        onAI: () {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          toggleSnackBarVisibility(false);
+                          // Handle AI folder creation here
+                        },
+                      ),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0),
+                        ),
+                      ),
+                      duration: const Duration(days: 365),
+                    ),
+                  );
+                  toggleSnackBarVisibility(true);
+                },
+                backgroundColor: const Color(0xFF20EFC0),
+                child: const Icon(Icons.add),
+              )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
+      ),
+    );
+  }
+}
+
+class FolderOptions extends StatelessWidget {
+  final VoidCallback onManual;
+  final VoidCallback onAI;
+
+  const FolderOptions({super.key, required this.onManual, required this.onAI});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Center(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: 10.0),
+            child: Column(
+              children: [
+                Text(
+                  'Create Deck',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        ElevatedButton.icon(
+          onPressed: onManual,
+          icon: const Icon(
+            Icons.person,
+            color: Color(0xFF20EFC0),
+          ),
+          label: const Text(
+            'Create manually',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            padding: EdgeInsets.zero,
+          ),
+        ),
+        const SizedBox(height: 10),
+        ElevatedButton.icon(
+          onPressed: onAI,
+          icon: const Icon(
+            Icons.computer,
+            color: Color(0xFF20EFC0),
+          ),
+          label: const Text(
+            'Create with AI',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            padding: EdgeInsets.zero,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class Folder {
+  final String name;
+
+  Folder({required this.name});
+}
+
+class FolderItem extends StatelessWidget {
+  final Folder folder;
+
+  const FolderItem({super.key, required this.folder});
+
+  @override
+  Widget build(BuildContext context) {
+    double iconSize = MediaQuery.of(context).size.width / 4;
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FolderPage(folder: folder),
+          ),
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width / 32,
+          vertical: MediaQuery.of(context).size.width / 64,
+        ),
+        width: iconSize * 1.7,
+        height: iconSize * 0.8,
+        decoration: BoxDecoration(
+          color: const Color(0xFF121212),
+          border: Border.all(
+            color: Colors.white,
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(
+                Icons.layers,
+                size: iconSize * 0.4,
+                color: const Color(0xFF20EFC0),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: Align(
+                  alignment: const Alignment(-1.2, -0.5),
+                  child: Text(
+                    folder.name,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16.0, color: Colors.white),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class FolderPage extends StatelessWidget {
+  final Folder folder;
+
+  const FolderPage({super.key, required this.folder});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(folder.name),
+      ),
+      body: Center(
+        child: Text("Content of ${folder.name}"),
+      ),
     );
   }
 }
