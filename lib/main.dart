@@ -23,147 +23,150 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  List<Folder> folders = [];
-  bool isSnackBarVisible = false;
+  List<Deck> decks = [];
+  bool isAddButtonVisible = true;
 
-  void addFolder(String name) {
+  void addDeck(String name) {
     setState(() {
-      folders.add(Folder(name: name));
+      decks.add(Deck(name: name));
     });
   }
 
-  void toggleSnackBarVisibility(bool visibility) {
-    setState(() {
-      isSnackBarVisible = visibility;
-    });
-  }
-
-  void _showCreateFolderDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      String folderName = '';
-      return SizedBox(
-        child: AlertDialog(
-          backgroundColor: const Color(0xFF414141), // Set background color to #414141
-          title: const Text(
-            'Create Folder',
-            style: TextStyle(
-              color: Colors.white, // Set text color to white
-              fontSize: 18,
+  void showCreateDeckDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String deckName = '';
+        return SizedBox(
+          child: AlertDialog(
+            backgroundColor: const Color(0xFF414141),
+            // Set background color to #414141
+            title: const Text(
+              'Create Deck',
+              style: TextStyle(
+                color: Colors.white, // Set text color to white
+                fontSize: 18,
+              ),
+            ),
+            content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Stack(
+                      alignment: Alignment.topLeft,
+                      children: [
+                        TextField(
+                          onChanged: (value) {
+                            setState(() {
+                              deckName = value;
+                            });
+                          },
+                          maxLength: 21, // Set maximum length to 21 characters
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: 'deck name',
+                            hintStyle: const TextStyle(
+                              color: Colors
+                                  .white54, // Set hint text color to a lighter shade of white
+                            ),
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: Color(
+                                    0xFF20EFC0), // Set border color to #20EFC0
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: Color(0xFF20EFC0),
+                                // Set border color to #20EFC0 when focused
+                                width: 2.0,
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: Color(0xFF20EFC0),
+                                // Set border color to #20EFC0 when enabled
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            errorText: deckName.isEmpty
+                                ? 'Please enter a deck name'
+                                : null, // Show error if deckName is empty
+                          ),
+                        ),
+                        Positioned(
+                          right: 8,
+                          // Adjust the left position of the character count
+                          bottom: 27,
+                          // Adjust the bottom position of the character count
+                          child: Text(
+                            '${deckName.length}/21',
+                            // Display character count
+                            style: const TextStyle(
+                              color: Colors.white54,
+                              fontSize: 12, // Set font size to 12
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    // Add spacing between TextField and Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: Colors.white, // Set text color to white
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (deckName.isEmpty) {
+                              return; // Don't close the dialog if deckName is empty
+                            }
+                            addDeck(deckName);
+                            Navigator.of(context).pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(
+                                0xFF20EFC0), // Set button background color to #20EFC0
+                          ),
+                          child: const Text(
+                            'Ok',
+                            style: TextStyle(
+                              color: Colors.white, // Set text color to white
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
             ),
           ),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Stack(
-                    alignment: Alignment.topLeft, 
-                    children: [
-                      TextField(
-                        onChanged: (value) {
-                          setState(() {
-                            folderName = value;
-                          });
-                        },
-                        maxLength: 21, // Set maximum length to 21 characters
-                        decoration: InputDecoration(
-                          hintText: 'Enter folder name',
-                          hintStyle: const TextStyle(
-                            color: Colors.white70, // Set hint text color to a lighter shade of white
-                          ),
-                          border: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color(0xFF20EFC0), // Set border color to #20EFC0
-                            ),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color(0xFF20EFC0), // Set border color to #20EFC0 when focused
-                              width: 2.0,
-                            ),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color(0xFF20EFC0), // Set border color to #20EFC0 when enabled
-                              width: 1.0,
-                            ),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          errorText: folderName.isEmpty ? 'Please enter a folder name' : null, // Show error if folderName is empty
-                        ),
-                      ),
-                      Positioned(
-                        right: 8, // Adjust the left position of the character count
-                        bottom: 27, // Adjust the bottom position of the character count
-                        child: Text(
-                          '${folderName.length}/21', // Display character count
-                          style: const TextStyle(
-                            color: Color(0xFFCCCCCC), // Set text color to light gray
-                            fontSize: 12, // Set font size to 12
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8), // Add spacing between TextField and Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(
-                            color: Colors.white, // Set text color to white
-                          ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (folderName.isEmpty) {
-                            return; // Don't close the dialog if folderName is empty
-                          }
-                          addFolder(folderName);
-                          Navigator.of(context).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF20EFC0), // Set button background color to #20EFC0
-                        ),
-                        child: const Text(
-                          'Ok',
-                          style: TextStyle(
-                            color: Colors.white, // Set text color to white
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-      );
-    },
-  );
-
-}
+        );
+      },
+    );
+  }
 
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (isSnackBarVisible) {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          toggleSnackBarVisibility(false);
-        }
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -182,53 +185,62 @@ class HomePageState extends State<HomePage> {
         body: SingleChildScrollView(
           child: Wrap(
             direction: Axis.horizontal,
-            children: folders.map((folder) => FolderItem(folder: folder)).toList(),
+            children: decks.map((deck) => DeckItem(deck: deck))
+                .toList(),
           ),
         ),
-        floatingActionButton: !isSnackBarVisible
-            ? FloatingActionButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: const Color(0xFF414141),
-                      content: FolderOptions(
-                        onManual: () {
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          toggleSnackBarVisibility(false);
-                          _showCreateFolderDialog(context);
-                        },
-                        onAI: () {
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          toggleSnackBarVisibility(false);
-                          // Handle AI folder creation here
-                        },
-                      ),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20.0),
-                          topRight: Radius.circular(20.0),
-                        ),
-                      ),
-                      duration: const Duration(days: 365),
+        floatingActionButton: Visibility(
+            visible: isAddButtonVisible,
+            child: FloatingActionButton(
+              onPressed: () {
+                setState (() {
+                  isAddButtonVisible = false;
+                });
+                ScaffoldMessenger
+                    .of(context)
+                    .showSnackBar(
+                  SnackBar(
+                    backgroundColor: const Color(0xFF414141),
+                    content: CreateDeckSnackbar(
+                      onManual: () {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        showCreateDeckDialog(context);
+                      },
+                      onAI: () {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        // Handle AI deck creation here
+                      },
                     ),
-                  );
-                  toggleSnackBarVisibility(true);
-                },
-                backgroundColor: const Color(0xFF20EFC0),
-                child: const Icon(Icons.add),
-              )
-            : null,
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20.0),
+                        topRight: Radius.circular(20.0),
+                      ),
+                    ),
+                    duration: const Duration(days: 365),
+                  ),
+                ).closed.then((value) => {
+                ScaffoldMessenger.of(context).clearSnackBars(),
+                setState (() {
+                isAddButtonVisible = true;
+                })
+              });
+              },
+              backgroundColor: const Color(0xFF20EFC0),
+              child: const Icon(Icons.add),
+            )),
+        floatingActionButtonLocation: FloatingActionButtonLocation
+            .miniStartFloat,
       ),
     );
   }
 }
 
-class FolderOptions extends StatelessWidget {
+class CreateDeckSnackbar extends StatelessWidget {
   final VoidCallback onManual;
   final VoidCallback onAI;
 
-  const FolderOptions({super.key, required this.onManual, required this.onAI});
+  const CreateDeckSnackbar({super.key, required this.onManual, required this.onAI});
 
   @override
   Widget build(BuildContext context) {
@@ -276,7 +288,7 @@ class FolderOptions extends StatelessWidget {
         ElevatedButton.icon(
           onPressed: onAI,
           icon: const Icon(
-            Icons.computer,
+            Icons.smart_toy,
             color: Color(0xFF20EFC0),
           ),
           label: const Text(
@@ -297,34 +309,43 @@ class FolderOptions extends StatelessWidget {
   }
 }
 
-class Folder {
+class Deck {
   final String name;
 
-  Folder({required this.name});
+  Deck({required this.name});
 }
 
-class FolderItem extends StatelessWidget {
-  final Folder folder;
+class DeckItem extends StatelessWidget {
+  final Deck deck;
 
-  const FolderItem({super.key, required this.folder});
+  const DeckItem({super.key, required this.deck});
 
   @override
   Widget build(BuildContext context) {
-    double iconSize = MediaQuery.of(context).size.width / 4;
+    double iconSize = MediaQuery
+        .of(context)
+        .size
+        .width / 4;
 
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => FolderPage(folder: folder),
+            builder: (context) => DeckPage(deck: deck),
           ),
         );
       },
       child: Container(
         margin: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width / 32,
-          vertical: MediaQuery.of(context).size.width / 64,
+          horizontal: MediaQuery
+              .of(context)
+              .size
+              .width / 32,
+          vertical: MediaQuery
+              .of(context)
+              .size
+              .width / 64,
         ),
         width: iconSize * 1.7,
         height: iconSize * 0.8,
@@ -353,7 +374,7 @@ class FolderItem extends StatelessWidget {
                 child: Align(
                   alignment: const Alignment(-1.2, -0.5),
                   child: Text(
-                    folder.name,
+                    deck.name,
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 16.0, color: Colors.white),
                     overflow: TextOverflow.ellipsis,
@@ -369,19 +390,19 @@ class FolderItem extends StatelessWidget {
   }
 }
 
-class FolderPage extends StatelessWidget {
-  final Folder folder;
+class DeckPage extends StatelessWidget {
+  final Deck deck;
 
-  const FolderPage({super.key, required this.folder});
+  const DeckPage({super.key, required this.deck});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(folder.name),
+        title: Text(deck.name),
       ),
       body: Center(
-        child: Text("Content of ${folder.name}"),
+        child: Text("Content of ${deck.name}"),
       ),
     );
   }
