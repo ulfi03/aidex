@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../shared/app/model/deck.dart';
+import '../../app/model/deck.dart';
 
 class DeckViewWidget extends StatelessWidget {
   final Deck deck;

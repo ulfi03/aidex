@@ -1,8 +1,8 @@
-import 'package:aidex/deck-overview/ui/deck_item_widget.dart';
-import 'package:aidex/deck-overview/ui/deck_overview_widget.dart';
+import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:flutter/material.dart';
-import '../../shared/app/model/deck.dart';
-import 'create_deck_snackbar_widget.dart';
+import '../../app/model/deck.dart';
+import '../../ui/deck-overview/create_deck_snackbar_widget.dart';
+import 'deck_overview_widget.dart';
 
 class DeckOverviewState extends State<DeckOverviewWidget> {
   List<Deck> decks = [];

@@ -1,4 +1,4 @@
-import 'package:aidex/deck-overview/ui/deck_overview_widget.dart';
+import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
 import 'package:flutter/material.dart';
 
 void main() {

@@ -1,7 +1,6 @@
-import 'package:aidex/deck-view/ui/deck_view_widget.dart';
+import 'package:aidex/ui/deck-view/deck_view_widget.dart';
 import 'package:flutter/cupertino.dart';
-
-import 'shared/app/model/deck.dart';
+import '../app/model/deck.dart';
 
 class ItemOnDeckOverviewSelectedRoute extends StatelessWidget {
   final Deck deck;
