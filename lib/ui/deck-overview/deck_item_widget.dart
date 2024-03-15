@@ -1,6 +1,7 @@
-import 'package:aidex/routes.dart';
+import 'package:aidex/ui/routes.dart';
 import 'package:flutter/material.dart';
-import '../../shared/app/model/deck.dart';
+
+import '../../app/model/deck.dart';
 
 class DeckItemWidget extends StatelessWidget {
   final Deck deck;
