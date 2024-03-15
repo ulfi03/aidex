@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../app/model/deck.dart';
 import '../../ui/deck-overview/create_deck_snackbar_widget.dart';
 import 'deck_overview_widget.dart';
+import "package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart";
 
 class DeckOverviewState extends State<DeckOverviewWidget> {
   List<Deck> decks = [];
@@ -96,6 +97,11 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                         ),
                       ],
                     ),
+                    ColorPicker(
+                        color: Colors.blue,
+                        onChanged: (value){ },
+                        initialPicker: Picker.paletteHue,
+                      ),
                     const SizedBox(height: 8),
                     // Add spacing between TextField and Row
                     Row(
