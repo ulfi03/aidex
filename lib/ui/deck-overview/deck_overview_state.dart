@@ -1,5 +1,6 @@
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:flutter/material.dart';
+
 import '../../app/model/deck.dart';
 import '../../ui/deck-overview/create_deck_snackbar_widget.dart';
 import 'deck_overview_widget.dart';
@@ -8,9 +9,9 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
   List<Deck> decks = [];
   bool isAddButtonVisible = true;
 
-  void addDeck(String name) {
+  void addDeck(Deck newDeck) {
     setState(() {
-      decks.add(Deck(name: name));
+      decks.add(newDeck);
     });
   }
 
@@ -117,7 +118,7 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                             if (deckName.isEmpty) {
                               return; // Don't close the dialog if deckName is empty
                             }
-                            addDeck(deckName);
+                            addDeck(Deck(name: deckName));
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
@@ -178,40 +179,40 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                 });
                 ScaffoldMessenger.of(context)
                     .showSnackBar(
-                  SnackBar(
-                    backgroundColor: const Color(0xFF414141),
-                    content: CreateDeckSnackbarWidget(
-                      onManual: () {
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        showCreateDeckDialog(context);
-                      },
-                      onAI: () {
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        // Handle AI deck creation here
-                      },
-                    ),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.0),
-                        topRight: Radius.circular(20.0),
+                      SnackBar(
+                        backgroundColor: const Color(0xFF414141),
+                        content: CreateDeckSnackbarWidget(
+                          onManual: () {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            showCreateDeckDialog(context);
+                          },
+                          onAI: () {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            // Handle AI deck creation here
+                          },
+                        ),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
+                          ),
+                        ),
+                        duration: const Duration(days: 365),
                       ),
-                    ),
-                    duration: const Duration(days: 365),
-                  ),
-                )
+                    )
                     .closed
                     .then((value) => {
-                  ScaffoldMessenger.of(context).clearSnackBars(),
-                  setState(() {
-                    isAddButtonVisible = true;
-                  })
-                });
+                          ScaffoldMessenger.of(context).clearSnackBars(),
+                          setState(() {
+                            isAddButtonVisible = true;
+                          })
+                        });
               },
               backgroundColor: const Color(0xFF20EFC0),
               child: const Icon(Icons.add),
             )),
         floatingActionButtonLocation:
-        FloatingActionButtonLocation.miniStartFloat,
+            FloatingActionButtonLocation.miniStartFloat,
       ),
     );
   }

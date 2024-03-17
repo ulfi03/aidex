@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class CreateDeckSnackbarWidget extends StatelessWidget {
+  static const snackbarTitleKey = Key('create_deck_snackbar_title');
+  static const createManuallyTitleKey = Key('create_manually_title');
+  static const createAITitleKey = Key('create_ai_title');
+
   final VoidCallback onManual;
   final VoidCallback onAI;
 
@@ -19,6 +23,7 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
             child: Column(
               children: [
                 Text(
+                  key: snackbarTitleKey,
                   'Create Deck',
                   style: TextStyle(
                     color: Colors.white,
@@ -37,6 +42,7 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
             color: Color(0xFF20EFC0),
           ),
           label: const Text(
+            key: createManuallyTitleKey,
             'Create manually',
             style: TextStyle(
               color: Colors.white,
@@ -57,6 +63,7 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
             color: Color(0xFF20EFC0),
           ),
           label: const Text(
+            key: createAITitleKey,
             'Create with AI',
             style: TextStyle(
               color: Colors.white,

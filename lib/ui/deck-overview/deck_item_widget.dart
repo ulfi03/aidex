@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../../app/model/deck.dart';
 
 class DeckItemWidget extends StatelessWidget {
+  static const deckNameKey = Key('deck.name');
+
   final Deck deck;
 
   const DeckItemWidget({super.key, required this.deck});
@@ -53,6 +55,7 @@ class DeckItemWidget extends StatelessWidget {
                 child: Align(
                   alignment: const Alignment(-1.2, -0.5),
                   child: Text(
+                    key: deckNameKey,
                     deck.name,
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 16.0, color: Colors.white),
