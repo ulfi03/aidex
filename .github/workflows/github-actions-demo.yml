@@ -8,13 +8,16 @@ jobs:
     steps:
       - name: Checking out repository ${{ github.repository }} on branch ${{ github.ref }} ...
         uses: actions/checkout@v4
-      - name: List files in the repository
+      - name: Listing source files ...
         run: |
-          echo "Listing source files ..."
           ls ${{ github.workspace }}/lib -R
           echo "Listing test files ..."
           ls ${{ github.workspace }}/test -R
-      - uses: subosito/flutter-action@v2
+      - name: Listing test files ...
+        run: |
+          ls ${{ github.workspace }}/test -R
+      - name: Setting up Flutter ...
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.3'
           channel: 'stable'
@@ -23,24 +26,4 @@ jobs:
       - run: flutter test
       - run: flutter build apk
       - run: flutter build appbundle
-      - run: echo "job status is ${{ job.status }}."
-
-  build-ios:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: List files in the repository
-        run: |
-          echo "Listing source files ..."
-          ls ${{ github.workspace }}/lib -R
-          echo "Listing test files ..."
-          ls ${{ github.workspace }}/test -R
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.19.3'
-          channel: 'stable'
-      - run: flutter --version
-      - run: flutter pub get
-      - run: flutter test
-      - run: flutter build ios --release --no-codesign
       - run: echo "job status is ${{ job.status }}."
