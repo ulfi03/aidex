@@ -5,13 +5,12 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:aidex/main.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:aidex/main.dart';
-
 void main() {
-  testWidgets('smoke test', (WidgetTester tester) async {
+  testWidgets('smoke test', (final tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
     // Verify that the DeckOverviewWidget is present
