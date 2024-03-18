@@ -46,6 +46,7 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                           });
                         },
                         maxLength: 21,
+                        cursorColor: const Color(0xFF20EFC0),
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           hintText: 'deck name',
@@ -58,6 +59,12 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                           errorText: deckName.isEmpty
                               ? 'Please enter a deck name'
                               : null,
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFF20EFC0),
+                            ),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
                         ),
                       ),
                       Positioned(
@@ -150,6 +157,9 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                           addDeck(deckName, pickerColor);
                           Navigator.of(context).pop();
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF20EFC0),
+                        ),
                         child: const Text(
                           'Ok',
                           style: TextStyle(
