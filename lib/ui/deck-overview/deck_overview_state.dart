@@ -19,13 +19,22 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
   /// A boolean to check if the add button is visible.
   bool isAddButtonVisible = true;
 
+  @override
+  void initState() {
+    super.initState();
+  }
   /// Add a deck to the list of decks with the given [name].
   void addDeck(final String name) {
     setState(() {
       decks.add(Deck(name: name));
     });
   }
-
+  /// Delete the deck at the given [name].
+  void deleteDeck(final String name) {
+    setState(() {
+      decks.removeWhere((final deck) => deck.name == name);
+    });
+  }
   /// Show a dialog to create a deck.
   Future<void> showCreateDeckDialog(final BuildContext context) async {
     await showDialog(

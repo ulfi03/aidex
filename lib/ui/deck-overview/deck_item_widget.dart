@@ -1,6 +1,7 @@
 import 'package:aidex/app/model/deck.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:aidex/ui/deck-overview/deck_overview_state.dart' as deckOverviewState;
 
 /// A widget used to display a deck item.
 ///
@@ -78,23 +79,64 @@ class DeckItemWidget extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Align(
                   alignment: const Alignment(-1.2, -0.5),
                   child: Text(
                     deck.name,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16, color: Colors.white),
+                    style: const TextStyle(fontSize: 13, color: Colors.white),
                     overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
+                    maxLines: 3,
                   ),
                 ),
-              ),
             ),
-          ],
-        ),
-      ),
-    );
+                    PopupMenuButton<String>(
+                      color: const Color(0xFF414141),
+                      icon: const Icon(Icons.more_vert, color: Colors.white, size: 20), 
+                      onSelected: (final value) async {
+                        if (value == 'delete') {
+                          await showDialog(
+                            context: context,
+                            builder: (final context) => AlertDialog(
+                              backgroundColor: const Color(0xFF414141),
+                                title: const Text('Confirm Deletion', style: TextStyle(color: Colors.white)),
+                                content: const Text('Are you sure you want to delete this deck? This action cannot be reversed.', style: TextStyle(color: Colors.white)),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context); // Close the dialog
+                                    },
+                                    child: const Text('Cancel', style: TextStyle(color: Colors.white)),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      deckOverviewState.DeckOverviewState().deleteDeck(deck.name);
+                                      Navigator.pop(context); // Close the dialog
+                                    },
+                                    child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                  ),
+                                ],
+                              ),
+                          );
+                        }
+                      },
+                      itemBuilder: (final context) => <PopupMenuEntry<String>>[
+                        const PopupMenuItem<String>(
+                          value: 'delete',
+                          child: ListTile(
+                            leading: Icon(Icons.delete, size: 17, color: Colors.white),
+                            title: Text(
+                              'Delete Deck',
+                              style: TextStyle(fontSize: 14, color: Colors.white),
+                            ),
+                            dense: true, // Add this line to reduce the height
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
   }
 }
