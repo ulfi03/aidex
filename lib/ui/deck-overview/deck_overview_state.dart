@@ -16,28 +16,23 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
   }
 
   void showCreateDeckDialog(BuildContext context) {
-  Color pickerColor = const Color(0xFF121212); // Initial color
-  void changeColor(Color color) {
-    setState(() => pickerColor = color);
-  }
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      String deckName = '';
-      return SizedBox(
-        child: AlertDialog(
-          backgroundColor: const Color(0xFF414141),
-          title: const Text(
-            'Create Deck',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-            ),
-          ),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Column(
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        Color pickerColor = const Color(0xFF121212); // Initial color
+        String deckName = '';
+        return StatefulBuilder(builder: (context, setState) {
+          return SizedBox(
+            child: AlertDialog(
+              backgroundColor: const Color(0xFF414141),
+              title: const Text(
+                'Create Deck',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
+              content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Deck Name TextField
@@ -94,7 +89,11 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                             content: SingleChildScrollView(
                               child: BlockPicker(
                                 pickerColor: pickerColor,
-                                onColorChanged: changeColor,
+                                onColorChanged: (color) {
+                                  setState(() {
+                                    pickerColor = color;
+                                  });
+                                },
                               ),
                             ),
                             actions: <Widget>[
@@ -115,7 +114,7 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF212121), 
+                      backgroundColor: pickerColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -161,14 +160,13 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                     ],
                   ),
                 ],
-              );
-            },
-          ),
-        ),
-      );
-    },
-  );
-}
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -205,40 +203,40 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                 });
                 ScaffoldMessenger.of(context)
                     .showSnackBar(
-                  SnackBar(
-                    backgroundColor: const Color(0xFF414141),
-                    content: CreateDeckSnackbarWidget(
-                      onManual: () {
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        showCreateDeckDialog(context);
-                      },
-                      onAI: () {
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        // Handle AI deck creation here
-                      },
-                    ),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.0),
-                        topRight: Radius.circular(20.0),
+                      SnackBar(
+                        backgroundColor: const Color(0xFF414141),
+                        content: CreateDeckSnackbarWidget(
+                          onManual: () {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            showCreateDeckDialog(context);
+                          },
+                          onAI: () {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            // Handle AI deck creation here
+                          },
+                        ),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
+                          ),
+                        ),
+                        duration: const Duration(days: 365),
                       ),
-                    ),
-                    duration: const Duration(days: 365),
-                  ),
-                )
+                    )
                     .closed
                     .then((value) => {
-                  ScaffoldMessenger.of(context).clearSnackBars(),
-                  setState(() {
-                    isAddButtonVisible = true;
-                  })
-                });
+                          ScaffoldMessenger.of(context).clearSnackBars(),
+                          setState(() {
+                            isAddButtonVisible = true;
+                          })
+                        });
               },
               backgroundColor: const Color(0xFF20EFC0),
               child: const Icon(Icons.add),
             )),
         floatingActionButtonLocation:
-        FloatingActionButtonLocation.miniStartFloat,
+            FloatingActionButtonLocation.miniStartFloat,
       ),
     );
   }
