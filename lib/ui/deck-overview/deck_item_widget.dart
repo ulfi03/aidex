@@ -29,7 +29,7 @@ class DeckItemWidget extends StatelessWidget {
         width: iconSize * 1.7,
         height: iconSize * 0.8,
         decoration: BoxDecoration(
-          color: const Color(0xFF121212),
+          color: deck.color, // Set the background color from the deck
           border: Border.all(
             color: Colors.white,
             width: 2.0,

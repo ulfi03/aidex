@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
+
 class Deck {
   final String name;
-
-  Deck({required this.name});
+  final Color color;
+  Deck({required this.name, required this.color});
 }
