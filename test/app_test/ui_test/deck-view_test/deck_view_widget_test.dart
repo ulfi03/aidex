@@ -6,14 +6,14 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   // Widget tests -------------------------------------------------------------
   // Widget initializers
-  final Deck initDeck = Deck(name: 'my Deck');
-  var widgetStub = MaterialApp(
+  final Deck initDeck = Deck(name: 'my Deck', color: Colors.white);
+  final widgetStub = MaterialApp(
     home: Scaffold(
       body: DeckViewWidget(deck: initDeck),
     ),
   );
 
-  testWidgets('Deck-name is DeckViewWidget title', (tester) async {
+  testWidgets('Deck-name is DeckViewWidget title', (final tester) async {
     await tester.pumpWidget(widgetStub);
 
     final deckViewTitle = find.text(initDeck.name);
@@ -21,7 +21,7 @@ void main() {
   });
 
   testWidgets('Deck-name is included in DeckViewWidget content',
-      (tester) async {
+      (final tester) async {
     await tester.pumpWidget(widgetStub);
 
     final deckViewContent = find.text('Content of ${initDeck.name}');

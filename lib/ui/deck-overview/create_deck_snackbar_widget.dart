@@ -35,10 +35,6 @@ import 'package:flutter/material.dart';
 ///
 /// {@category Widget}
 class CreateDeckSnackbarWidget extends StatelessWidget {
-  static const snackbarTitleKey = Key('create_deck_snackbar_title');
-  static const createManuallyTitleKey = Key('create_manually_title');
-  static const createAITitleKey = Key('create_ai_title');
-  static const createManuallyButtonKey = Key('create_manually_button');
   /// Constructor for the [CreateDeckSnackbarWidget].
   ///
   /// The [key] is used to identify the widget in the widget tree.
@@ -50,6 +46,18 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
   /// a deck with AI.
   const CreateDeckSnackbarWidget(
       {required this.onManual, required this.onAI, super.key});
+
+  /// The key for the Snackbar title
+  static const snackbarTitleKey = Key('create_deck_snackbar_title');
+
+  /// The key for the create manually title
+  static const createManuallyTitleKey = Key('create_manually_title');
+
+  /// The key for the create AI title
+  static const createAITitleKey = Key('create_ai_title');
+
+  /// The key for the create manually button
+  static const createManuallyButtonKey = Key('create_manually_button');
 
   /// The callback called when the user presses the button to create a deck
   /// manually

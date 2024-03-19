@@ -7,54 +7,57 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  // Widget tests ---------------------------------------------------------------
+  // Widget tests --------------------------------------------------------------
   group('add Decks to DeckOverview', () {
-    final newDeck = Deck(name: 'New Deck');
-    var widgetStub = const Directionality(
+    final newDeck = Deck(name: 'New Deck', color: Colors.black);
+    final newDeckCopy = Deck(name: 'New Deck', color: Colors.black);
+    const widgetStub = Directionality(
         textDirection: TextDirection.ltr,
         child: MaterialApp(
           home: Scaffold(body: DeckOverviewWidget()),
         ));
 
-    testWidgets('add Deck to DeckOverview', (tester) async {
+    testWidgets('add Deck to DeckOverview', (final tester) async {
       await tester.pumpWidget(widgetStub);
-      DeckOverviewState state = tester.state(find.byType(DeckOverviewWidget));
-      List<Deck> expectedDecks = [newDeck];
+      final DeckOverviewState state =
+          tester.state(find.byType(DeckOverviewWidget));
+      final expectedDecks = <Deck>[newDeck];
       state.addDeck(newDeck);
       expect(const ListEquality().equals(state.decks, expectedDecks), true);
     });
 
-    testWidgets('add multiple Decks to DeckOverview', (tester) async {
+    testWidgets('add multiple Decks to DeckOverview', (final tester) async {
       await tester.pumpWidget(widgetStub);
-      DeckOverviewState state = tester.state(find.byType(DeckOverviewWidget));
+      final DeckOverviewState state =
+          tester.state(find.byType(DeckOverviewWidget));
       final List<Deck> expectedDecks = [
-        Deck(name: 'Deck 1'),
-        Deck(name: 'Deck 2')
+        Deck(name: 'Deck 1', color: Colors.black),
+        Deck(name: 'Deck 2', color: Colors.black),
       ];
 
-      for (int i = 0; i < expectedDecks.length; i++) {
+      for (var i = 0; i < expectedDecks.length; i++) {
         state.addDeck(expectedDecks[i]);
       }
       expect(const ListEquality().equals(state.decks, expectedDecks), true);
     });
 
-    testWidgets('add the same Deck twice', (tester) async {
+    testWidgets('add the same Deck twice', (final tester) async {
       await tester.pumpWidget(widgetStub);
-      DeckOverviewState state = tester.state(find.byType(DeckOverviewWidget));
-      state.addDeck(newDeck);
-      state.addDeck(newDeck);
-      List<Deck> expectedDecks = [newDeck, newDeck];
-      expect(state.decks.length == (expectedDecks.length - 1), true);
+      final DeckOverviewState state =
+          tester.state(find.byType(DeckOverviewWidget))
+            ..addDeck(newDeck)
+            ..addDeck(newDeckCopy);
+      expect(state.decks.length == 1, true);
     });
     //Maybe a test that adds a lot of decks to see if the UI can handle it
   });
   group('showCreateDeckDialog', () {
-    var widgetStub = const Directionality(
+    const widgetStub = Directionality(
         textDirection: TextDirection.ltr,
         child: MaterialApp(
           home: Scaffold(body: DeckOverviewWidget()),
         ));
-    navigateToCreateDeckDialog(WidgetTester tester) async {
+    Future<void> navigateToCreateDeckDialog(final WidgetTester tester) async {
       await tester.pumpWidget(widgetStub);
       await tester.tap(find.byType(FloatingActionButton));
       await tester.pumpAndSettle();
@@ -63,7 +66,7 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('Check content on CreateDeckDialog', (tester) async {
+    testWidgets('Check content on CreateDeckDialog', (final tester) async {
       await navigateToCreateDeckDialog(tester);
       final widgetTitle =
           find.byKey(DeckOverviewState.showCreateDeckDialogTitleKey);
@@ -74,6 +77,6 @@ void main() {
       expect(errorTextOnEmptyInput, findsOneWidget);
     });
   });
-  // [potential] golden  tests -------------------------------------------------------------
+  // [potential] golden  tests -------------------------------------------------
   //vgl. https://itnext.io/tdd-in-flutter-part-3-testing-your-widgets-c5e87d76a864
 }
