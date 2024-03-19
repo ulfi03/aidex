@@ -3,15 +3,12 @@ import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-/// The state for the [DeckOverviewWidget].
-///
-/// This state is used to manage the state of the [DeckOverviewWidget].
-///
-/// It contains a list of [Deck]s and a boolean to check if the add button
-/// is visible.
-///
-/// It provides methods to add a [Deck] and show a dialog to create a [Deck].
+/// The state of the DeckOverviewWidget.
+/// This class is responsible for the logic of the DeckOverviewWidget.
+/// It contains the list of decks and the logic to add a deck to the list.
+/// It also contains the logic to show a dialog to create a deck.
 class DeckOverviewState extends State<DeckOverviewWidget> {
   /// The list of decks.
   List<Deck> decks = [];
@@ -20,9 +17,9 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
   bool isAddButtonVisible = true;
 
   /// Add a deck to the list of decks with the given [name].
-  void addDeck(final String name) {
+  void addDeck(final String name, final Color color) {
     setState(() {
-      decks.add(Deck(name: name));
+      decks.add(Deck(name: name, color: color));
     });
   }
 
@@ -31,22 +28,23 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
     await showDialog(
       context: context,
       builder: (final context) {
+        var pickerColor = const Color(0xFF121212); // Initial color
         var deckName = '';
-        return SizedBox(
-          child: AlertDialog(
-            backgroundColor: const Color(0xFF414141),
-            // Set background color to #414141
-            title: const Text(
-              'Create Deck',
-              style: TextStyle(
-                color: Colors.white, // Set text color to white
-                fontSize: 18,
+        return StatefulBuilder(builder: (final context, final setState)
+        => SizedBox(
+            child: AlertDialog(
+              backgroundColor: const Color(0xFF414141),
+              title: const Text(
+                'Create Deck',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
               ),
-            ),
-            content: StatefulBuilder(
-              builder: (final context, final setState) => Column(
+              content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Deck Name TextField
                   Stack(
                     alignment: Alignment.topLeft,
                     children: [
@@ -57,59 +55,93 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                           });
                         },
                         maxLength: 21,
-                        // Set maximum length to 21 characters
+                        cursorColor: const Color(0xFF20EFC0),
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           hintText: 'deck name',
                           hintStyle: const TextStyle(
-                            color: Colors
-                                .white54, // Set hint text color to a lighter
-                            // shade of white
+                            color: Colors.white54,
                           ),
                           border: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color(
-                                  0xFF20EFC0), // Set border color to #20EFC0
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color(0xFF20EFC0),
-                              // Set border color to #20EFC0 when focused
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color(0xFF20EFC0),
-                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           errorText: deckName.isEmpty
                               ? 'Please enter a deck name'
-                              : null, // Show error if deckName is empty
+                              : null,
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFF20EFC0),
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                       ),
                       Positioned(
                         right: 8,
-                        // Adjust the left position of the character count
                         bottom: 27,
-                        // Adjust the bottom position of the character count
                         child: Text(
                           '${deckName.length}/21',
-                          // Display character count
                           style: const TextStyle(
                             color: Colors.white54,
-                            fontSize: 12, // Set font size to 12
+                            fontSize: 12,
                           ),
                         ),
                       ),
                     ],
                   ),
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (final context) => AlertDialog(
+                            title: const Text(
+                              'Pick a color',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            backgroundColor: const Color(0xFF414141),
+                            content: SingleChildScrollView(
+                              child: BlockPicker(
+                                pickerColor: pickerColor,
+                                onColorChanged: (final color) {
+                                  setState(() {
+                                    pickerColor = color;
+                                  });
+                                },
+                              ),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text(
+                                  'Select',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: pickerColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      'Color (optional)',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 8),
-                  // Add spacing between TextField and Row
+                  // Buttons
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -120,28 +152,25 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                         child: const Text(
                           'Cancel',
                           style: TextStyle(
-                            color: Colors.white, // Set text color to white
+                            color: Colors.white,
                           ),
                         ),
                       ),
                       ElevatedButton(
                         onPressed: () {
                           if (deckName.isEmpty) {
-                            return; // Don't close the dialog if deckName is
-                            // empty
+                            return;
                           }
-                          addDeck(deckName);
+                          addDeck(deckName, pickerColor);
                           Navigator.of(context).pop();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(
-                              0xFF20EFC0), // Set button background color to
-                          // #20EFC0
+                          backgroundColor: const Color(0xFF20EFC0),
                         ),
                         child: const Text(
                           'Ok',
                           style: TextStyle(
-                            color: Colors.white, // Set text color to white
+                            color: Color(0xFF414141),
                           ),
                         ),
                       ),
@@ -150,8 +179,7 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                 ],
               ),
             ),
-          ),
-        );
+          ));
       },
     );
   }
