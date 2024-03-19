@@ -5,13 +5,16 @@ void main() {
   runApp(const MyApp());
 }
 
+/// The main application widget.
+///
+/// This widget is the root of the application.
 class MyApp extends StatelessWidget {
+
+  /// Constructor for the main application widget.
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
+  Widget build(final BuildContext context) => const MaterialApp(
       home: DeckOverviewWidget(),
     );
-  }
 }

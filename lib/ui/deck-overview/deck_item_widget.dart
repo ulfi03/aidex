@@ -1,23 +1,53 @@
+import 'package:aidex/app/model/deck.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:flutter/material.dart';
 
-import '../../app/model/deck.dart';
-
+/// A widget used to display a deck item.
+///
+/// This widget is used to display a deck item.
+///
+/// It displays the name of the deck and an icon.
+///
+/// The [DeckItemWidget] requires a [deck] to be provided.
+///
+/// The [deck] is the deck to be displayed.
+///
+/// This snippet can be used in the `DeckOverviewWidget` to display the
+/// deck items.
+///
+/// ```dart
+/// ListView.builder(
+///   itemCount: decks.length,
+///   itemBuilder: (context, index) {
+///     return DeckItemWidget(deck: decks[index]);
+///   },
+/// );
+/// ```
+///
+/// {@category Widget}
 class DeckItemWidget extends StatelessWidget {
+
+  /// Constructor for the [DeckItemWidget].
+  ///
+  /// The [key] is used to identify the widget in the widget tree.
+  ///
+  /// The [deck] is the deck to be displayed.
+  const DeckItemWidget({required this.deck, super.key});
+
+  /// The deck to be displayed.
   final Deck deck;
 
-  const DeckItemWidget({super.key, required this.deck});
-
   @override
-  Widget build(BuildContext context) {
-    double iconSize = MediaQuery.of(context).size.width / 4;
+  Widget build(final BuildContext context) {
+    final iconSize = MediaQuery.of(context).size.width / 4;
 
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ItemOnDeckOverviewSelectedRoute(deck: deck),
+            builder: (final context)
+            => ItemOnDeckOverviewSelectedRoute(deck: deck),
           ),
         );
       },
@@ -29,18 +59,18 @@ class DeckItemWidget extends StatelessWidget {
         width: iconSize * 1.7,
         height: iconSize * 0.8,
         decoration: BoxDecoration(
-          color: const Color(0xFF121212),
+          color: deck.color, // Set the background color from the deck
           border: Border.all(
             color: Colors.white,
-            width: 2.0,
+            width: 2,
           ),
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8),
               child: Icon(
                 Icons.layers,
                 size: iconSize * 0.4,
@@ -49,13 +79,13 @@ class DeckItemWidget extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Align(
                   alignment: const Alignment(-1.2, -0.5),
                   child: Text(
                     deck.name,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16.0, color: Colors.white),
+                    style: const TextStyle(fontSize: 16, color: Colors.white),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),

@@ -1,20 +1,24 @@
+import 'package:aidex/app/model/deck.dart';
 import 'package:flutter/material.dart';
-import '../../app/model/deck.dart';
 
+/// A widget used to display the deck view.
+///
+/// The [DeckViewWidget] requires a [deck] to be provided.
 class DeckViewWidget extends StatelessWidget {
+
+  /// Constructor for the [DeckViewWidget].
+  const DeckViewWidget({required this.deck, super.key});
+
+  /// The deck to be displayed.
   final Deck deck;
 
-  const DeckViewWidget({super.key, required this.deck});
-
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(final BuildContext context) => Scaffold(
       appBar: AppBar(
         title: Text(deck.name),
       ),
       body: Center(
-        child: Text("Content of ${deck.name}"),
+        child: Text('Content of ${deck.name}'),
       ),
     );
-  }
 }
