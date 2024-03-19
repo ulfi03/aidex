@@ -1,4 +1,4 @@
-import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
+import 'package:aidex/ui/quill-poc/quill_editor_widget.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) => const MaterialApp(
-      home: DeckOverviewWidget(),
+      //home: DeckOverviewWidget(),
+    home: QuillEditorWidget(key: Key('quill-editor-widget'),),
     );
 }
