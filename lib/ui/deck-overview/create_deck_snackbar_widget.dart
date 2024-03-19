@@ -4,7 +4,7 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
   static const snackbarTitleKey = Key('create_deck_snackbar_title');
   static const createManuallyTitleKey = Key('create_manually_title');
   static const createAITitleKey = Key('create_ai_title');
-
+  static const createManuallyButtonKey = Key('create_manually_button');
   final VoidCallback onManual;
   final VoidCallback onAI;
 
@@ -36,6 +36,7 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
           ),
         ),
         ElevatedButton.icon(
+          key: createManuallyButtonKey,
           onPressed: onManual,
           icon: const Icon(
             Icons.person,

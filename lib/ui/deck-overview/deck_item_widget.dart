@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../app/model/deck.dart';
 
 class DeckItemWidget extends StatelessWidget {
-  static const deckNameKey = Key('deck.name');
+  static const deckNameKey = Key('deck_name');
 
   final Deck deck;
 

@@ -1,4 +1,5 @@
 import 'package:aidex/app/model/deck.dart';
+import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_state.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
 import 'package:collection/collection.dart';
@@ -15,12 +16,62 @@ void main() {
           home: Scaffold(body: DeckOverviewWidget()),
         ));
 
-    testWidgets('add Deck to empty DeckOverview', (tester) async {
+    testWidgets('add Deck to DeckOverview', (tester) async {
+      await tester.pumpWidget(widgetStub);
+      DeckOverviewState state = tester.state(find.byType(DeckOverviewWidget));
+      List<Deck> expectedDecks = [newDeck];
+      state.addDeck(newDeck);
+      expect(const ListEquality().equals(state.decks, expectedDecks), true);
+    });
+
+    testWidgets('add multiple Decks to DeckOverview', (tester) async {
+      await tester.pumpWidget(widgetStub);
+      DeckOverviewState state = tester.state(find.byType(DeckOverviewWidget));
+      final List<Deck> expectedDecks = [
+        Deck(name: 'Deck 1'),
+        Deck(name: 'Deck 2')
+      ];
+
+      for (int i = 0; i < expectedDecks.length; i++) {
+        state.addDeck(expectedDecks[i]);
+      }
+      expect(const ListEquality().equals(state.decks, expectedDecks), true);
+    });
+
+    testWidgets('add the same Deck twice', (tester) async {
       await tester.pumpWidget(widgetStub);
       DeckOverviewState state = tester.state(find.byType(DeckOverviewWidget));
       state.addDeck(newDeck);
-      List<Deck> expectedDecks = [newDeck];
-      expect(const ListEquality().equals(state.decks, expectedDecks), true);
+      state.addDeck(newDeck);
+      List<Deck> expectedDecks = [newDeck, newDeck];
+      expect(state.decks.length == (expectedDecks.length - 1), true);
+    });
+    //Maybe a test that adds a lot of decks to see if the UI can handle it
+  });
+  group('showCreateDeckDialog', () {
+    var widgetStub = const Directionality(
+        textDirection: TextDirection.ltr,
+        child: MaterialApp(
+          home: Scaffold(body: DeckOverviewWidget()),
+        ));
+    navigateToCreateDeckDialog(WidgetTester tester) async {
+      await tester.pumpWidget(widgetStub);
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pumpAndSettle();
+      await tester
+          .tap(find.byKey(CreateDeckSnackbarWidget.createManuallyButtonKey));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('Check content on CreateDeckDialog', (tester) async {
+      await navigateToCreateDeckDialog(tester);
+      final widgetTitle =
+          find.byKey(DeckOverviewState.showCreateDeckDialogTitleKey);
+      final hintText = find.text('deck name');
+      final errorTextOnEmptyInput = find.text('Please enter a deck name');
+      expect(widgetTitle, findsOneWidget);
+      expect(hintText, findsOneWidget);
+      expect(errorTextOnEmptyInput, findsOneWidget);
     });
   });
   // [potential] golden  tests -------------------------------------------------------------

@@ -6,6 +6,7 @@ import '../../ui/deck-overview/create_deck_snackbar_widget.dart';
 import 'deck_overview_widget.dart';
 
 class DeckOverviewState extends State<DeckOverviewWidget> {
+  static const Key showCreateDeckDialogTitleKey = Key("DeckDialogTitleKey");
   List<Deck> decks = [];
   bool isAddButtonVisible = true;
 
@@ -25,6 +26,7 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
             backgroundColor: const Color(0xFF414141),
             // Set background color to #414141
             title: const Text(
+              key: showCreateDeckDialogTitleKey,
               'Create Deck',
               style: TextStyle(
                 color: Colors.white, // Set text color to white
