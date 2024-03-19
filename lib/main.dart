@@ -54,6 +54,19 @@ class MyApp extends StatelessWidget {
         ),
         //home: DeckOverviewWidget(),
         home: Scaffold(
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            centerTitle: true,
+            title: const Text(
+              'Create Index Card',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            backgroundColor: const Color(0xFF121212),
+          ),
           body: _quillEditorWidget,
         ));
   }

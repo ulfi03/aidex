@@ -14,6 +14,16 @@ class QuillEditorWidget extends StatelessWidget {
   Widget build(final BuildContext context) => Flex(
         direction: Axis.vertical,
         children: [
+          QuillToolbar.simple(
+            configurations: QuillSimpleToolbarConfigurations(
+              controller: controller,
+              multiRowsDisplay: false,
+              toolbarSize: 40,
+              sharedConfigurations:
+              const QuillSharedConfigurations(locale: Locale('de'),),
+              embedButtons: FlutterQuillEmbeds.toolbarButtons(),
+            ),
+          ),
           Expanded(
             child: QuillEditor.basic(
               configurations: QuillEditorConfigurations(
@@ -25,16 +35,7 @@ class QuillEditorWidget extends StatelessWidget {
               ),
             ),
           ),
-            QuillToolbar.simple(
-              configurations: QuillSimpleToolbarConfigurations(
-                controller: controller,
-                multiRowsDisplay: false,
-                toolbarSize: 40,
-                sharedConfigurations:
-                    const QuillSharedConfigurations(locale: Locale('de'),),
-                embedButtons: FlutterQuillEmbeds.toolbarButtons(),
-              ),
-            ),
+
 
         ],
       );
