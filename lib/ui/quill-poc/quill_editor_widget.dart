@@ -25,23 +25,17 @@ class QuillEditorWidget extends StatelessWidget {
               ),
             ),
           ),
-          _buildCollapsable(
-            'Toolbar',
             QuillToolbar.simple(
               configurations: QuillSimpleToolbarConfigurations(
                 controller: controller,
+                multiRowsDisplay: false,
+                toolbarSize: 50,
                 sharedConfigurations:
                     const QuillSharedConfigurations(locale: Locale('de'),),
                 embedButtons: FlutterQuillEmbeds.toolbarButtons(),
               ),
             ),
-          ),
-        ],
-      );
 
-  Widget _buildCollapsable(final String title, final Widget body) =>
-      ExpansionTile(
-        title: Text(title, style: const TextStyle(color: Colors.white)),
-        children: [body],
+        ],
       );
 }

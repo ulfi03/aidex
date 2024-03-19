@@ -26,8 +26,31 @@ class MyApp extends StatelessWidget {
             primary: const Color(0xFF20EFC0),
             onPrimary: Colors.black,
             background: Colors.black,
+            onBackground: Colors.white,
+            surface: Colors.white38,
+            onSurface: Colors.white,
+            onSurfaceVariant: Colors.white38,
+
           ),
-          textTheme: Typography.whiteCupertino,
+          textTheme:
+            const TextTheme(
+              displayLarge: TextStyle(color: Colors.white),
+              displayMedium: TextStyle(color: Colors.white),
+              displaySmall: TextStyle(color: Colors.white),
+              bodyLarge: TextStyle(color: Colors.white),
+              bodyMedium: TextStyle(color: Colors.white),
+              bodySmall: TextStyle(color: Colors.white),
+              labelLarge: TextStyle(color: Colors.white),
+              labelMedium: TextStyle(color: Colors.white),
+              labelSmall: TextStyle(color: Colors.white),
+              headlineLarge: TextStyle(color: Colors.white),
+              headlineMedium: TextStyle(color: Colors.white),
+              headlineSmall: TextStyle(color: Colors.white),
+              titleLarge: TextStyle(color: Colors.white),
+              titleMedium: TextStyle(color: Colors.white),
+              titleSmall: TextStyle(color: Colors.white),
+            ),
+          // change icon color to blue
         ),
         //home: DeckOverviewWidget(),
         home: Scaffold(
