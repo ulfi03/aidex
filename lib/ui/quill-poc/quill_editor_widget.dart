@@ -29,7 +29,7 @@ class QuillEditorWidget extends StatelessWidget {
               configurations: QuillSimpleToolbarConfigurations(
                 controller: controller,
                 multiRowsDisplay: false,
-                toolbarSize: 50,
+                toolbarSize: 40,
                 sharedConfigurations:
                     const QuillSharedConfigurations(locale: Locale('de'),),
                 embedButtons: FlutterQuillEmbeds.toolbarButtons(),

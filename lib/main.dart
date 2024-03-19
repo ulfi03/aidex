@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
             onPrimary: Colors.black,
             background: Colors.black,
             onBackground: Colors.white,
-            surface: Colors.white38,
+            surface: const Color(0xFF121212).withOpacity(0.9),
             onSurface: Colors.white,
             onSurfaceVariant: Colors.white38,
 
