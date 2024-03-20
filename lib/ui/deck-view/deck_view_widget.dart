@@ -1,4 +1,4 @@
-import 'package:aidex/app/model/deck.dart';
+import 'package:aidex/model/deck.dart';
 import 'package:flutter/material.dart';
 
 /// A widget used to display the deck view.

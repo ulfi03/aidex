@@ -33,11 +33,10 @@ dependencies:
   cupertino_icons: ^1.0.6
   flutter:
     sdk: flutter
-  flutter_bloc: ^8.1.4
   flutter_colorpicker: ^1.0.3
   flutter_quill: ^9.3.3
   flutter_quill_extensions: ^9.3.3
-  hydrated_bloc: ^9.1.4
+  sqflite: ^2.3.2
 
 dev_dependencies:
   # The "flutter_lints" package below contains a set of recommended lints to

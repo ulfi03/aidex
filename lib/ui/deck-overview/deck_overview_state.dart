@@ -1,4 +1,4 @@
-import 'package:aidex/app/model/deck.dart';
+import 'package:aidex/model/deck.dart';
 import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
