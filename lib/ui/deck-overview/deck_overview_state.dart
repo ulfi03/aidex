@@ -10,8 +10,29 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 /// It contains the list of decks and the logic to add a deck to the list.
 /// It also contains the logic to show a dialog to create a deck.
 class DeckOverviewState extends State<DeckOverviewWidget> {
-  /// The key for the dialog title.
+  /// The key for the deckOverviewWidget title.
+  static const Key deckOverviewTitleKey = Key('DeckOverviewTitleKey');
+
+  /// The key for the dialogMethods Widget title.
   static const Key showCreateDeckDialogTitleKey = Key('DeckDialogTitleKey');
+
+  /// Widget Title of color picker.
+  static const Key pickColorTextKey = Key('PickColorText');
+
+  /// Button to select a color from the color picker.
+  static const Key colorPickerSelectButtonKey = Key('ColorPickerSelectButton');
+
+  ///(Key to) Button text for the button to select a color the created deck.
+  static const Key selectColorTextKey = Key('SelectColorText');
+
+  ///(Key to) Button text for the button to cancel the deck creation.
+  static const Key cancelButtonTextKey = Key('cancelButtonText');
+
+  ///(Key to) Button text for the button to confirm the deck creation.
+  static const Key okButtonTextKey = Key('okButtonTextKey');
+
+  ///(Key to) TextField to input the deck name.
+  static const Key deckNameTextFieldKey = Key('InputTextField_deckName');
 
   /// The list of decks.
   List<Deck> decks = [];
@@ -52,6 +73,7 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                           alignment: Alignment.topLeft,
                           children: [
                             TextField(
+                              key: deckNameTextFieldKey,
                               onChanged: (final value) {
                                 setState(() {
                                   deckName = value;
@@ -98,6 +120,7 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                               context: context,
                               builder: (final context) => AlertDialog(
                                 title: const Text(
+                                  key: pickColorTextKey,
                                   'Pick a color',
                                   style: TextStyle(
                                     color: Colors.white,
@@ -120,6 +143,7 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                                       Navigator.of(context).pop();
                                     },
                                     child: const Text(
+                                      key: colorPickerSelectButtonKey,
                                       'Select',
                                       style: TextStyle(
                                         color: Colors.white,
@@ -137,6 +161,7 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                             ),
                           ),
                           child: const Text(
+                            key: selectColorTextKey,
                             'Color (optional)',
                             style: TextStyle(
                               color: Colors.white,
@@ -153,6 +178,7 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                                 Navigator.of(context).pop();
                               },
                               child: const Text(
+                                key: cancelButtonTextKey,
                                 'Cancel',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -174,6 +200,7 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                                 backgroundColor: const Color(0xFF20EFC0),
                               ),
                               child: const Text(
+                                key: okButtonTextKey,
                                 'Ok',
                                 style: TextStyle(
                                   color: Color(0xFF414141),
@@ -199,6 +226,7 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
           appBar: AppBar(
             centerTitle: true,
             title: const Text(
+              key: deckOverviewTitleKey,
               'All Decks',
               style: TextStyle(
                 color: Colors.white,
