@@ -5,13 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  // Widget tests -------------------------------------------------------------
-  // Widget initializers
   const deckName = 'Initial Deck';
   final deckStub = Deck(name: deckName, color: Colors.black);
+
+  ///To create a DeckItemWidget, it needs a route beforehand
   final directionalWidgetAncestor = MaterialPageRoute(
       builder: (final context) =>
           ItemOnDeckOverviewSelectedRoute(deck: deckStub));
+
+  /// initialze the DeckItemWidget with a correct route
   final widgetStub = MaterialApp(
     home: Scaffold(
       body: DeckItemWidget(deck: deckStub),
@@ -29,7 +31,4 @@ void main() {
     final widgetTitle = find.byKey(DeckItemWidget.deckNameKey);
     expect(widgetTitle, findsOneWidget);
   });
-
-  // [potential] golden  tests -------------------------------------------------
-  //vgl. https://itnext.io/tdd-in-flutter-part-3-testing-your-widgets-c5e87d76a864
 }
