@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  // Widget tests -------------------------------------------------------------
-  // Widget initializers
+  /// void functions to trigger CreateDeckSnackbarWidget
   void onManual() {}
   void onAI() {}
+
+  ///initialize the CreateDeckSnackbarWidget
   final widgetStub = MaterialApp(
     home: Scaffold(
       body: CreateDeckSnackbarWidget(onManual: onManual, onAI: onAI),
@@ -26,14 +27,11 @@ void main() {
         find.byKey(CreateDeckSnackbarWidget.createManuallyTitleKey);
     expect(manualCreateText, findsOneWidget);
   });
+
   testWidgets('correct title for AI driven creation of a deck',
       (final tester) async {
     await tester.pumpWidget(widgetStub);
     final aiCreateText = find.byKey(CreateDeckSnackbarWidget.createAITitleKey);
     expect(aiCreateText, findsOneWidget);
   });
-
-  // [potential] golden  tests -------------------------------------------------
-
-  //vgl. https://itnext.io/tdd-in-flutter-part-3-testing-your-widgets-c5e87d76a864
 }

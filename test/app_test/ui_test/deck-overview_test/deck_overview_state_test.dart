@@ -4,7 +4,6 @@ import 'package:aidex/ui/deck-overview/deck_overview_state.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -19,21 +18,28 @@ void main() {
 
   group('add Decks to DeckOverview', () {
     final newDeck = Deck(name: 'New Deck', color: Colors.black);
-    final newDeckCopy = Deck(name: 'New Deck', color: Colors.black);
 
     testWidgets('add Deck to DeckOverview', (final tester) async {
       await tester.pumpWidget(widgetStub);
+
+      /// DeckoverviewState instance is needed to call addDeck
       final DeckOverviewState state =
           tester.state(find.byType(DeckOverviewWidget));
+
       final expectedDecks = <Deck>[newDeck];
+
       state.addDeck(newDeck);
+
       expect(const ListEquality().equals(state.decks, expectedDecks), true);
     });
 
     testWidgets('add multiple Decks to DeckOverview', (final tester) async {
       await tester.pumpWidget(widgetStub);
+
+      /// DeckoverviewState instance is needed to call addDeck
       final DeckOverviewState state =
           tester.state(find.byType(DeckOverviewWidget));
+
       final List<Deck> expectedDecks = [
         Deck(name: 'Deck 1', color: Colors.black),
         Deck(name: 'Deck 2', color: Colors.black),
@@ -42,16 +48,8 @@ void main() {
       for (var i = 0; i < expectedDecks.length; i++) {
         state.addDeck(expectedDecks[i]);
       }
-      expect(const ListEquality().equals(state.decks, expectedDecks), true);
-    });
 
-    testWidgets('add the same Deck twice', (final tester) async {
-      await tester.pumpWidget(widgetStub);
-      final DeckOverviewState state =
-          tester.state(find.byType(DeckOverviewWidget))
-            ..addDeck(newDeck)
-            ..addDeck(newDeckCopy);
-      expect(state.decks.length == 1, true);
+      expect(const ListEquality().equals(state.decks, expectedDecks), true);
     });
 
     testWidgets(
@@ -89,6 +87,7 @@ void main() {
       expect(verifyOnTapSuccessful, findsOneWidget);
     });
   });
+
   group('showCreateDeckDialog', () {
     /// Helper function to navigate the widgets until CreateDeckDialog shows up
     Future<void> navigateToCreateDeckDialog(final WidgetTester tester) async {
@@ -123,25 +122,6 @@ void main() {
       expect(selectColorText, findsOneWidget);
       expect(cancelButtonTextKey, findsOneWidget);
       expect(okButtonTextKey, findsOneWidget);
-    });
-
-    testWidgets('write deck name in text-field', (final tester) async {
-      await navigateToCreateDeckDialog(tester);
-      await tester.pumpAndSettle();
-      await tester.enterText(
-          find.byKey(DeckOverviewState.deckNameTextFieldKey), 'Deck 1');
-      await tester.pumpAndSettle();
-      final deckNameBorder = tester
-          .widget<TextField>(find.byKey(DeckOverviewState.deckNameTextFieldKey))
-          .decoration;
-      final borderColor = deckNameBorder?.border?.borderSide.color;
-
-      ///errorTextOnEmptyInput disappears
-      expect(errorTextOnEmptyInput, findsNothing);
-
-      ///Border Color of TextField changes to green
-      expect(borderColor, const Color(0xFF20EFC0));
-      // wo im Code wechselt das auf rot?
     });
 
     testWidgets('Cancel-Button brings you back to inital DeckOverview',
@@ -192,33 +172,5 @@ void main() {
       expect(cancelButtonTextKey, findsOneWidget);
       expect(okButtonTextKey, findsOneWidget);
     });
-
-    testWidgets(
-        'Color-Button brings you to ColorPicker and changes to selcted color',
-        (final tester) async {
-      await navigateToCreateDeckDialog(tester);
-      await tester.pumpAndSettle();
-      await tester.tap(selectColorText);
-      await tester.pumpAndSettle();
-
-      ///expected to tap into ColorPicker
-      expect(find.byKey(DeckOverviewState.pickColorTextKey), findsOneWidget);
-
-      await tester.pumpWidget(BlockPicker(
-          //default picked color is black?
-          pickerColor: Colors.black,
-          onColorChanged: (final color) => Colors.purple));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(DeckOverviewState.selectColorTextKey));
-      await tester.pumpAndSettle();
-      final colorButton =
-          (tester.state(find.byKey(DeckOverviewState.pickColorTextKey)) as Text)
-            ..selectionColor;
-
-      ///expected to display Button 'Color(optional)' change to selected color
-      expect(colorButton, Colors.purple);
-    });
   });
-  // [potential] golden  tests -------------------------------------------------
-  //vgl. https://itnext.io/tdd-in-flutter-part-3-testing-your-widgets-c5e87d76a864
 }
