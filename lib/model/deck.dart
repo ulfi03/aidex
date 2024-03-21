@@ -18,7 +18,7 @@ class Deck {
   Deck.fromMap(final Map<String, dynamic> map) {
     deckId =  map[columnDeckId];
     name = map[columnName];
-    color = map[columnColor];
+    color = Color(map[columnColor]);
     cardsCount = map[columnCardsCount];
   }
 
@@ -53,7 +53,7 @@ class Deck {
   Map<String, Object?> toMap() {
     final map = <String, Object?>{
       columnName: name,
-      columnColor: color.toString(),
+      columnColor: color.value,
       columnCardsCount: cardsCount
     };
     if (deckId != null) {
