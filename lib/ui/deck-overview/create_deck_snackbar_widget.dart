@@ -47,6 +47,18 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
   const CreateDeckSnackbarWidget(
       {required this.onManual, required this.onAI, super.key});
 
+  /// The key for the Snackbar title
+  static const snackbarTitleKey = Key('create_deck_snackbar_title');
+
+  /// The key for the create manually title
+  static const createManuallyTitleKey = Key('create_manually_title');
+
+  /// The key for the create AI title
+  static const createAITitleKey = Key('create_ai_title');
+
+  /// The key for the create manually button
+  static const createManuallyButtonKey = Key('create_manually_button');
+
   /// The callback called when the user presses the button to create a deck
   /// manually
   final VoidCallback onManual;
@@ -66,6 +78,7 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
+                    key: snackbarTitleKey,
                     'Create Deck',
                     style: TextStyle(
                       color: Colors.white,
@@ -78,12 +91,14 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
             ),
           ),
           ElevatedButton.icon(
+            key: createManuallyButtonKey,
             onPressed: onManual,
             icon: const Icon(
               Icons.person,
               color: Color(0xFF20EFC0),
             ),
             label: const Text(
+              key: createManuallyTitleKey,
               'Create manually',
               style: TextStyle(
                 color: Colors.white,
@@ -104,6 +119,7 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
               color: Color(0xFF20EFC0),
             ),
             label: const Text(
+              key: createAITitleKey,
               'Create with AI',
               style: TextStyle(
                 color: Colors.white,

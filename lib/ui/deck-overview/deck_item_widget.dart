@@ -34,6 +34,9 @@ class DeckItemWidget extends StatelessWidget {
   /// The [deck] is the deck to be displayed.
   const DeckItemWidget({required this.deck, super.key});
 
+  /// The key for the deck name
+  static const deckNameKey = Key('deck_name');
+
   /// The deck to be displayed.
   final Deck deck;
 
@@ -83,6 +86,7 @@ class DeckItemWidget extends StatelessWidget {
                 child: Align(
                   alignment: const Alignment(-1.2, -0.5),
                   child: Text(
+                    key: deckNameKey,
                     deck.name,
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 16, color: Colors.white),

@@ -10,16 +10,40 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 /// It contains the list of decks and the logic to add a deck to the list.
 /// It also contains the logic to show a dialog to create a deck.
 class DeckOverviewState extends State<DeckOverviewWidget> {
+  /// The key for the deckOverviewWidget title.
+  static const Key deckOverviewTitleKey = Key('DeckOverviewTitleKey');
+
+  /// The key for the dialogMethods Widget title.
+  static const Key showCreateDeckDialogTitleKey = Key('DeckDialogTitleKey');
+
+  /// Widget Title of color picker.
+  static const Key pickColorTextKey = Key('PickColorText');
+
+  /// Button to select a color from the color picker.
+  static const Key colorPickerSelectButtonKey = Key('ColorPickerSelectButton');
+
+  ///(Key to) Button text for the button to select a color the created deck.
+  static const Key selectColorTextKey = Key('SelectColorText');
+
+  ///(Key to) Button text for the button to cancel the deck creation.
+  static const Key cancelButtonTextKey = Key('cancelButtonText');
+
+  ///(Key to) Button text for the button to confirm the deck creation.
+  static const Key okButtonTextKey = Key('okButtonTextKey');
+
+  ///(Key to) TextField to input the deck name.
+  static const Key deckNameTextFieldKey = Key('InputTextField_deckName');
+
   /// The list of decks.
   List<Deck> decks = [];
 
   /// A boolean to check if the add button is visible.
   bool isAddButtonVisible = true;
 
-  /// Add a deck to the list of decks with the given [name].
-  void addDeck(final String name, final Color color) {
+  /// Add a [deck] to the list of decks.
+  void addDeck(final Deck deck) {
     setState(() {
-      decks.add(Deck(name: name, color: color));
+      decks.add(deck);
     });
   }
 
@@ -30,228 +54,241 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
       builder: (final context) {
         var pickerColor = const Color(0xFF121212); // Initial color
         var deckName = '';
-        return StatefulBuilder(builder: (final context, final setState)
-        => SizedBox(
-            child: AlertDialog(
-              backgroundColor: const Color(0xFF414141),
-              title: const Text(
-                'Create Deck',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                ),
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Deck Name TextField
-                  Stack(
-                    alignment: Alignment.topLeft,
-                    children: [
-                      TextField(
-                        onChanged: (final value) {
-                          setState(() {
-                            deckName = value;
-                          });
-                        },
-                        maxLength: 21,
-                        cursorColor: const Color(0xFF20EFC0),
-                        style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          hintText: 'deck name',
-                          hintStyle: const TextStyle(
-                            color: Colors.white54,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          errorText: deckName.isEmpty
-                              ? 'Please enter a deck name'
-                              : null,
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color(0xFF20EFC0),
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
+        return StatefulBuilder(
+            builder: (final context, final setState) => SizedBox(
+                  child: AlertDialog(
+                    backgroundColor: const Color(0xFF414141),
+                    title: const Text(
+                      key: showCreateDeckDialogTitleKey,
+                      'Create Deck',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
                       ),
-                      Positioned(
-                        right: 8,
-                        bottom: 27,
-                        child: Text(
-                          '${deckName.length}/21',
-                          style: const TextStyle(
-                            color: Colors.white54,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (final context) => AlertDialog(
-                            title: const Text(
-                              'Pick a color',
-                              style: TextStyle(
-                                color: Colors.white,
+                    ),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Stack(
+                          alignment: Alignment.topLeft,
+                          children: [
+                            TextField(
+                              key: deckNameTextFieldKey,
+                              onChanged: (final value) {
+                                setState(() {
+                                  deckName = value;
+                                });
+                              },
+                              maxLength: 21,
+                              cursorColor: const Color(0xFF20EFC0),
+                              style: const TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                hintText: 'deck name',
+                                hintStyle: const TextStyle(
+                                  color: Colors.white54,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                errorText: deckName.isEmpty
+                                    ? 'Please enter a deck name'
+                                    : null,
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFF20EFC0),
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
                             ),
-                            backgroundColor: const Color(0xFF414141),
-                            content: SingleChildScrollView(
-                              child: BlockPicker(
-                                pickerColor: pickerColor,
-                                onColorChanged: (final color) {
-                                  setState(() {
-                                    pickerColor = color;
-                                  });
-                                },
+                            Positioned(
+                              right: 8,
+                              bottom: 27,
+                              child: Text(
+                                '${deckName.length}/21',
+                                style: const TextStyle(
+                                  color: Colors.white54,
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text(
-                                  'Select',
+                          ],
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (final context) => AlertDialog(
+                                title: const Text(
+                                  key: pickColorTextKey,
+                                  'Pick a color',
                                   style: TextStyle(
                                     color: Colors.white,
                                   ),
                                 ),
+                                backgroundColor: const Color(0xFF414141),
+                                content: SingleChildScrollView(
+                                  child: BlockPicker(
+                                    pickerColor: pickerColor,
+                                    onColorChanged: (final color) {
+                                      setState(() {
+                                        pickerColor = color;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text(
+                                      key: colorPickerSelectButtonKey,
+                                      'Select',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: pickerColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: pickerColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      'Color (optional)',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
+                          child: const Text(
+                            key: selectColorTextKey,
+                            'Color (optional)',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        // Buttons
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                key: cancelButtonTextKey,
+                                'Cancel',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (deckName.isEmpty) {
+                                  return;
+                                }
+                                addDeck(Deck(
+                                  name: deckName,
+                                  color: pickerColor,
+                                ));
+                                Navigator.of(context).pop();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF20EFC0),
+                              ),
+                              child: const Text(
+                                key: okButtonTextKey,
+                                'Ok',
+                                style: TextStyle(
+                                  color: Color(0xFF414141),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  // Buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (deckName.isEmpty) {
-                            return;
-                          }
-                          addDeck(deckName, pickerColor);
-                          Navigator.of(context).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF20EFC0),
-                        ),
-                        child: const Text(
-                          'Ok',
-                          style: TextStyle(
-                            color: Color(0xFF414141),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ));
+                ));
       },
     );
   }
 
   @override
   Widget build(final BuildContext context) => GestureDetector(
-      onTap: () {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text(
-            'All Decks',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
+        onTap: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: const Text(
+              key: deckOverviewTitleKey,
+              'All Decks',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
             ),
+            backgroundColor: const Color(0xFF121212),
           ),
           backgroundColor: const Color(0xFF121212),
-        ),
-        backgroundColor: const Color(0xFF121212),
-        body: SingleChildScrollView(
-          child: Wrap(
-            children: decks.map((final deck) => DeckItemWidget(deck: deck))
-                .toList(),
+          body: SingleChildScrollView(
+            child: Wrap(
+              children: decks
+                  .map((final deck) => DeckItemWidget(deck: deck))
+                  .toList(),
+            ),
           ),
-        ),
-        floatingActionButton: Visibility(
-            visible: isAddButtonVisible,
-            child: FloatingActionButton(
-              onPressed: () async {
-                setState(() {
-                  isAddButtonVisible = false;
-                });
-                await ScaffoldMessenger.of(context)
-                    .showSnackBar(
-                      SnackBar(
-                        backgroundColor: const Color(0xFF414141),
-                        content: CreateDeckSnackbarWidget(
-                          onManual: () {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            showCreateDeckDialog(context);
-                          },
-                          onAI: () {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            // Handle AI deck creation here
-                          },
-                        ),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
+          floatingActionButton: Visibility(
+              visible: isAddButtonVisible,
+              child: FloatingActionButton(
+                onPressed: () async {
+                  setState(() {
+                    isAddButtonVisible = false;
+                  });
+                  await ScaffoldMessenger.of(context)
+                      .showSnackBar(
+                        SnackBar(
+                          backgroundColor: const Color(0xFF414141),
+                          content: CreateDeckSnackbarWidget(
+                            onManual: () {
+                              ScaffoldMessenger.of(context)
+                                  .hideCurrentSnackBar();
+                              showCreateDeckDialog(context);
+                            },
+                            onAI: () {
+                              ScaffoldMessenger.of(context)
+                                  .hideCurrentSnackBar();
+                              // Handle AI deck creation here
+                            },
                           ),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            ),
+                          ),
+                          duration: const Duration(days: 365),
                         ),
-                        duration: const Duration(days: 365),
-                      ),
-                    )
-                    .closed
-                    .then((final value) => {
-                          ScaffoldMessenger.of(context).clearSnackBars(),
-                          setState(() {
-                            isAddButtonVisible = true;
-                          })
-                        });
-              },
-              backgroundColor: const Color(0xFF20EFC0),
-              child: const Icon(Icons.add),
-            )),
-        floatingActionButtonLocation:
-            FloatingActionButtonLocation.miniStartFloat,
-      ),
-    );
+                      )
+                      .closed
+                      .then((final value) => {
+                            ScaffoldMessenger.of(context).clearSnackBars(),
+                            setState(() {
+                              isAddButtonVisible = true;
+                            })
+                          });
+                },
+                backgroundColor: const Color(0xFF20EFC0),
+                child: const Icon(Icons.add),
+              )),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.miniStartFloat,
+        ),
+      );
 }
