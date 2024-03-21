@@ -1,7 +1,6 @@
 import 'package:aidex/app/model/deck.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:aidex/ui/deck-overview/deck_overview_state.dart' as deckOverviewState;
 
 /// A widget used to display a deck item.
 ///
@@ -27,16 +26,18 @@ import 'package:aidex/ui/deck-overview/deck_overview_state.dart' as deckOverview
 ///
 /// {@category Widget}
 class DeckItemWidget extends StatelessWidget {
-
   /// Constructor for the [DeckItemWidget].
   ///
   /// The [key] is used to identify the widget in the widget tree.
   ///
   /// The [deck] is the deck to be displayed.
-  const DeckItemWidget({required this.deck, super.key});
+  const DeckItemWidget({required this.deck, required this.onDelete, super.key});
 
   /// The deck to be displayed.
   final Deck deck;
+
+  /// Callback function to handle deck deletion.
+  final VoidCallback onDelete;
 
   @override
   Widget build(final BuildContext context) {
@@ -110,8 +111,8 @@ class DeckItemWidget extends StatelessWidget {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      deckOverviewState.DeckOverviewState().deleteDeck(deck.name);
-                                      Navigator.pop(context); // Close the dialog
+                                        onDelete();
+                                        Navigator.pop(context); // Close the dialog
                                     },
                                     child: const Text('Delete', style: TextStyle(color: Colors.red)),
                                   ),

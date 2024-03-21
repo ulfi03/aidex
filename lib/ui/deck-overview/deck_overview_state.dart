@@ -18,7 +18,6 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
 
   /// A boolean to check if the add button is visible.
   bool isAddButtonVisible = true;
-
   @override
   void initState() {
     super.initState();
@@ -29,10 +28,12 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
       decks.add(Deck(name: name));
     });
   }
-  /// Delete the deck at the given [name].
-  void deleteDeck(final String name) {
+  /// Delete a deck from the list of decks.
+  ///
+  /// Removes the specified [deck] from the list of decks.
+  void deleteDeck(final Deck deck) {
     setState(() {
-      decks.removeWhere((final deck) => deck.name == name);
+      decks.remove(deck);
     });
   }
   /// Show a dialog to create a deck.
@@ -165,32 +166,37 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
     );
   }
 
-  @override
+   @override
   Widget build(final BuildContext context) => GestureDetector(
-      onTap: () {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text(
-            'All Decks',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
+        onTap: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: const Text(
+              'All Decks',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
             ),
+            backgroundColor: const Color(0xFF121212),
           ),
           backgroundColor: const Color(0xFF121212),
-        ),
-        backgroundColor: const Color(0xFF121212),
-        body: SingleChildScrollView(
-          child: Wrap(
-            children: decks.map((final deck) => DeckItemWidget(deck: deck))
-                .toList(),
+          body: SingleChildScrollView(
+            child: Wrap(
+              children: decks
+                  .map((final deck) => DeckItemWidget(deck: deck,
+                        onDelete: () {
+                          deleteDeck(deck);
+                        },
+                      ))
+                  .toList(),
+            ),
           ),
-        ),
-        floatingActionButton: Visibility(
+            floatingActionButton: Visibility(
             visible: isAddButtonVisible,
             child: FloatingActionButton(
               onPressed: () async {
@@ -231,8 +237,8 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
               backgroundColor: const Color(0xFF20EFC0),
               child: const Icon(Icons.add),
             )),
-        floatingActionButtonLocation:
-            FloatingActionButtonLocation.miniStartFloat,
-      ),
-    );
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.miniStartFloat,
+        ),
+      );
 }
