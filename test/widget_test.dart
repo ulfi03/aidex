@@ -12,7 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('smoke test', (final tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const AIDexApp());
     // Verify that the DeckOverviewWidget is present
     expect(find.byType(DeckOverviewWidget), findsOneWidget);
   });

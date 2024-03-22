@@ -1,45 +1,26 @@
 import 'package:aidex/model/deck.dart';
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// The deck data access object.
-class DeckRepository {
-  DeckRepository._create() {
-    print("_create() (private constructor)");
-  }
+class DeckProvider {
+  /// Private constructor
+  DeckProvider._create(this._db);
 
   /// Public factory
-  static Future<DeckRepository> create() async {
-    print("create() (public factory)");
-
-    // Call the private constructor
-    final component = DeckRepository._create();
-
+  static Future<DeckProvider> init() async {
     // Open the database
-    try {
-      if (_db != null) {
-        print('Database already opened');
-      } else {
-        await _open('aidex_deck.db');
-      }
-      // drop database 'aidex_deck.db'
-      // print('drop database');
-      //await deleteDatabase('aidex_deck.db');
-    } on Exception catch (e) {
-      print('Error opening database: $e');
-    }
-    // Delete the database and try again
-    // Return the fully initialized object
-    print('returning component from create()');
-    return component;
+    final db =
+        await _getDatabase(join(await getDatabasesPath(), 'aidex_deck.db'));
+    return DeckProvider._create(db);
   }
 
   /// The deck data access object.
-  static Database? _db;
+  final Database _db;
 
   /// Opens the database at the given [path].
-  static Future _open(final String path) async {
-    print('_open() in repo');
-    _db = await openDatabase(path, version: 1,
+  static Future<Database> _getDatabase(final String path) async {
+    final db = await openDatabase(path, version: 1,
         onCreate: (final db, final version) async {
       print('Creating database...');
       await db.execute('''
@@ -51,11 +32,12 @@ create table ${Deck.tableDeck} (
 ''');
       print('Database created');
     });
-    if (_db!.isOpen) {
+    if (db.isOpen) {
       print('Database opened');
     } else {
       print('Database not opened');
     }
+    return db;
   }
 
   /// Returns all decks from the database.
@@ -90,20 +72,23 @@ create table ${Deck.tableDeck} (
 
   /// Inserts the given [deck] into the database.
   Future<Deck> insert(final Deck deck) async {
-    deck.deckId = await _db!.insert(Deck.tableDeck, deck.toMap(),
+    deck.deckId = await _db.insert(Deck.tableDeck, deck.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     return deck;
   }
 
   /// Returns all decks from the database.
-  Future<int> delete(final int id) async => _db!.delete(Deck.tableDeck,
+  Future<int> delete(final int id) async => _db.delete(Deck.tableDeck,
       where: '${Deck.columnDeckId} = ?', whereArgs: [id]);
+
+  /// Delete all decks from the database.
+  Future<int> deleteAll() async => _db.delete(Deck.tableDeck);
 
   /// Returns all decks from the database.
   Future<int> update(final Deck deck) async =>
-      _db!.update(Deck.tableDeck, deck.toMap(),
+      _db.update(Deck.tableDeck, deck.toMap(),
           where: '${Deck.columnDeckId} = ?', whereArgs: [deck.deckId]);
 
   /// Closes the database.
-  Future close() async => _db!.close();
+  Future close() async => _db.close();
 }
