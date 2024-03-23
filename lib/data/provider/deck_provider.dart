@@ -22,7 +22,6 @@ class DeckProvider {
   static Future<Database> _getDatabase(final String path) async {
     final db = await openDatabase(path, version: 1,
         onCreate: (final db, final version) async {
-      print('Creating database...');
       await db.execute('''
 create table ${Deck.tableDeck} ( 
   ${Deck.columnDeckId} integer primary key autoincrement, 
@@ -30,20 +29,16 @@ create table ${Deck.tableDeck} (
   ${Deck.columnColor} integer not null,
   ${Deck.columnCardsCount} integer not null)
 ''');
-      print('Database created');
     });
     if (db.isOpen) {
-      print('Database opened');
     } else {
-      print('Database not opened');
     }
     return db;
   }
 
   /// Returns all decks from the database.
   Future<List<Deck>> getDecks() async {
-    print('getDecks() in repo');
-    final List<Map<String, dynamic>> maps = await _db!.query(Deck.tableDeck,
+    final List<Map<String, dynamic>> maps = await _db.query(Deck.tableDeck,
         columns: [
           Deck.columnDeckId,
           Deck.columnName,
@@ -55,7 +50,7 @@ create table ${Deck.tableDeck} (
 
   /// Returns all decks from the database.
   Future<Deck?> getDeck(final int id) async {
-    final List<Map<String, dynamic>> maps = await _db!.query(Deck.tableDeck,
+    final List<Map<String, dynamic>> maps = await _db.query(Deck.tableDeck,
         columns: [
           Deck.columnDeckId,
           Deck.columnName,

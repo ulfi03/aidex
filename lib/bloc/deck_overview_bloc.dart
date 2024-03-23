@@ -16,10 +16,10 @@ class DeckOverviewBloc extends Bloc<DeckEvent, DeckState> {
   void _initEventHandlers() {
     on<FetchDecks>((final event, final emit) async {
       emit(const DecksLoading());
+      await Future.delayed(const Duration(seconds: 1));
       try {
         final decks = await _deckRepository.fetchDecks();
         emit(DecksLoaded(decks: decks));
-        print('Decks loaded in bloc');
       } on Exception catch (e) {
         emit(DecksError(message: e.toString()));
       }
@@ -46,7 +46,7 @@ class DeckOverviewBloc extends Bloc<DeckEvent, DeckState> {
 /// ################################################################# States
 
 /// The deck state.
-abstract class DeckState {
+abstract class DeckState extends Equatable {
   /// Creates a new deck state.
   const DeckState();
 }
@@ -55,12 +55,18 @@ abstract class DeckState {
 class DeckInitial extends DeckState {
   /// Creates a new deck initial state.
   const DeckInitial();
+
+  @override
+  List<Object> get props => [];
 }
 
 /// The deck loading state.
 class DecksLoading extends DeckState {
   /// Creates a new deck loading state.
   const DecksLoading();
+
+  @override
+  List<Object> get props => [];
 
 }
 
@@ -72,6 +78,9 @@ class DecksLoaded extends DeckState {
   /// The decks.
   final List<Deck> decks;
 
+  @override
+  List<Object> get props => [decks];
+
 }
 
 /// The deck error state.
@@ -82,6 +91,8 @@ class DecksError extends DeckState {
   /// The error message.
   final String message;
 
+  @override
+  List<Object> get props => [message];
 }
 
 /// ################################################################# Events

@@ -6,7 +6,6 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:aidex/main.dart';
-import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
