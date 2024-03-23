@@ -6,9 +6,29 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 /// This widget is used to display the create deck dialog.
 class CreateDeckDialog extends StatelessWidget {
-
   /// Constructor for the [CreateDeckDialog].
   const CreateDeckDialog({super.key});
+
+  /// The key for the dialogMethods Widget title.
+  static const Key showCreateDeckDialogTitleKey = Key('DeckDialogTitleKey');
+
+  /// Widget Title of color picker.
+  static const Key pickColorTextKey = Key('PickColorText');
+
+  /// Button to select a color from the color picker.
+  static const Key colorPickerSelectButtonKey = Key('ColorPickerSelectButton');
+
+  ///(Key to) Button text for the button to select a color the created deck.
+  static const Key selectColorTextKey = Key('SelectColorText');
+
+  ///(Key to) Button text for the button to cancel the deck creation.
+  static const Key cancelButtonTextKey = Key('cancelButtonText');
+
+  ///(Key to) Button text for the button to confirm the deck creation.
+  static const Key okButtonTextKey = Key('okButtonTextKey');
+
+  ///(Key to) TextField to input the deck name.
+  static const Key deckNameTextFieldKey = Key('InputTextField_deckName');
 
   @override
   Widget build(final BuildContext context) {
@@ -17,6 +37,7 @@ class CreateDeckDialog extends StatelessWidget {
     return AlertDialog(
       backgroundColor: const Color(0xFF414141),
       title: const Text(
+        key: showCreateDeckDialogTitleKey,
         'Create Deck',
         style: TextStyle(
           color: Colors.white,
@@ -31,6 +52,7 @@ class CreateDeckDialog extends StatelessWidget {
             alignment: Alignment.topLeft,
             children: [
               TextFormField(
+                key: deckNameTextFieldKey,
                 autovalidateMode: AutovalidateMode.always,
                 controller: deckNameController,
                 maxLength: 21,
@@ -68,54 +90,57 @@ class CreateDeckDialog extends StatelessWidget {
           ),
           StatefulBuilder(
               builder: (final context, final setState) => ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (final context) => AlertDialog(
-                      title: const Text(
-                        'Pick a color',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      backgroundColor: const Color(0xFF414141),
-                      content: SingleChildScrollView(
-                        child: BlockPicker(
-                          pickerColor: pickerColor,
-                          onColorChanged: (final color) {
-                            setState(() => pickerColor = color);
-                          },
-                        ),
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text(
-                            'Select',
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (final context) => AlertDialog(
+                          title: const Text(
+                            key: pickColorTextKey,
+                            'Pick a color',
                             style: TextStyle(
                               color: Colors.white,
                             ),
                           ),
+                          backgroundColor: const Color(0xFF414141),
+                          content: SingleChildScrollView(
+                            child: BlockPicker(
+                              pickerColor: pickerColor,
+                              onColorChanged: (final color) {
+                                setState(() => pickerColor = color);
+                              },
+                            ),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                key: colorPickerSelectButtonKey,
+                                'Select',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: pickerColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: pickerColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text(
-                  'Color (optional)',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              )),
+                    child: const Text(
+                      key: selectColorTextKey,
+                      'Color (optional)',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  )),
           const SizedBox(height: 8),
           // Buttons
           Row(
@@ -126,6 +151,7 @@ class CreateDeckDialog extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
                 child: const Text(
+                  key: cancelButtonTextKey,
                   'Cancel',
                   style: TextStyle(
                     color: Colors.white,
@@ -136,14 +162,14 @@ class CreateDeckDialog extends StatelessWidget {
                 onPressed: () async {
                   context.read<DeckOverviewBloc>().add(AddDeck(
                       deck: Deck(
-                          name: deckNameController.text,
-                          color: pickerColor)));
+                          name: deckNameController.text, color: pickerColor)));
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF20EFC0),
                 ),
                 child: const Text(
+                  key: okButtonTextKey,
                   'Ok',
                   style: TextStyle(
                     color: Color(0xFF414141),

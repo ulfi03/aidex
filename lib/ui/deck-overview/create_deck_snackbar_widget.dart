@@ -1,12 +1,36 @@
 import 'package:flutter/material.dart';
 
 /// A widget used to display the Snackbar for creating a deck.
+class CreateDeckSnackbar extends SnackBar {
+
+  /// Constructor for the [CreateDeckSnackbar].
+  CreateDeckSnackbar({required final VoidCallback onManual,
+    required final VoidCallback onAI,
+    super.key})
+      : super(
+    backgroundColor: const Color(0xFF414141),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(20),
+        topRight: Radius.circular(20),
+      ),
+    ),
+    duration: const Duration(days: 365),
+    content: _CreateDeckSnackbarWidget(
+      onManual: onManual,
+      onAI: onAI,
+      key: _CreateDeckSnackbarWidget.snackbarTitleKey,
+    ),
+  );
+}
+
+/// A widget used to display the Snackbar for creating a deck.
 ///
 /// This widget is used to display the Snackbar for creating a deck.
 ///
 /// It displays two buttons for the user to create a deck manually or with AI.
 ///
-/// The [CreateDeckSnackbarWidget] requires a [onManual] and [onAI] callback
+/// The [_CreateDeckSnackbarWidget] requires a [onManual] and [onAI] callback
 /// to be provided.
 ///
 /// The [onManual] callback is called when the user presses the button to create
@@ -34,8 +58,8 @@ import 'package:flutter/material.dart';
 /// ```
 ///
 /// {@category Widget}
-class CreateDeckSnackbarWidget extends StatelessWidget {
-  /// Constructor for the [CreateDeckSnackbarWidget].
+class _CreateDeckSnackbarWidget extends StatelessWidget {
+  /// Constructor for the [_CreateDeckSnackbarWidget].
   ///
   /// The [key] is used to identify the widget in the widget tree.
   ///
@@ -44,8 +68,20 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
   ///
   /// The [onAI] callback is called when the user presses the button to create
   /// a deck with AI.
-  const CreateDeckSnackbarWidget(
+  const _CreateDeckSnackbarWidget(
       {required this.onManual, required this.onAI, super.key});
+
+  /// The key for the Snackbar title
+  static const snackbarTitleKey = Key('create_deck_snackbar_title');
+
+  /// The key for the create manually title
+  static const createManuallyTitleKey = Key('create_manually_title');
+
+  /// The key for the create AI title
+  static const createAITitleKey = Key('create_ai_title');
+
+  /// The key for the create manually button
+  static const createManuallyButtonKey = Key('create_manually_button');
 
   /// The callback called when the user presses the button to create a deck
   /// manually
@@ -56,7 +92,8 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
   final VoidCallback onAI;
 
   @override
-  Widget build(final BuildContext context) => Column(
+  Widget build(final BuildContext context) =>
+      Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -66,6 +103,7 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
+                    key: snackbarTitleKey,
                     'Create Deck',
                     style: TextStyle(
                       color: Colors.white,
@@ -78,12 +116,14 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
             ),
           ),
           ElevatedButton.icon(
+            key: createManuallyButtonKey,
             onPressed: onManual,
             icon: const Icon(
               Icons.person,
               color: Color(0xFF20EFC0),
             ),
             label: const Text(
+              key: createManuallyTitleKey,
               'Create manually',
               style: TextStyle(
                 color: Colors.white,
@@ -104,6 +144,7 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
               color: Color(0xFF20EFC0),
             ),
             label: const Text(
+              key: createAITitleKey,
               'Create with AI',
               style: TextStyle(
                 color: Colors.white,
