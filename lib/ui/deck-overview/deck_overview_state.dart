@@ -34,6 +34,10 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
   ///(Key to) TextField to input the deck name.
   static const Key deckNameTextFieldKey = Key('InputTextField_deckName');
 
+  ///(Key to) Button to initiate the color picker.
+  static const Key initiateColorPickerButtonKey =
+      Key('InitiateColorPickerButton');
+
   /// The list of decks.
   List<Deck> decks = [];
 
@@ -115,6 +119,7 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                           ],
                         ),
                         ElevatedButton(
+                          key: initiateColorPickerButtonKey,
                           onPressed: () {
                             showDialog(
                               context: context,
@@ -139,11 +144,11 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                                 ),
                                 actions: <Widget>[
                                   TextButton(
+                                    key: colorPickerSelectButtonKey,
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
                                     child: const Text(
-                                      key: colorPickerSelectButtonKey,
                                       'Select',
                                       style: TextStyle(
                                         color: Colors.white,

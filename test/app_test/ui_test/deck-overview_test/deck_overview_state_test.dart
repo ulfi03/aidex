@@ -4,6 +4,7 @@ import 'package:aidex/ui/deck-overview/deck_overview_state.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -50,6 +51,16 @@ void main() {
       }
 
       expect(const ListEquality().equals(state.decks, expectedDecks), true);
+    });
+
+    testWidgets('add the same Deck twice', (final tester) async {
+      await tester.pumpWidget(widgetStub);
+      final newDeckCopy = Deck(name: 'New Deck', color: Colors.black);
+      final DeckOverviewState state =
+          tester.state(find.byType(DeckOverviewWidget))
+            ..addDeck(newDeck)
+            ..addDeck(newDeckCopy);
+      expect(state.decks.length == 1, true);
     });
 
     testWidgets(
@@ -113,6 +124,8 @@ void main() {
     final cancelButtonTextKey =
         find.byKey(DeckOverviewState.cancelButtonTextKey);
     final okButtonTextKey = find.byKey(DeckOverviewState.okButtonTextKey);
+    final colorPickerButton =
+        find.byKey(DeckOverviewState.initiateColorPickerButtonKey);
 
     testWidgets('Check content on CreateDeckDialog', (final tester) async {
       await navigateToCreateDeckDialog(tester);
@@ -124,10 +137,26 @@ void main() {
       expect(okButtonTextKey, findsOneWidget);
     });
 
+    testWidgets('write deck name in text-field', (final tester) async {
+      await navigateToCreateDeckDialog(tester);
+      await tester.enterText(
+          find.byKey(DeckOverviewState.deckNameTextFieldKey), 'Deck 1');
+      await tester.pumpAndSettle();
+      final deckNameBorder = tester
+          .widget<TextField>(find.byKey(DeckOverviewState.deckNameTextFieldKey))
+          .decoration;
+      final borderColor = deckNameBorder?.focusedBorder?.borderSide.color;
+
+      ///errorTextOnEmptyInput disappears
+      expect(errorTextOnEmptyInput, findsNothing);
+
+      ///Border Color of TextField changes to green
+      expect(borderColor, const Color(0xFF20EFC0));
+    });
+
     testWidgets('Cancel-Button brings you back to inital DeckOverview',
         (final tester) async {
       await navigateToCreateDeckDialog(tester);
-      await tester.pumpAndSettle();
       await tester.tap(find.byKey(DeckOverviewState.cancelButtonTextKey));
       await tester.pumpAndSettle();
 
@@ -140,7 +169,6 @@ void main() {
         'Ok-Button -> DeckOverview and inserts a deck if deckName not empty',
         (final tester) async {
       await navigateToCreateDeckDialog(tester);
-      await tester.pumpAndSettle();
       const deckName = 'my newDeck';
       await tester.enterText(
           find.byKey(DeckOverviewState.deckNameTextFieldKey), deckName);
@@ -159,7 +187,6 @@ void main() {
     testWidgets('Ok-Button stays in widget if you do not put a deckName',
         (final tester) async {
       await navigateToCreateDeckDialog(tester);
-      await tester.pumpAndSettle();
       await tester.tap(find.byKey(DeckOverviewState.okButtonTextKey));
       await tester.pumpAndSettle();
 
@@ -171,6 +198,66 @@ void main() {
       expect(selectColorText, findsOneWidget);
       expect(cancelButtonTextKey, findsOneWidget);
       expect(okButtonTextKey, findsOneWidget);
+    });
+
+    testWidgets(
+        'Color-Button -> ColorPicker changes to selcted color '
+        '+ creates Deck with selected color (for all available colors)',
+        (final tester) async {
+      int defaultLength = 1;
+
+      ///iterate through all available colors
+      for (int i = 0; i < defaultLength; i++) {
+        await navigateToCreateDeckDialog(tester);
+        await tester.enterText(
+            find.byKey(DeckOverviewState.deckNameTextFieldKey), 'Deck $i');
+        await tester.tap(colorPickerButton);
+        await tester.pumpAndSettle();
+
+        ///expected to tap into ColorPicker
+        expect(find.byKey(DeckOverviewState.pickColorTextKey), findsOneWidget);
+
+        ///ColorPickerElement+availableColors
+        final colorPicker = find.byType(BlockPicker);
+        final colorPickerColors =
+            tester.widget<BlockPicker>(colorPicker).availableColors;
+        defaultLength = colorPickerColors.length;
+
+        ///select button for current color
+        final inkWellButton = find
+            .descendant(of: colorPicker, matching: find.byType(InkWell))
+            .at(i);
+        await tester.tap(inkWellButton);
+        await tester.pumpAndSettle();
+
+        ///confirm selected color
+        await tester
+            .tap(find.byKey(DeckOverviewState.colorPickerSelectButtonKey));
+        await tester.pumpAndSettle();
+
+        ///get color of "Color(optional)" Button
+        final colorButton = tester
+            .widget<ElevatedButton>(
+                find.byKey(DeckOverviewState.initiateColorPickerButtonKey))
+            .style
+            ?.backgroundColor
+            ?.resolve(<MaterialState>{});
+
+        ///expected Button 'Color(optional)' to change to selected color
+        expect(colorButton, colorPickerColors[i]);
+
+        ///create Deck with selected color
+        await tester.tap(find.byKey(DeckOverviewState.okButtonTextKey));
+        await tester.pumpAndSettle();
+
+        ///instanze of DeckOverviewState to reference decks
+        final DeckOverviewState state =
+            tester.state(find.byType(DeckOverviewWidget));
+
+        ///expected deck is created with selected color matching the name
+        expect(state.decks[i].color, colorPickerColors[i]);
+        expect(state.decks[i].name, 'Deck $i');
+      }
     });
   });
 }
