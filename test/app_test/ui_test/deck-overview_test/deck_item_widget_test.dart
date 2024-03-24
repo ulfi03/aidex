@@ -6,17 +6,17 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   const deckName = 'Initial Deck';
-  final deckStub = Deck(name: deckName, color: Colors.black);
+  final deckStub = Deck(name: deckName, color: Colors.black, indexCards: []);
 
   ///To create a DeckItemWidget, it needs a route beforehand
   final directionalWidgetAncestor = MaterialPageRoute(
       builder: (final context) =>
-          ItemOnDeckOverviewSelectedRoute(deck: deckStub));
+          ItemOnDeckOverviewSelectedRoute(deck: deckStub, indexCards: [], key: Key('textKey')));
 
   /// initialze the DeckItemWidget with a correct route
   final widgetStub = MaterialApp(
     home: Scaffold(
-      body: DeckItemWidget(deck: deckStub),
+      body: DeckItemWidget(deck: deckStub, indexCards: [],),
     ),
     onGenerateRoute: (final settings) {
       if (settings.name == '/deck-view') {
@@ -28,7 +28,7 @@ void main() {
 
   testWidgets('deck_item has correct Deck title', (final tester) async {
     await tester.pumpWidget(widgetStub);
-    final widgetTitle = find.byKey(DeckItemWidget.deckNameKey);
+    final widgetTitle = find.text(deckName);
     expect(widgetTitle, findsOneWidget);
   });
 }

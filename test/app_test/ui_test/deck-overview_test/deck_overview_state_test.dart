@@ -17,7 +17,7 @@ void main() {
       ));
 
   group('add Decks to DeckOverview', () {
-    final newDeck = Deck(name: 'New Deck', color: Colors.black);
+    final newDeck = Deck(name: 'New Deck', color: Colors.black, indexCards: []);
 
     testWidgets('add Deck to DeckOverview', (final tester) async {
       await tester.pumpWidget(widgetStub);
@@ -41,8 +41,8 @@ void main() {
           tester.state(find.byType(DeckOverviewWidget));
 
       final List<Deck> expectedDecks = [
-        Deck(name: 'Deck 1', color: Colors.black),
-        Deck(name: 'Deck 2', color: Colors.black),
+        Deck(name: 'Deck 1', color: Colors.black, indexCards: []),
+        Deck(name: 'Deck 2', color: Colors.black, indexCards: []),
       ];
 
       for (var i = 0; i < expectedDecks.length; i++) {
@@ -61,7 +61,7 @@ void main() {
       final DeckOverviewState state =
           tester.state(find.byType(DeckOverviewWidget));
       for (var i = 0; i < 500; i++) {
-        state.addDeck(Deck(name: 'myDeck $i', color: Colors.black));
+        state.addDeck(Deck(name: 'myDeck $i', color: Colors.black, indexCards: []));
       }
       await tester.pumpAndSettle();
 

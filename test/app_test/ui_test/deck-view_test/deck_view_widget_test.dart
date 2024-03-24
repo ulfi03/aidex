@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  final Deck initDeck = Deck(name: 'my Deck', color: Colors.white);
+  final Deck initDeck = Deck(name: 'my Deck', color: Colors.white, indexCards: []);
 
   /// intitialize the DeckViewWidget
   final widgetStub = MaterialApp(
     home: Scaffold(
-      body: DeckViewWidget(deck: initDeck),
+      body: DeckViewWidget(deck: initDeck, indexCards: []),
     ),
   );
 

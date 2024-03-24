@@ -193,6 +193,7 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
                                 addDeck(Deck(
                                   name: deckName,
                                   color: pickerColor,
+                                  indexCards: [],
                                 ));
                                 Navigator.of(context).pop();
                               },
@@ -240,7 +241,7 @@ class DeckOverviewState extends State<DeckOverviewWidget> {
           body: SingleChildScrollView(
             child: Wrap(
               children: decks
-                  .map((final deck) => DeckItemWidget(deck: deck))
+                  .map((final deck) => DeckItemWidget(deck: deck, indexCards: deck.indexCards))
                   .toList(),
             ),
           ),
