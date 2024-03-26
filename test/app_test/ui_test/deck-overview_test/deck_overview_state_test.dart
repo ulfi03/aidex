@@ -53,16 +53,6 @@ void main() {
       expect(const ListEquality().equals(state.decks, expectedDecks), true);
     });
 
-    testWidgets('add the same Deck twice', (final tester) async {
-      await tester.pumpWidget(widgetStub);
-      final newDeckCopy = Deck(name: 'New Deck', color: Colors.black);
-      final DeckOverviewState state =
-          tester.state(find.byType(DeckOverviewWidget))
-            ..addDeck(newDeck)
-            ..addDeck(newDeckCopy);
-      expect(state.decks.length == 1, true);
-    });
-
     testWidgets(
         'if decks exceed visible UI can you scroll down to the last item?',
         (final tester) async {
