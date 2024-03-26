@@ -15,10 +15,10 @@ class DeckOverviewPage extends StatelessWidget {
   /// The key for the deckOverviewWidget title.
   static const Key deckOverviewTitleKey = Key('DeckOverviewTitleKey');
 
-  // unique key for the add button
+  /// The key for the add button.
   static const Key addButtonKey = Key('AddButtonKey');
 
-  // key for the snackbar
+  /// The key for the create deck snackbar.
   static const Key createDeckSnackbarKey = Key('CreateDeckSnackbarKey');
 
   @override

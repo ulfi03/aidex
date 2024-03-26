@@ -1,7 +1,7 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
-import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/model/deck.dart';
 import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
+import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
 import 'package:bloc_test/bloc_test.dart';
@@ -10,144 +10,127 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockDeckRepository extends Mock implements DeckRepository {}
-
 class MockDeckOverviewBloc extends MockBloc<DeckEvent, DeckState>
     implements DeckOverviewBloc {}
 
 void main() {
   // Widget tests --------------------------------------------------------------
 
-  group('DeckOverview unit test', () {
-    late final DeckRepository deckRepository;
+  late DeckOverviewBloc deckOverviewBloc;
 
-    setUp(() {
-      deckRepository = MockDeckRepository();
-    });
+  setUp(() {
+    deckOverviewBloc = MockDeckOverviewBloc();
+    registerFallbackValue(const DeckEvent());
+  });
 
-    testWidgets('renders DeckOverview for state DeckInitial',
-        (final tester) async {
-      final deckOverviewBloc = MockDeckOverviewBloc();
+  Future<void> pumpDeckOverview(final WidgetTester tester) async {
+    await tester.pumpWidget(BlocProvider.value(
+        value: deckOverviewBloc,
+        child: const MaterialApp(home: DeckOverview())));
+  }
+
+  group('DeckOverview', () {
+    testWidgets('render initial state', (final tester) async {
       when(() => deckOverviewBloc.state).thenReturn(const DeckInitial());
-
-      await tester.pumpWidget(BlocProvider.value(
-          value: deckOverviewBloc,
-          child: const MaterialApp(home: DeckOverviewPage())));
-
-      expect(find.byType(DeckOverviewPage), findsOneWidget);
+      await pumpDeckOverview(tester);
+      expect(find.byType(DeckOverview), findsOneWidget);
     });
 
-    testWidgets('render progress indicator for state DecksLoading',
+    testWidgets('render progress indicator when decks are loading',
         (final tester) async {
-      final deckOverviewBloc = MockDeckOverviewBloc();
       when(() => deckOverviewBloc.state).thenReturn(const DecksLoading());
-
-      await tester.pumpWidget(BlocProvider.value(
-          value: deckOverviewBloc,
-          child: const MaterialApp(home: DeckOverviewPage())));
-
+      await pumpDeckOverview(tester);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('render fetched decks for state DecksLoaded',
-        (final tester) async {
-      final deckOverviewBloc = MockDeckOverviewBloc();
+    testWidgets('render loaded decks', (final tester) async {
       final decks = <Deck>[
         Deck(name: 'Deck 1', color: Colors.black),
         Deck(name: 'Deck 2', color: Colors.black),
       ];
       when(() => deckOverviewBloc.state).thenReturn(DecksLoaded(decks: decks));
-
-      await tester.pumpWidget(BlocProvider.value(
-          value: deckOverviewBloc,
-          child: const MaterialApp(home: DeckOverviewPage())));
-
+      await pumpDeckOverview(tester);
       expect(find.byType(DeckItemWidget), findsNWidgets(2));
     });
 
-    testWidgets('render error message for state DecksError',
+    testWidgets('render error message when decks failed to load',
         (final tester) async {
-      final deckOverviewBloc = MockDeckOverviewBloc();
       const errorText = 'error text stub';
       when(() => deckOverviewBloc.state)
           .thenReturn(const DecksError(message: errorText));
-
-      await tester.pumpWidget(BlocProvider.value(
-          value: deckOverviewBloc,
-          child: const MaterialApp(home: DeckOverviewPage())));
-
+      await pumpDeckOverview(tester);
       expect(find.text(errorText), findsOneWidget);
     });
-
-
-
-    testWidgets('renders DeckOverview with Decks', (final tester) async {
-      final decks = <Deck>[
-        Deck(name: 'Deck 1', color: Colors.black),
-        Deck(name: 'Deck 2', color: Colors.black),
-      ];
-
-      when(() => deckRepository.fetchDecks())
-          .thenAnswer((final _) async => decks);
-
-      await tester.pumpWidget(RepositoryProvider.value(
-          value: deckRepository,
-          child: const MaterialApp(home: DeckOverviewPage())));
-
-      expect(find.byType(DeckOverviewPage), findsOneWidget);
-      expect(find.text('Deck 1'), findsOneWidget);
-      expect(find.text('Deck 2'), findsOneWidget);
-    });
-
-    testWidgets('add Deck to DeckOverview', (final tester) async {
-      final decks = <Deck>[
-        Deck(name: 'Deck 1', color: Colors.black),
-      ];
-
-      when(() => deckRepository.fetchDecks())
-          .thenAnswer((final _) async => decks);
-
-      await tester.pumpWidget(RepositoryProvider.value(
-          value: deckRepository,
-          child: const MaterialApp(home: DeckOverviewPage())));
-
-      expect(find.byType(DeckOverviewPage), findsOneWidget);
-      expect(find.text('Deck 1'), findsOneWidget);
-
-      final newDeck = Deck(name: 'New Deck', color: Colors.black);
-
-      when(() => deckRepository.addDeck(newDeck))
-          .thenAnswer((final _) async => newDeck);
-
-      await tester.tap(find.byKey(CreateDeckDialog.okButtonTextKey));
-      await tester.pumpAndSettle();
-
-      await tester.enterText(
-          find.byKey(const Key('deck_name_input')), 'New Deck');
-      await tester.tap(find.byKey(const Key('create_deck_button')));
-      await tester.pumpAndSettle();
-
-      expect(find.text('New Deck'), findsOneWidget);
-    });
-
-    testWidgets('add Deck to DeckOverview', (final tester) async {});
-
-    testWidgets('add multiple Decks to DeckOverview', (final tester) async {});
-
-    testWidgets(
-        'if decks exceed visible UI can you scroll down to the last item?',
-        (final tester) async {});
   });
 
-  group('showCreateDeckDialog', () {});
+  group('CreateDeckSnackbar', () {
+    setUp(() => when(() => deckOverviewBloc.state)
+        .thenReturn(const DecksLoaded(decks: [])));
 
-  testWidgets('Cancel-Button brings you back to inital DeckOverview',
-      (final tester) async {});
+    Future<void> prepareSnackbar(final WidgetTester tester) async {
+      await pumpDeckOverview(tester);
+      await tester.tap(find.byKey(DeckOverviewPage.addButtonKey));
+      await tester.pumpAndSettle();
+    }
 
-  testWidgets(
-      'Ok-Button -> DeckOverview and inserts a deck if deckName not empty',
-      (final tester) async {});
+    testWidgets('Show CreateDeckSnackbar', (final tester) async {
+      await prepareSnackbar(tester);
+      expect(find.bySubtype<SnackBar>(), findsOneWidget);
+    });
 
-  testWidgets('Ok-Button stays in widget if you do not put a deckName',
-      (final tester) async {});
+    testWidgets('Verify displayed content on CreateDeckSnackbar',
+        (final tester) async {
+      await prepareSnackbar(tester);
+      expect(find.byKey(CreateDeckSnackbar.snackbarTitleKey), findsOneWidget);
+      expect(find.text('Create Deck'), findsOneWidget);
+      expect(find.byKey(CreateDeckSnackbar.createManuallyButtonKey),
+          findsOneWidget);
+      expect(find.text('Create manually'), findsOneWidget);
+      expect(find.byKey(CreateDeckSnackbar.createAITitleKey), findsOneWidget);
+      expect(find.text('Create with AI'), findsOneWidget);
+    });
+
+    testWidgets('Open "Create Deck manually" dialog', (final tester) async {
+      await prepareSnackbar(tester);
+      await tester.tap(find.byKey(CreateDeckSnackbar.createManuallyButtonKey));
+      await tester.pumpAndSettle();
+      expect(find.byType(CreateDeckDialog), findsOneWidget);
+    });
+  });
+
+  group('CreateDeckDialog', () {
+    setUp(() => when(() => deckOverviewBloc.state)
+        .thenReturn(const DecksLoaded(decks: [])));
+
+    Future<void> prepareCreateDeckDialog(final WidgetTester tester) async {
+      await pumpDeckOverview(tester);
+      await tester.tap(find.byKey(DeckOverviewPage.addButtonKey));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(CreateDeckSnackbar.createManuallyButtonKey));
+      await tester.pumpAndSettle();
+      expect(find.byType(CreateDeckDialog), findsOneWidget);
+    }
+
+    testWidgets('Return to DeckOverview by pressing "Cancel")',
+        (final tester) async {
+      await prepareCreateDeckDialog(tester);
+      await tester.tap(find.byKey(CreateDeckDialog.cancelButtonTextKey));
+      await tester.pumpAndSettle();
+      expect(find.byType(DeckOverview), findsOneWidget);
+      expect(find.byType(CreateDeckDialog), findsNothing);
+      expect(find.bySubtype<SnackBar>(), findsNothing);
+    });
+
+    testWidgets('Create deck by pressing "OK', (final tester) async {
+      await prepareCreateDeckDialog(tester);
+      await tester.enterText(
+          find.byKey(CreateDeckDialog.deckNameTextFieldKey), 'Deck 1');
+      await tester.tap(find.byKey(CreateDeckDialog.okButtonKey));
+      await tester.pumpAndSettle();
+      expect(find.byType(DeckOverview), findsOneWidget);
+      verify(() => deckOverviewBloc.add(any(
+          that: isA<AddDeck>().having((final addDeck) => addDeck.deck.name,
+              'deck.name', equals('Deck 1'))))).called(1);
+    });
+  });
 }

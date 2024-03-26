@@ -3,18 +3,6 @@ import 'package:flutter/material.dart';
 /// A widget used to display the Snackbar for creating a deck.
 class CreateDeckSnackbar extends SnackBar {
 
-  /// The key for the Snackbar title
-  static const snackbarTitleKey = Key('create_deck_snackbar_title');
-
-  /// The key for the create manually title
-  static const createManuallyTitleKey = Key('create_manually_title');
-
-  /// The key for the create AI title
-  static const createAITitleKey = Key('create_ai_title');
-
-  /// The key for the create manually button
-  static const createManuallyButtonKey = Key('create_manually_button');
-
   /// Constructor for the [CreateDeckSnackbar].
   CreateDeckSnackbar({required final VoidCallback onManual,
     required final VoidCallback onAI,
@@ -31,9 +19,20 @@ class CreateDeckSnackbar extends SnackBar {
     content: _CreateDeckSnackbarWidget(
       onManual: onManual,
       onAI: onAI,
-      key: CreateDeckSnackbar.snackbarTitleKey,
     ),
   );
+
+  /// The key for the Snackbar title
+  static const snackbarTitleKey = Key('create_deck_snackbar_title');
+
+  /// The key for the create manually title
+  static const createManuallyTitleKey = Key('create_manually_title');
+
+  /// The key for the create AI title
+  static const createAITitleKey = Key('create_ai_title');
+
+  /// The key for the create manually button
+  static const createManuallyButtonKey = Key('create_manually_button');
 }
 
 /// A widget used to display the Snackbar for creating a deck.
@@ -81,7 +80,7 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
   /// The [onAI] callback is called when the user presses the button to create
   /// a deck with AI.
   const _CreateDeckSnackbarWidget(
-      {required this.onManual, required this.onAI, super.key});
+      {required this.onManual, required this.onAI});
 
   /// The callback called when the user presses the button to create a deck
   /// manually

@@ -16,7 +16,7 @@ class MockDeckRepository extends Mock implements DeckRepository {}
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late final DeckRepository deckRepository;
+  late DeckRepository deckRepository;
 
   setUp(() {
     deckRepository = MockDeckRepository();
@@ -99,7 +99,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // select color
-      var openColorPickerButton =
+      final openColorPickerButton =
           find.byKey(CreateDeckDialog.colorPickerButtonKey);
       expect(openColorPickerButton, findsOneWidget);
       await tester.tap(openColorPickerButton);
