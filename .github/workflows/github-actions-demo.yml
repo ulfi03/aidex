@@ -5,6 +5,11 @@ jobs:
 
   build-android:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        api-level:
+          - 29
+      fail-fast: true
     steps:
       - name: Checking out repository ${{ github.repository }} on branch ${{ github.ref }} ...
         uses: actions/checkout@v4
@@ -25,7 +30,13 @@ jobs:
       - run: flutter analyze
       - run: flutter pub get
       - run: flutter test
-      - run: flutter test integration_test
+      - name: Run integration tests ...
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          arch: x86_64
+          profile: Nexus 6
+          script: flutter test integration_test --verbose
       - run: flutter build apk
       - run: flutter build appbundle
       - run: echo "job status is ${{ job.status }}."
