@@ -36,6 +36,12 @@
 @import image_picker_ios;
 #endif
 
+#if __has_include(<integration_test/IntegrationTestPlugin.h>)
+#import <integration_test/IntegrationTestPlugin.h>
+#else
+@import integration_test;
+#endif
+
 #if __has_include(<irondash_engine_context/IrondashEngineContextPlugin.h>)
 #import <irondash_engine_context/IrondashEngineContextPlugin.h>
 #else
@@ -74,6 +80,7 @@
   [FlutterKeyboardVisibilityPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterKeyboardVisibilityPlugin"]];
   [GalPlugin registerWithRegistrar:[registry registrarForPlugin:@"GalPlugin"]];
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
+  [IntegrationTestPlugin registerWithRegistrar:[registry registrarForPlugin:@"IntegrationTestPlugin"]];
   [IrondashEngineContextPlugin registerWithRegistrar:[registry registrarForPlugin:@"IrondashEngineContextPlugin"]];
   [SqflitePlugin registerWithRegistrar:[registry registrarForPlugin:@"SqflitePlugin"]];
   [SuperNativeExtensionsPlugin registerWithRegistrar:[registry registrarForPlugin:@"SuperNativeExtensionsPlugin"]];

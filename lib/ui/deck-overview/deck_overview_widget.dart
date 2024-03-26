@@ -15,6 +15,12 @@ class DeckOverviewPage extends StatelessWidget {
   /// The key for the deckOverviewWidget title.
   static const Key deckOverviewTitleKey = Key('DeckOverviewTitleKey');
 
+  // unique key for the add button
+  static const Key addButtonKey = Key('AddButtonKey');
+
+  // key for the snackbar
+  static const Key createDeckSnackbarKey = Key('CreateDeckSnackbarKey');
+
   @override
   Widget build(final BuildContext context) => BlocProvider(
       create: (final context) =>
@@ -28,13 +34,7 @@ class DeckOverview extends StatelessWidget {
   const DeckOverview({super.key});
 
   @override
-  Widget build(final BuildContext context) => BlocProvider(
-        create: (final context) =>
-            DeckOverviewBloc(context.read<DeckRepository>()),
-        child: _getDeckOverview(context),
-      );
-
-  Widget _getDeckOverview(final BuildContext context) => GestureDetector(
+  Widget build(final BuildContext context) => GestureDetector(
         onTap: () {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
         },
@@ -78,7 +78,8 @@ class DeckOverview extends StatelessWidget {
               }
             },
           ),
-          floatingActionButton: const AddButton(),
+          floatingActionButton:
+              const AddButton(key: DeckOverviewPage.addButtonKey),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.miniEndFloat,
         ),
@@ -115,6 +116,7 @@ class AddButtonState extends State<AddButton> {
     await ScaffoldMessenger.of(context)
         .showSnackBar(
           CreateDeckSnackbar(
+            key: DeckOverviewPage.createDeckSnackbarKey,
             onManual: () async {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               await _showCreateDeckDialog(context);

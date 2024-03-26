@@ -3,6 +3,18 @@ import 'package:flutter/material.dart';
 /// A widget used to display the Snackbar for creating a deck.
 class CreateDeckSnackbar extends SnackBar {
 
+  /// The key for the Snackbar title
+  static const snackbarTitleKey = Key('create_deck_snackbar_title');
+
+  /// The key for the create manually title
+  static const createManuallyTitleKey = Key('create_manually_title');
+
+  /// The key for the create AI title
+  static const createAITitleKey = Key('create_ai_title');
+
+  /// The key for the create manually button
+  static const createManuallyButtonKey = Key('create_manually_button');
+
   /// Constructor for the [CreateDeckSnackbar].
   CreateDeckSnackbar({required final VoidCallback onManual,
     required final VoidCallback onAI,
@@ -19,7 +31,7 @@ class CreateDeckSnackbar extends SnackBar {
     content: _CreateDeckSnackbarWidget(
       onManual: onManual,
       onAI: onAI,
-      key: _CreateDeckSnackbarWidget.snackbarTitleKey,
+      key: CreateDeckSnackbar.snackbarTitleKey,
     ),
   );
 }
@@ -71,18 +83,6 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
   const _CreateDeckSnackbarWidget(
       {required this.onManual, required this.onAI, super.key});
 
-  /// The key for the Snackbar title
-  static const snackbarTitleKey = Key('create_deck_snackbar_title');
-
-  /// The key for the create manually title
-  static const createManuallyTitleKey = Key('create_manually_title');
-
-  /// The key for the create AI title
-  static const createAITitleKey = Key('create_ai_title');
-
-  /// The key for the create manually button
-  static const createManuallyButtonKey = Key('create_manually_button');
-
   /// The callback called when the user presses the button to create a deck
   /// manually
   final VoidCallback onManual;
@@ -103,7 +103,7 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    key: snackbarTitleKey,
+                    key: CreateDeckSnackbar.snackbarTitleKey,
                     'Create Deck',
                     style: TextStyle(
                       color: Colors.white,
@@ -116,14 +116,14 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
             ),
           ),
           ElevatedButton.icon(
-            key: createManuallyButtonKey,
+            key: CreateDeckSnackbar.createManuallyButtonKey,
             onPressed: onManual,
             icon: const Icon(
               Icons.person,
               color: Color(0xFF20EFC0),
             ),
             label: const Text(
-              key: createManuallyTitleKey,
+              key: CreateDeckSnackbar.createManuallyTitleKey,
               'Create manually',
               style: TextStyle(
                 color: Colors.white,
@@ -144,7 +144,7 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
               color: Color(0xFF20EFC0),
             ),
             label: const Text(
-              key: createAITitleKey,
+              key: CreateDeckSnackbar.createAITitleKey,
               'Create with AI',
               style: TextStyle(
                 color: Colors.white,

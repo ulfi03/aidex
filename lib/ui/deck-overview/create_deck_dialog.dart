@@ -12,6 +12,9 @@ class CreateDeckDialog extends StatelessWidget {
   /// The key for the dialogMethods Widget title.
   static const Key showCreateDeckDialogTitleKey = Key('DeckDialogTitleKey');
 
+  /// The key for the color picker button.
+  static const Key colorPickerButtonKey = Key('ColorPickerButton');
+
   /// Widget Title of color picker.
   static const Key pickColorTextKey = Key('PickColorText');
 
@@ -22,13 +25,16 @@ class CreateDeckDialog extends StatelessWidget {
   static const Key selectColorTextKey = Key('SelectColorText');
 
   ///(Key to) Button text for the button to cancel the deck creation.
-  static const Key cancelButtonTextKey = Key('cancelButtonText');
+  static const Key cancelButtonTextKey = Key('CancelButtonText');
 
   ///(Key to) Button text for the button to confirm the deck creation.
-  static const Key okButtonTextKey = Key('okButtonTextKey');
+  static const Key okButtonTextKey = Key('OkButtonTextKey');
 
   ///(Key to) TextField to input the deck name.
   static const Key deckNameTextFieldKey = Key('InputTextField_deckName');
+
+  ///(Key to) Button to add the deck.
+  static const Key okButtonKey = Key('OkButtonKey');
 
   @override
   Widget build(final BuildContext context) {
@@ -90,6 +96,7 @@ class CreateDeckDialog extends StatelessWidget {
           ),
           StatefulBuilder(
               builder: (final context, final setState) => ElevatedButton(
+                key: colorPickerButtonKey,
                     onPressed: () {
                       showDialog(
                         context: context,
@@ -112,11 +119,11 @@ class CreateDeckDialog extends StatelessWidget {
                           ),
                           actions: <Widget>[
                             TextButton(
+                              key: colorPickerSelectButtonKey,
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
                               child: const Text(
-                                key: colorPickerSelectButtonKey,
                                 'Select',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -158,7 +165,7 @@ class CreateDeckDialog extends StatelessWidget {
                   ),
                 ),
               ),
-              ElevatedButton(
+              ElevatedButton(key: okButtonKey,
                 onPressed: () async {
                   context.read<DeckOverviewBloc>().add(AddDeck(
                       deck: Deck(
