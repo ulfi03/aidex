@@ -117,8 +117,11 @@ void main() {
               (widget.decoration is BoxDecoration) &&
               (widget.decoration! as BoxDecoration).color == Colors.black));
       expect(blackContainer, findsOneWidget);
+      final inkWell =
+          find.descendant(of: blackContainer, matching: find.byType(InkWell));
+      expect(inkWell, findsOneWidget);
       // tab black container
-      await tester.tap(blackContainer);
+      await tester.tap(inkWell);
       await tester.pumpAndSettle();
 
       // press color picker 'Select' button
