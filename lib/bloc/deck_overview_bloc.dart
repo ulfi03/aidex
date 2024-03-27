@@ -16,7 +16,6 @@ class DeckOverviewBloc extends Bloc<DeckEvent, DeckState> {
   void _initEventHandlers() {
     on<FetchDecks>((final event, final emit) async {
       emit(const DecksLoading());
-      await Future.delayed(const Duration(seconds: 1));
       try {
         final decks = await _deckRepository.fetchDecks();
         emit(DecksLoaded(decks: decks));

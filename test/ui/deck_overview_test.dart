@@ -30,20 +30,20 @@ void main() {
   }
 
   group('DeckOverview', () {
-    testWidgets('render initial state', (final tester) async {
+    testWidgets('Render initial state', (final tester) async {
       when(() => deckOverviewBloc.state).thenReturn(const DeckInitial());
       await pumpDeckOverview(tester);
       expect(find.byType(DeckOverview), findsOneWidget);
     });
 
-    testWidgets('render progress indicator when decks are loading',
+    testWidgets('Render progress indicator when decks are loading',
         (final tester) async {
       when(() => deckOverviewBloc.state).thenReturn(const DecksLoading());
       await pumpDeckOverview(tester);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('render loaded decks', (final tester) async {
+    testWidgets('Render loaded decks', (final tester) async {
       final decks = <Deck>[
         Deck(name: 'Deck 1', color: Colors.black),
         Deck(name: 'Deck 2', color: Colors.black),
@@ -53,7 +53,7 @@ void main() {
       expect(find.byType(DeckItemWidget), findsNWidgets(2));
     });
 
-    testWidgets('render error message when decks failed to load',
+    testWidgets('Render error message when decks failed to load',
         (final tester) async {
       const errorText = 'error text stub';
       when(() => deckOverviewBloc.state)
@@ -121,7 +121,7 @@ void main() {
       expect(find.bySubtype<SnackBar>(), findsNothing);
     });
 
-    testWidgets('Create deck by pressing "OK', (final tester) async {
+    testWidgets('Create deck by pressing "OK"', (final tester) async {
       await prepareCreateDeckDialog(tester);
       await tester.enterText(
           find.byKey(CreateDeckDialog.deckNameTextFieldKey), 'Deck 1');

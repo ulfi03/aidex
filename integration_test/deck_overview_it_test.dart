@@ -24,7 +24,7 @@ void main() {
   });
 
   group('Integrate DeckOverviewBloc with DeckOverview', () {
-    testWidgets('fetch Decks on start and render DeckOverview',
+    testWidgets('Fetch decks on start and render DeckOverview',
         (final tester) async {
       // Stub the fetchDecks method to return an empty list
       when(() => deckRepository.fetchDecks()).thenAnswer((final _) async => []);
@@ -140,7 +140,5 @@ void main() {
               (final deck) => deck.name, 'name', equals('Deck 3'))))).called(1);
       expect(find.byType(DeckItemWidget), findsNWidgets(3));
     });
-
-    testWidgets('', (final tester) async {});
   });
 }
