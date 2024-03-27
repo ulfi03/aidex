@@ -30,9 +30,6 @@ create table ${Deck.tableDeck} (
   ${Deck.columnCardsCount} integer not null)
 ''');
     });
-    if (db.isOpen) {
-    } else {
-    }
     return db;
   }
 
