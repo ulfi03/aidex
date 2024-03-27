@@ -65,6 +65,7 @@ jobs:
           api-level: ${{ matrix.api-level }}
           arch: x86_64
           profile: Nexus 6
+          disable-animations: false
           script: flutter test integration_test
       - run: flutter build apk
       - run: flutter build appbundle
