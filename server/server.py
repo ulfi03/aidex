@@ -12,11 +12,15 @@ import os
 app = Flask(__name__)
 CORS(app, resources={r"/create_index_cards_from_files": {"origins": "*"}, r"/create_index_cards_from_text:": {"origins": "*"}})
 
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+
 @app.route('/create_index_cards_from_files', methods=['POST'])
 def create_index_card_from_files():
     #file = request.files['file']
-    #open_api_key = json.loads(request.data)['openai_api_key'] 
-    #uuid = json.loads(request.data)['user_uuid']
+    openai_api_key = json.loads(request.data)['openai_api_key'] 
+    uuid = json.loads(request.data)['user_uuid']
     print(os.getcwd())
     open_api_key = "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"
     file = os.getcwd()+'/server/napoleon.pdf'
@@ -59,7 +63,7 @@ def create_index_card_from_files():
     # Access and print the value associated with the key "Frage" for each JSON object
     for frage_und_antwort in responses_als_json:
         print(frage_und_antwort["Frage"] + "\n" + frage_und_antwort["Antwort"] + "\n\n")
-    #return jsonify({'antwort': 'Hello, World!'})
+    return jsonify(responses_als_json)
 
 @app.route('/create_index_cards_from_text', methods=['POST'])
 def create_index_card_from_text():
@@ -90,6 +94,6 @@ def get_token_count_for_a_string(string):
 if __name__ == "__main__":
     #from waitress import serve
     #serve(app, host="0.0.0.0", port=5000) # for prod
-    #app.run(debug=True) #for development
-    create_index_card_from_files()
+    app.run(debug=True) #for development
+    #create_index_card_from_files()
    

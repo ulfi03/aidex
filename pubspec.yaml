@@ -38,6 +38,7 @@ dependencies:
   flutter_colorpicker: ^1.0.3
   flutter_quill: ^9.3.3
   flutter_quill_extensions: ^9.3.3
+  http: ^1.2.1
   hydrated_bloc: ^9.1.4
 
 dev_dependencies:
