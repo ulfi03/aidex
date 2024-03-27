@@ -48,8 +48,9 @@ def create_index_card_from_files():
     for element in string_array_of_extracted_text:
         ai_response = ai_create_index_cards_from_plain_text(element, open_api_key)
         responses += ai_response + "#"
-    responses = responses[:-1]
-    responses = responses.replace("\n", "").replace("\\", "").split("#")
+    responses = responses[:-1] #remove last # 
+    responses = responses.replace("\n", "").replace("\\", "").replace("/", "").split("#") # remove all new lines and some special characters and split by #
+    responses = [item for item in responses if item != ""] #make sure there are no empty strings
     print(responses)
         
     print("Number of Index Cards: " + str(len(responses)) + "\n")
@@ -69,15 +70,14 @@ def create_index_card_from_text():
 
 def ai_create_index_cards_from_plain_text(plain_text, api_key): 
     nachrichten = [{"role": "user", "content": '''Du bist ein Karteikarten-Generator. Du erstellt Karteikarten auf Grundlage von Auschnitten aus 
-                Vorlesungsmaterialien, Artikeln, Büchern, etc. Bitte erstelle möglichst viele Karteikarten. Bitte 
-                halte dich an folgendes Format: {"Frage": "<hier die Frage>", "Anwort": "<hier die Antwort>"}. Die 
-                einzelnen Karteikarten müssen in diesem JSON Format angegeben werden! Gebe Zitate niemals mit "" an (also kein ""<Zitat>"", sondern "<Zitat>")!. Das darfst du nicht machen! Trenne die Karteikarten mit #!! Bitte 
+                Vorlesungsmaterialien, Artikeln, Büchern, etc. Bitte halte dich an folgendes Format: {"Frage": "<hier die Frage>", "Anwort": "<hier die Antwort>"}. Die 
+                einzelnen Karteikarten müssen in diesem JSON Format angegeben werden! Gebe Zitate niemals mit "" an (also kein ""<Zitat>"", sondern "<Zitat>")!. Verwende keinerlei Formatierung - keine Zeilumbrüche, Fettschreibung, o.Ä.!! Trenne die Karteikarten mit #!! Bitte 
                 erstelle nun die Karteikarten aus dem folgenden Text und halte dich strikt an die Anweisungen: ''' + plain_text}]
     openai.api_key = api_key
 
     ai_response = openai.ChatCompletion.create(
-        model = "gpt-3.5-turbo-0125",
-        temperature = 0.2, 
+        model = "gpt-3.5-turbo",
+        temperature = 0.5, 
         messages = nachrichten, 
     )
     return ai_response.choices[0].message.content
