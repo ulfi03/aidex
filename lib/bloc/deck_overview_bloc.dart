@@ -1,5 +1,5 @@
+import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
-import 'package:aidex/model/deck.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

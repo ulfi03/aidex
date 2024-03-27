@@ -1,4 +1,4 @@
-import 'package:aidex/model/deck.dart';
+import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:flutter/material.dart';
 

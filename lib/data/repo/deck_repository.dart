@@ -1,6 +1,5 @@
+import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/provider/deck_provider.dart';
-
-import 'package:aidex/model/deck.dart';
 
 /// The deck repository.
 class DeckRepository {

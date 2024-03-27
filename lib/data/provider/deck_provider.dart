@@ -1,4 +1,4 @@
-import 'package:aidex/model/deck.dart';
+import 'package:aidex/data/model/deck.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 

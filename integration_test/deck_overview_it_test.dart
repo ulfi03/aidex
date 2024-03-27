@@ -1,5 +1,5 @@
+import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
-import 'package:aidex/model/deck.dart';
 import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
 import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';

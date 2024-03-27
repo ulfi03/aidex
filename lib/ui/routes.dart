@@ -1,4 +1,4 @@
-import 'package:aidex/model/deck.dart';
+import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/deck-view/deck_view_widget.dart';
 import 'package:flutter/cupertino.dart';
 

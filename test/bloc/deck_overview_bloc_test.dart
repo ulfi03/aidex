@@ -1,6 +1,6 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
+import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
-import 'package:aidex/model/deck.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
