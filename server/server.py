@@ -49,7 +49,7 @@ def create_index_card_from_files():
         ai_response = ai_create_index_cards_from_plain_text(element, open_api_key)
         responses += ai_response + "#"
     responses = responses[:-1] #remove last # 
-    responses = responses.replace("\n", "").replace("\\", "").replace("/", "").split("#") # remove all new lines and some special characters and split by #
+    responses = responses.replace("\n", "").split("#") # remove all new lines and split by #
     responses = [item for item in responses if item != ""] #make sure there are no empty strings
     print(responses)
         
@@ -77,7 +77,7 @@ def ai_create_index_cards_from_plain_text(plain_text, api_key):
 
     ai_response = openai.ChatCompletion.create(
         model = "gpt-3.5-turbo",
-        temperature = 0.5, 
+        temperature = 0.7, 
         messages = nachrichten, 
     )
     return ai_response.choices[0].message.content
