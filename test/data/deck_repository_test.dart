@@ -22,9 +22,9 @@ void main() {
         Deck(name: 'Deck 3', color: Colors.black)
       ];
       when(() => deckProvider.getDecks())
-          .thenAnswer((_) async => expectedDecks);
+          .thenAnswer((final _) async => expectedDecks);
       when(() => deckProvider.getDecks())
-          .thenAnswer((_) async => expectedDecks);
+          .thenAnswer((final _) async => expectedDecks);
       final DeckRepository repository =
           DeckRepository(deckProvider: deckProvider);
       final decks = await repository.fetchDecks();
