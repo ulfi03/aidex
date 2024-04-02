@@ -1,43 +1,18 @@
+import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// A widget used to display a deck item.
+/// A widget representing a deck item.
 ///
-/// This widget is used to display a deck item.
-///
-/// It displays the name of the deck and an icon.
-///
-/// The [DeckItemWidget] requires a [deck] to be provided.
-///
-/// The [deck] is the deck to be displayed.
-///
-/// This snippet can be used in the `DeckOverviewWidget` to display the
-/// deck items.
-///
-/// ```dart
-/// ListView.builder(
-///   itemCount: decks.length,
-///   itemBuilder: (context, index) {
-///     return DeckItemWidget(deck: decks[index]);
-///   },
-/// );
-/// ```
-///
-/// {@category Widget}
+/// This widget is used to display information about a deck.
+/// It can be used in a deck overview screen or any other screen where deck 
+/// information needs to be displayed.
 class DeckItemWidget extends StatelessWidget {
-
-  /// Constructor for the [DeckItemWidget].
-  ///
-  /// The [key] is used to identify the widget in the widget tree.
-  ///
-  /// The [deck] is the deck to be displayed.
   const DeckItemWidget({required this.deck, super.key});
 
-  /// The key for the deck name
   static const deckNameKey = Key('deck_name');
-
-  /// The deck to be displayed.
   final Deck deck;
 
   @override
@@ -49,8 +24,8 @@ class DeckItemWidget extends StatelessWidget {
         await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (final context)
-            => ItemOnDeckOverviewSelectedRoute(deck: deck),
+            builder: (final context) => 
+            ItemOnDeckOverviewSelectedRoute(deck: deck),
           ),
         );
       },
@@ -62,7 +37,7 @@ class DeckItemWidget extends StatelessWidget {
         width: iconSize * 1.7,
         height: iconSize * 0.8,
         decoration: BoxDecoration(
-          color: deck.color, // Set the background color from the deck
+          color: deck.color,
           border: Border.all(
             color: Colors.white,
             width: 2,
@@ -95,6 +70,79 @@ class DeckItemWidget extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+            PopupMenuButton<String>(
+              onSelected: (final value) {
+                if (value == 'delete') {
+                  showDialog(
+                    context: context,
+                    builder: (final context) => AlertDialog(
+                      title: const Text(
+                        'Delete Deck',
+                        style: TextStyle(
+                          color: Color(0xFF20EFC0),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      content: const Text(
+                        'Are you sure you want to delete this deck?',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            context.read<DeckOverviewBloc>()
+                            .add(DeleteDeck(deck: deck));
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            'Delete',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                      backgroundColor: const Color(0xFF414141),
+                    ),
+                  );
+                }
+              },
+              icon: const Icon(
+                Icons.more_vert,
+                color: Colors.white,
+              ),
+              itemBuilder: (final context) => <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(
+                  value: 'delete',
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.delete,
+                      color: Color(0xFF20EFC0),
+                    ),
+                    title: Text(
+                      'Delete Deck',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+              color: const Color(0xFF414141),
             ),
           ],
         ),
