@@ -7,7 +7,10 @@ import 'package:flutter_quill_extensions/flutter_quill_embeds.dart';
 /// Rich text editor widget.
 class RichTextEditorWidget extends StatelessWidget {
   /// Constructor for the [RichTextEditorWidget].
-  RichTextEditorWidget({super.key});
+  RichTextEditorWidget({required final readonly, super.key})
+      : _readonly = readonly;
+
+  final bool _readonly;
 
   /// The controller for the quill editor.
   final _controller = QuillController.basic();
@@ -23,20 +26,24 @@ class RichTextEditorWidget extends StatelessWidget {
   Widget build(final BuildContext context) => Flex(
         direction: Axis.vertical,
         children: [
-          QuillToolbar.simple(
-            configurations: QuillSimpleToolbarConfigurations(
-              controller: _controller,
-              multiRowsDisplay: false,
-              toolbarSize: 40,
-              sharedConfigurations: const QuillSharedConfigurations(
-                locale: Locale('de'),
+          Visibility(
+            visible: !_readonly,
+            child: QuillToolbar.simple(
+              configurations: QuillSimpleToolbarConfigurations(
+                controller: _controller,
+                multiRowsDisplay: false,
+                toolbarSize: 40,
+                sharedConfigurations: const QuillSharedConfigurations(
+                  locale: Locale('de'),
+                ),
+                embedButtons: FlutterQuillEmbeds.toolbarButtons(),
               ),
-              embedButtons: FlutterQuillEmbeds.toolbarButtons(),
             ),
           ),
           Expanded(
             child: QuillEditor.basic(
               configurations: QuillEditorConfigurations(
+                readOnly: _readonly,
                 controller: _controller,
                 sharedConfigurations: const QuillSharedConfigurations(
                   locale: Locale('de'),
