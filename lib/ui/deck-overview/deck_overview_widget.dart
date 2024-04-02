@@ -66,7 +66,8 @@ class DeckOverview extends StatelessWidget {
                 return SingleChildScrollView(
                   child: Wrap(
                     children: state.decks
-                        .map((final deck) => DeckItemWidget(deck: deck))
+                        .map((final deck) => DeckItemWidget(deck: deck,
+                         contextWithBloc: context))
                         .toList(),
                   ),
                 );

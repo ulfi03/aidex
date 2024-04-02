@@ -3,17 +3,22 @@ import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-/// A widget representing a deck item.
-///
-/// This widget is used to display information about a deck.
-/// It can be used in a deck overview screen or any other screen where deck 
-/// information needs to be displayed.
+/// A widget that represents a deck item.
 class DeckItemWidget extends StatelessWidget {
-  const DeckItemWidget({required this.deck, super.key});
+  
+  /// Creates a new deck item widget.
+  const DeckItemWidget({
+    required this.deck,
+    required this.contextWithBloc,
+    super.key,
+  });
 
+  /// A key used to identify the deck name widget in tests.
   static const deckNameKey = Key('deck_name');
+  /// The deck to display.
   final Deck deck;
+  /// The context with the DeckOverviewBloc.
+  final BuildContext contextWithBloc; 
 
   @override
   Widget build(final BuildContext context) {
@@ -24,8 +29,8 @@ class DeckItemWidget extends StatelessWidget {
         await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (final context) => 
-            ItemOnDeckOverviewSelectedRoute(deck: deck),
+            builder: (final context) => ItemOnDeckOverviewSelectedRoute(deck: 
+            deck),
           ),
         );
       },
@@ -93,8 +98,9 @@ class DeckItemWidget extends StatelessWidget {
                       actions: [
                         TextButton(
                           onPressed: () {
-                            context.read<DeckOverviewBloc>()
-                            .add(DeleteDeck(deck: deck));
+                            // Use the context passed to access DeckOverviewBloc
+                            BlocProvider.of<DeckOverviewBloc>(contextWithBloc)
+                                .add(DeleteDeck(deck: deck));
                             Navigator.pop(context);
                           },
                           child: const Text(
