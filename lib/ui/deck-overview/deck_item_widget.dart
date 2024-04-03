@@ -89,18 +89,30 @@ class DeckItemWidget extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      content: const Text(
-                        'Are you sure you want to delete this deck?',
-                        style: TextStyle(
-                          color: Colors.white,
+                      content: RichText(
+                        text: TextSpan(
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                          children: [
+                            const TextSpan(
+                              text: 'Are you sure you want to delete the Deck '),
+                            TextSpan(
+                              text: '${deck.name}',
+                              style: const TextStyle(
+                                color: Color(0xFF20EFC0),
+                              ),
+                            ),
+                            const TextSpan(text: '?'),
+                          ],
                         ),
                       ),
                       actions: [
                         TextButton(
                           onPressed: () {
                             // Use the context passed to access DeckOverviewBloc
-                            BlocProvider.of<DeckOverviewBloc>(contextWithBloc)
-                                .add(DeleteDeck(deck: deck));
+                            contextWithBloc.read<DeckOverviewBloc>()
+                            .add(DeleteDeck(deck: deck));
                             Navigator.pop(context);
                           },
                           child: const Text(
