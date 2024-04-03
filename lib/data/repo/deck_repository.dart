@@ -15,6 +15,10 @@ class DeckRepository {
   /// Adds a deck.
   Future<void> addDeck(final Deck deck) async => _deckProvider.insert(deck);
 
+  /// Deletes a deck.
+  Future<void> deleteDeck(final Deck deck) async => _deckProvider
+  .delete(deck.deckId!);
+
   /// Removes all decks.
    Future<void> removeAllDecks() async => _deckProvider.deleteAll();
 }

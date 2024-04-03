@@ -31,6 +31,14 @@ class DeckOverviewBloc extends Bloc<DeckEvent, DeckState> {
         emit(DecksError(message: e.toString()));
       }
     });
+    on<DeleteDeck>((final event, final emit) async {
+      try {
+        await _deckRepository.deleteDeck(event.deck);
+        add(const FetchDecks());
+      } on Exception catch (e) {
+        emit(DecksError(message: e.toString()));
+      }
+    });
     on<RemoveAllDecks>((final event, final emit) async {
       try {
         await _deckRepository.removeAllDecks();
@@ -41,6 +49,8 @@ class DeckOverviewBloc extends Bloc<DeckEvent, DeckState> {
     });
   }
 }
+
+
 
 /// ################################################################# States
 
@@ -120,5 +130,14 @@ class AddDeck extends DeckEvent {
   const AddDeck({required this.deck});
 
   /// The deck to add.
+  final Deck deck;
+}
+
+/// Represents an event for deleting a deck.
+class DeleteDeck extends DeckEvent {
+  /// Creates a new delete deck event.
+  const DeleteDeck({required this.deck});
+
+  /// The deck to delete.
   final Deck deck;
 }
