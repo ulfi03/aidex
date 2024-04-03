@@ -13,24 +13,24 @@ class DeleteDeckDialog extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) => AlertDialog(
-        title: const Text(
+        title: Text(
           'Delete Deck',
           style: TextStyle(
-            color: Color(0xFF20EFC0),
+            color: Theme.of(context).colorScheme.tertiary,
             fontWeight: FontWeight.bold,
           ),
         ),
         content: RichText(
           text: TextSpan(
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
             ),
             children: [
               const TextSpan(text: 'Are you sure you want to delete the Deck '),
               TextSpan(
                 text: _deck.name,
-                style: const TextStyle(
-                  color: Color(0xFF20EFC0),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.tertiary,
                 ),
               ),
               const TextSpan(text: '?'),
@@ -44,10 +44,10 @@ class DeleteDeckDialog extends StatelessWidget {
               context.read<DeckOverviewBloc>().add(DeleteDeck(deck: _deck));
               Navigator.pop(context);
             },
-            child: const Text(
+            child: Text(
               'Delete',
               style: TextStyle(
-                color: Colors.red,
+                color: Theme.of(context).colorScheme.error,
               ),
             ),
           ),
@@ -55,14 +55,14 @@ class DeleteDeckDialog extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text(
+            child: Text(
               'Cancel',
               style: TextStyle(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),
         ],
-        backgroundColor: const Color(0xFF414141),
+        backgroundColor: Theme.of(context).colorScheme.onBackground,
       );
 }

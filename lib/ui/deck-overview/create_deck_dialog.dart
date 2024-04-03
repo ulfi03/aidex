@@ -38,15 +38,15 @@ class CreateDeckDialog extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    var pickerColor = const Color(0xFF121212); // Initial color
+    var pickerColor = Theme.of(context).colorScheme.background; // Initial color
     final deckNameController = TextEditingController();
     return AlertDialog(
-      backgroundColor: const Color(0xFF414141),
-      title: const Text(
+      backgroundColor: Theme.of(context).colorScheme.onBackground,
+      title: Text(
         key: showCreateDeckDialogTitleKey,
         'Create Deck',
         style: TextStyle(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.secondary,
           fontSize: 18,
         ),
       ),
@@ -68,25 +68,26 @@ class CreateDeckDialog extends StatelessWidget {
                   }
                   return null;
                 },
-                cursorColor: const Color(0xFF20EFC0),
-                style: const TextStyle(color: Colors.white),
+                cursorColor: Theme.of(context).colorScheme.tertiary,
+                style: TextStyle(color: Theme.of(context)
+                .colorScheme.secondary),
                 decoration: InputDecoration(
                   hintText: 'deck name',
-                  hintStyle: const TextStyle(
-                    color: Colors.white54,
+                  hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.onSecondary,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFF20EFC0),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.tertiary,
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFF20EFC0),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.tertiary,
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -101,14 +102,15 @@ class CreateDeckDialog extends StatelessWidget {
                       showDialog(
                         context: context,
                         builder: (final context) => AlertDialog(
-                          title: const Text(
+                          title: Text(
                             key: pickColorTextKey,
                             'Pick a color',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.secondary,
                             ),
                           ),
-                          backgroundColor: const Color(0xFF414141),
+                          backgroundColor: Theme.of(context).
+                          colorScheme.onBackground,
                           content: SingleChildScrollView(
                             child: BlockPicker(
                               pickerColor: pickerColor,
@@ -123,10 +125,11 @@ class CreateDeckDialog extends StatelessWidget {
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text(
+                              child: Text(
                                 'Select',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Theme.of(context)
+                                  .colorScheme.secondary,
                                 ),
                               ),
                             ),
@@ -140,11 +143,11 @@ class CreateDeckDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       key: selectColorTextKey,
                       'Color (optional)',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                   )),
@@ -157,11 +160,11 @@ class CreateDeckDialog extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text(
+                child: Text(
                   key: cancelButtonTextKey,
                   'Cancel',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
               ),
@@ -173,13 +176,13 @@ class CreateDeckDialog extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF20EFC0),
+                  backgroundColor: Theme.of(context).colorScheme.tertiary,
                 ),
-                child: const Text(
+                child: Text(
                   key: okButtonTextKey,
                   'Ok',
                   style: TextStyle(
-                    color: Color(0xFF414141),
+                    color: Theme.of(context).colorScheme.onBackground,
                   ),
                 ),
               ),

@@ -41,25 +41,26 @@ class DeckOverview extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             centerTitle: true,
-            title: const Text(
+            title: Text(
               key: DeckOverviewPage.deckOverviewTitleKey,
               'All Decks',
               style: TextStyle(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.secondary,
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
               ),
             ),
-            backgroundColor: const Color(0xFF121212),
+            backgroundColor: Theme.of(context).colorScheme.background,
           ),
-          backgroundColor: const Color(0xFF121212),
+          backgroundColor: Theme.of(context).colorScheme.background,
           body: BlocBuilder<DeckOverviewBloc, DeckState>(
             builder: (final context, final state) {
               if (state is DecksLoading) {
-                return const Center(
+                return Center(
                   child: CircularProgressIndicator(
                     valueColor:
-                        AlwaysStoppedAnimation<Color>(Color(0xFF20EFC0)),
+                        AlwaysStoppedAnimation<Color>(Theme.of(context)
+                        .colorScheme.tertiary),
                   ),
                 );
               } else if (state is DecksLoaded) {
@@ -104,7 +105,7 @@ class AddButtonState extends State<AddButton> {
       visible: _isAddButtonVisible,
       child: FloatingActionButton(
         onPressed: () => onAddButtonPressed(context),
-        backgroundColor: const Color(0xFF20EFC0),
+        backgroundColor: Theme.of(context).colorScheme.tertiary,
         child: const Icon(Icons.add),
       ));
 
@@ -126,6 +127,7 @@ class AddButtonState extends State<AddButton> {
               context.read<DeckOverviewBloc>().add(const RemoveAllDecks());
               // Handle AI deck creation here
             },
+            context: context,
           ),
         )
         .closed

@@ -14,17 +14,17 @@ class ErrorDisplayWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const Icon(
+          Icon(
             Icons.error,
             size: 50,
-            color: Colors.red,
+            color: Theme.of(context).colorScheme.error,
           ),
           const SizedBox(height: 10),
           Text(
             errorMessage,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.secondary,
             ),
             textAlign: TextAlign.center,
           ),
