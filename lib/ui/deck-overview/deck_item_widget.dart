@@ -1,24 +1,23 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
+import 'package:aidex/ui/deck-overview/delete_deck_dialog.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 /// A widget that represents a deck item.
 class DeckItemWidget extends StatelessWidget {
-  
   /// Creates a new deck item widget.
   const DeckItemWidget({
     required this.deck,
-    required this.contextWithBloc,
     super.key,
   });
 
   /// A key used to identify the deck name widget in tests.
   static const deckNameKey = Key('deck_name');
+
   /// The deck to display.
   final Deck deck;
-  /// The context with the DeckOverviewBloc.
-  final BuildContext contextWithBloc; 
 
   @override
   Widget build(final BuildContext context) {
@@ -29,8 +28,8 @@ class DeckItemWidget extends StatelessWidget {
         await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (final context) => ItemOnDeckOverviewSelectedRoute(deck: 
-            deck),
+            builder: (final context) =>
+                ItemOnDeckOverviewSelectedRoute(deck: deck),
           ),
         );
       },
@@ -77,66 +76,15 @@ class DeckItemWidget extends StatelessWidget {
               ),
             ),
             PopupMenuButton<String>(
-              onSelected: (final value) {
+              onSelected: (final value) async {
                 if (value == 'delete') {
-                  showDialog(
-                    context: context,
-                    builder: (final context) => AlertDialog(
-                      title: const Text(
-                        'Delete Deck',
-                        style: TextStyle(
-                          color: Color(0xFF20EFC0),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      content: RichText(
-                        text: TextSpan(
-                          style: const TextStyle(
-                            color: Colors.white,
-                          ),
-                          children: [
-                            const TextSpan(
-                              text: 'Are you sure you want to delete the Deck '),
-                            TextSpan(
-                              text: '${deck.name}',
-                              style: const TextStyle(
-                                color: Color(0xFF20EFC0),
-                              ),
-                            ),
-                            const TextSpan(text: '?'),
-                          ],
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            // Use the context passed to access DeckOverviewBloc
-                            contextWithBloc.read<DeckOverviewBloc>()
-                            .add(DeleteDeck(deck: deck));
-                            Navigator.pop(context);
-                          },
-                          child: const Text(
-                            'Delete',
-                            style: TextStyle(
-                              color: Colors.red,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text(
-                            'Cancel',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
-                      backgroundColor: const Color(0xFF414141),
-                    ),
-                  );
+                  final DeckOverviewBloc deckOverviewBloc =
+                      context.read<DeckOverviewBloc>();
+                  await showDialog(
+                      context: context,
+                      builder: (final context) => BlocProvider.value(
+                          value: deckOverviewBloc,
+                          child: DeleteDeckDialog(deck: deck)));
                 }
               },
               icon: const Icon(
