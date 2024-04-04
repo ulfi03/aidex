@@ -8,7 +8,7 @@ class CreateDeckSnackbar extends SnackBar {
     required final VoidCallback onAI,
     required final BuildContext context, super.key})
       : super(
-    backgroundColor: Theme.of(context).colorScheme.onBackground,
+    backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(20),
@@ -119,7 +119,7 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
             onPressed: onManual,
             icon: Icon(
               Icons.person,
-              color: Theme.of(context).colorScheme.tertiary,
+              color: Theme.of(context).colorScheme.primary,
             ),
             label: Text(
               key: CreateDeckSnackbar.createManuallyTitleKey,
@@ -141,7 +141,7 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
             onPressed: onAI,
             icon: Icon(
               Icons.smart_toy,
-              color: Theme.of(context).colorScheme.tertiary,
+              color: Theme.of(context).colorScheme.primary,
             ),
             label: Text(
               key: CreateDeckSnackbar.createAITitleKey,

@@ -38,10 +38,10 @@ class CreateDeckDialog extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    var pickerColor = Theme.of(context).colorScheme.background; // Initial color
+    var pickerColor = Theme.of(context).colorScheme.surface; // Initial color
     final deckNameController = TextEditingController();
     return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.onBackground,
+      backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
       title: Text(
         key: showCreateDeckDialogTitleKey,
         'Create Deck',
@@ -68,7 +68,7 @@ class CreateDeckDialog extends StatelessWidget {
                   }
                   return null;
                 },
-                cursorColor: Theme.of(context).colorScheme.tertiary,
+                cursorColor: Theme.of(context).colorScheme.primary,
                 style: TextStyle(color: Theme.of(context)
                 .colorScheme.secondary),
                 decoration: InputDecoration(
@@ -81,13 +81,13 @@ class CreateDeckDialog extends StatelessWidget {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.tertiary,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.tertiary,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -110,7 +110,7 @@ class CreateDeckDialog extends StatelessWidget {
                             ),
                           ),
                           backgroundColor: Theme.of(context).
-                          colorScheme.onBackground,
+                          colorScheme.onPrimaryContainer,
                           content: SingleChildScrollView(
                             child: BlockPicker(
                               pickerColor: pickerColor,
@@ -176,13 +176,13 @@ class CreateDeckDialog extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.tertiary,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
                 child: Text(
                   key: okButtonTextKey,
                   'Ok',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
                   ),
                 ),
               ),

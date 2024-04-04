@@ -56,7 +56,7 @@ class DeckItemWidget extends StatelessWidget {
               child: Icon(
                 Icons.layers,
                 size: iconSize * 0.4,
-                color: Theme.of(context).colorScheme.tertiary,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             Expanded(
@@ -98,7 +98,7 @@ class DeckItemWidget extends StatelessWidget {
                   child: ListTile(
                     leading: Icon(
                       Icons.delete,
-                      color: Theme.of(context).colorScheme.tertiary,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     title: Text(
                       'Delete Deck',
@@ -109,7 +109,7 @@ class DeckItemWidget extends StatelessWidget {
                   ),
                 ),
               ],
-              color: Theme.of(context).colorScheme.onBackground,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
             ),
           ],
         ),

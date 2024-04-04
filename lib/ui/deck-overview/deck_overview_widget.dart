@@ -50,9 +50,9 @@ class DeckOverview extends StatelessWidget {
                 fontSize: 20,
               ),
             ),
-            backgroundColor: Theme.of(context).colorScheme.background,
+            backgroundColor: Theme.of(context).colorScheme.surface,
           ),
-          backgroundColor: Theme.of(context).colorScheme.background,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           body: BlocBuilder<DeckOverviewBloc, DeckState>(
             builder: (final context, final state) {
               if (state is DecksLoading) {
@@ -60,7 +60,7 @@ class DeckOverview extends StatelessWidget {
                   child: CircularProgressIndicator(
                     valueColor:
                         AlwaysStoppedAnimation<Color>(Theme.of(context)
-                        .colorScheme.tertiary),
+                        .colorScheme.primary),
                   ),
                 );
               } else if (state is DecksLoaded) {
@@ -105,7 +105,7 @@ class AddButtonState extends State<AddButton> {
       visible: _isAddButtonVisible,
       child: FloatingActionButton(
         onPressed: () => onAddButtonPressed(context),
-        backgroundColor: Theme.of(context).colorScheme.tertiary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add),
       ));
 
