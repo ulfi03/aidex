@@ -1,43 +1,22 @@
+import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
+import 'package:aidex/ui/deck-overview/delete_deck_dialog.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// A widget used to display a deck item.
-///
-/// This widget is used to display a deck item.
-///
-/// It displays the name of the deck and an icon.
-///
-/// The [DeckItemWidget] requires a [deck] to be provided.
-///
-/// The [deck] is the deck to be displayed.
-///
-/// This snippet can be used in the `DeckOverviewWidget` to display the
-/// deck items.
-///
-/// ```dart
-/// ListView.builder(
-///   itemCount: decks.length,
-///   itemBuilder: (context, index) {
-///     return DeckItemWidget(deck: decks[index]);
-///   },
-/// );
-/// ```
-///
-/// {@category Widget}
+/// A widget that represents a deck item.
 class DeckItemWidget extends StatelessWidget {
+  /// Creates a new deck item widget.
+  const DeckItemWidget({
+    required this.deck,
+    super.key,
+  });
 
-  /// Constructor for the [DeckItemWidget].
-  ///
-  /// The [key] is used to identify the widget in the widget tree.
-  ///
-  /// The [deck] is the deck to be displayed.
-  const DeckItemWidget({required this.deck, super.key});
-
-  /// The key for the deck name
+  /// A key used to identify the deck name widget in tests.
   static const deckNameKey = Key('deck_name');
 
-  /// The deck to be displayed.
+  /// The deck to display.
   final Deck deck;
 
   @override
@@ -49,8 +28,8 @@ class DeckItemWidget extends StatelessWidget {
         await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (final context)
-            => ItemOnDeckOverviewSelectedRoute(deck: deck),
+            builder: (final context) =>
+                ItemOnDeckOverviewSelectedRoute(deck: deck),
           ),
         );
       },
@@ -62,7 +41,7 @@ class DeckItemWidget extends StatelessWidget {
         width: iconSize * 1.7,
         height: iconSize * 0.8,
         decoration: BoxDecoration(
-          color: deck.color, // Set the background color from the deck
+          color: deck.color,
           border: Border.all(
             color: Colors.white,
             width: 2,
@@ -95,6 +74,41 @@ class DeckItemWidget extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+            PopupMenuButton<String>(
+              onSelected: (final value) async {
+                if (value == 'delete') {
+                  final DeckOverviewBloc deckOverviewBloc =
+                      context.read<DeckOverviewBloc>();
+                  await showDialog(
+                      context: context,
+                      builder: (final context) => BlocProvider.value(
+                          value: deckOverviewBloc,
+                          child: DeleteDeckDialog(deck: deck)));
+                }
+              },
+              icon: const Icon(
+                Icons.more_vert,
+                color: Colors.white,
+              ),
+              itemBuilder: (final context) => <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(
+                  value: 'delete',
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.delete,
+                      color: Color(0xFF20EFC0),
+                    ),
+                    title: Text(
+                      'Delete Deck',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+              color: const Color(0xFF414141),
             ),
           ],
         ),
