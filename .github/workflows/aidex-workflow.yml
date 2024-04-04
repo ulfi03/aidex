@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        api-level: [ 34 ]
+        api-level: [ 28, 30, 32, 34 ]
       fail-fast: true
     steps:
       - name: Checking out repository ${{ github.repository }} on branch ${{ github.ref }} ...
