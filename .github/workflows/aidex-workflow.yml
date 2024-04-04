@@ -1,5 +1,5 @@
 name: AIDex CI/CD
-run-name: 👨‍💻${{ github.actor }} is testing
+run-name: 👨‍💻${{ github.actor }} is testing commit "${{ github.event.head_commit.message }}"
 on: [ push ]
 jobs:
 
