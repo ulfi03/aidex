@@ -14,7 +14,6 @@ final ThemeData mainTheme = ThemeData(
       onSurface: Colors.white,
       onSurfaceVariant: Colors.white38,
       error: Colors.red,
-      secondary: Colors.white,
     ),
     textTheme: const TextTheme(
       displayLarge: TextStyle(color: Colors.white),
