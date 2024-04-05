@@ -38,10 +38,10 @@ class CreateDeckDialog extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    var pickerColor = Theme.of(context).colorScheme.surface; // Initial color
+    var pickerColor = Colors.transparent; // Initial color
     final deckNameController = TextEditingController();
     return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      backgroundColor: Theme.of(context).colorScheme.background,
       title: Text(
         key: showCreateDeckDialogTitleKey,
         'Create Deck',
@@ -111,7 +111,7 @@ class CreateDeckDialog extends StatelessWidget {
                             ),
                           ),
                           backgroundColor: Theme.of(context).
-                          colorScheme.primaryContainer,
+                          colorScheme.background,
                           content: SingleChildScrollView(
                             child: BlockPicker(
                               pickerColor: pickerColor,

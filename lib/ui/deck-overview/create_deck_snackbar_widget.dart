@@ -8,7 +8,7 @@ class CreateDeckSnackbar extends SnackBar {
     required final VoidCallback onAI,
     required final BuildContext context, super.key})
       : super(
-    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+    backgroundColor: Theme.of(context).colorScheme.background,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(20),
@@ -129,7 +129,6 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
               ),
             ),
             style: ElevatedButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.secondary,
               backgroundColor: Colors.transparent,
               shadowColor: Colors.transparent,
               padding: EdgeInsets.zero,
@@ -151,7 +150,6 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
               ),
             ),
             style: ElevatedButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.secondary,
               backgroundColor: Colors.transparent,
               shadowColor: Colors.transparent,
               padding: EdgeInsets.zero,

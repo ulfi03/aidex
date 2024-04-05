@@ -30,7 +30,7 @@ class DeleteDeckDialog extends StatelessWidget {
               TextSpan(
                 text: _deck.name,
                 style: TextStyle(
-                  color: Theme.of(context).textTheme.titleMedium?.color,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const TextSpan(text: '?'),
@@ -63,6 +63,6 @@ class DeleteDeckDialog extends StatelessWidget {
             ),
           ),
         ],
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        backgroundColor: Theme.of(context).colorScheme.background,
       );
 }

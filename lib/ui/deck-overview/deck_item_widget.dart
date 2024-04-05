@@ -43,7 +43,7 @@ class DeckItemWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: deck.color,
           border: Border.all(
-            color: Theme.of(context).colorScheme.secondary,
+            color: Theme.of(context).colorScheme.onBackground,
             width: 2,
           ),
           borderRadius: BorderRadius.circular(8),
@@ -69,7 +69,7 @@ class DeckItemWidget extends StatelessWidget {
                     deck.name,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16, color: Theme.of(context)
-                    .textTheme.bodyMedium?.color),
+                    .colorScheme.onBackground),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),
@@ -90,7 +90,7 @@ class DeckItemWidget extends StatelessWidget {
               },
               icon: Icon(
                 Icons.more_vert,
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
               itemBuilder: (final context) => <PopupMenuEntry<String>>[
                 PopupMenuItem<String>(
@@ -109,7 +109,7 @@ class DeckItemWidget extends StatelessWidget {
                   ),
                 ),
               ],
-              color: Theme.of(context).colorScheme.primaryContainer,
+              color: Theme.of(context).colorScheme.background,
             ),
           ],
         ),
