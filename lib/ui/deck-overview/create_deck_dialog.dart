@@ -41,12 +41,12 @@ class CreateDeckDialog extends StatelessWidget {
     var pickerColor = Theme.of(context).colorScheme.surface; // Initial color
     final deckNameController = TextEditingController();
     return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       title: Text(
         key: showCreateDeckDialogTitleKey,
         'Create Deck',
         style: TextStyle(
-          color: Theme.of(context).colorScheme.secondary,
+          color: Theme.of(context).textTheme.bodyMedium?.color,
           fontSize: 18,
         ),
       ),
@@ -69,12 +69,12 @@ class CreateDeckDialog extends StatelessWidget {
                   return null;
                 },
                 cursorColor: Theme.of(context).colorScheme.primary,
-                style: TextStyle(color: Theme.of(context)
-                .colorScheme.secondary),
+                style: TextStyle(color: Theme.of(context).textTheme
+                .bodyMedium?.color),
                 decoration: InputDecoration(
                   hintText: 'deck name',
                   hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.onSecondary,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -106,11 +106,12 @@ class CreateDeckDialog extends StatelessWidget {
                             key: pickColorTextKey,
                             'Pick a color',
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
+                              color: Theme.of(context).textTheme
+                              .bodyMedium?.color,
                             ),
                           ),
                           backgroundColor: Theme.of(context).
-                          colorScheme.onPrimaryContainer,
+                          colorScheme.primaryContainer,
                           content: SingleChildScrollView(
                             child: BlockPicker(
                               pickerColor: pickerColor,
@@ -129,7 +130,7 @@ class CreateDeckDialog extends StatelessWidget {
                                 'Select',
                                 style: TextStyle(
                                   color: Theme.of(context)
-                                  .colorScheme.secondary,
+                                  .textTheme.bodyMedium?.color,
                                 ),
                               ),
                             ),
@@ -147,7 +148,7 @@ class CreateDeckDialog extends StatelessWidget {
                       key: selectColorTextKey,
                       'Color (optional)',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
                       ),
                     ),
                   )),
@@ -164,7 +165,7 @@ class CreateDeckDialog extends StatelessWidget {
                   key: cancelButtonTextKey,
                   'Cancel',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
                   ),
                 ),
               ),
@@ -182,7 +183,7 @@ class CreateDeckDialog extends StatelessWidget {
                   key: okButtonTextKey,
                   'Ok',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
                   ),
                 ),
               ),

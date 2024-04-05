@@ -16,21 +16,21 @@ class DeleteDeckDialog extends StatelessWidget {
         title: Text(
           'Delete Deck',
           style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).textTheme.titleMedium?.color,
             fontWeight: FontWeight.bold,
           ),
         ),
         content: RichText(
           text: TextSpan(
             style: TextStyle(
-              color: Theme.of(context).colorScheme.secondary,
+              color: Theme.of(context).textTheme.bodyMedium?.color,
             ),
             children: [
               const TextSpan(text: 'Are you sure you want to delete the Deck '),
               TextSpan(
                 text: _deck.name,
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).textTheme.titleMedium?.color,
                 ),
               ),
               const TextSpan(text: '?'),
@@ -58,11 +58,11 @@ class DeleteDeckDialog extends StatelessWidget {
             child: Text(
               'Cancel',
               style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
               ),
             ),
           ),
         ],
-        backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       );
 }

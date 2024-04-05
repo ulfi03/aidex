@@ -45,7 +45,7 @@ class DeckOverview extends StatelessWidget {
               key: DeckOverviewPage.deckOverviewTitleKey,
               'All Decks',
               style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
+                color:Theme.of(context).textTheme.bodyMedium?.color,
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
               ),

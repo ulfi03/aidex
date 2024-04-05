@@ -24,7 +24,7 @@ class ErrorDisplayWidget extends StatelessWidget {
             errorMessage,
             style: TextStyle(
               fontSize: 18,
-              color: Theme.of(context).colorScheme.secondary,
+              color: Theme.of(context).colorScheme.onError,
             ),
             textAlign: TextAlign.center,
           ),

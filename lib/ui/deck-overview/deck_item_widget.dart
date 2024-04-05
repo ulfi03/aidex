@@ -69,7 +69,7 @@ class DeckItemWidget extends StatelessWidget {
                     deck.name,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16, color: Theme.of(context)
-                    .colorScheme.secondary),
+                    .textTheme.bodyMedium?.color),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),
@@ -103,13 +103,13 @@ class DeckItemWidget extends StatelessWidget {
                     title: Text(
                       'Delete Deck',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
                       ),
                     ),
                   ),
                 ),
               ],
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
+              color: Theme.of(context).colorScheme.primaryContainer,
             ),
           ],
         ),

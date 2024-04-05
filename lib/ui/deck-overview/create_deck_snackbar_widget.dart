@@ -8,7 +8,7 @@ class CreateDeckSnackbar extends SnackBar {
     required final VoidCallback onAI,
     required final BuildContext context, super.key})
       : super(
-    backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(20),
@@ -105,7 +105,7 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
                     key: CreateDeckSnackbar.snackbarTitleKey,
                     'Create Deck',
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -125,7 +125,7 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
               key: CreateDeckSnackbar.createManuallyTitleKey,
               'Create manually',
               style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
               ),
             ),
             style: ElevatedButton.styleFrom(
@@ -147,7 +147,7 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
               key: CreateDeckSnackbar.createAITitleKey,
               'Create with AI',
               style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
               ),
             ),
             style: ElevatedButton.styleFrom(
