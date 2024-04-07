@@ -23,8 +23,6 @@ void main() {
       ];
       when(() => deckProvider.getDecks())
           .thenAnswer((final _) async => expectedDecks);
-      when(() => deckProvider.getDecks())
-          .thenAnswer((final _) async => expectedDecks);
       final DeckRepository repository =
           DeckRepository(deckProvider: deckProvider);
       final decks = await repository.fetchDecks();
