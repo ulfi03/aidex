@@ -43,6 +43,8 @@ jobs:
         api-level: [ 28, 30, 32, 34 ]
       fail-fast: true
     steps:
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@v1.3.1
       - name: Checking out repository ${{ github.repository }} on branch ${{ github.ref }} ...
         uses: actions/checkout@v4
       - name: Listing source files ...
