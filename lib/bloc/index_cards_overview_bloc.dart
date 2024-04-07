@@ -6,11 +6,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// The index card business logic component.
 class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
   /// Creates a new index card business logic component.
-  IndexCardOverviewBloc(this._indexCardRepository)
+  IndexCardOverviewBloc(this._indexCardRepository, this._deckId)
       : super(const IndexCardInitial()) {
     _initEventHandlers();
     add(const FetchIndexCards());
   }
+
+  final int _deckId;
 
   final IndexCardRepository _indexCardRepository;
 
@@ -18,7 +20,7 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
     on<FetchIndexCards>((final event, final emit) async {
       emit(const IndexCardsLoading());
       try {
-        final indexCards = await _indexCardRepository.fetchIndexCards();
+        final indexCards = await _indexCardRepository.fetchIndexCards(_deckId);
         emit(IndexCardsLoaded(indexCards: indexCards));
       } on Exception catch (e) {
         emit(IndexCardsError(message: e.toString()));
@@ -34,7 +36,7 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
     });
     on<RemoveAllIndexCards>((final event, final emit) async {
       try {
-        await _indexCardRepository.removeAllIndexCards();
+        await _indexCardRepository.removeAllIndexCards(_deckId);
         add(const FetchIndexCards());
       } on Exception catch (e) {
         emit(IndexCardsError(message: e.toString()));

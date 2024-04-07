@@ -10,13 +10,14 @@ class IndexCardRepository {
   final IndexCardProvider _indexCardProvider;
 
   /// Fetches the index cards.
-  Future<List<IndexCard>> fetchIndexCards() async =>
-      _indexCardProvider.getIndexCards();
+  Future<List<IndexCard>> fetchIndexCards(final int deckId) async =>
+      _indexCardProvider.getIndexCards(deckId);
 
   /// Adds an index card.
   Future<void> addIndexCard(final IndexCard indexCard) async =>
       _indexCardProvider.insert(indexCard);
 
   /// Removes all index cards.
-  Future<void> removeAllIndexCards() async => _indexCardProvider.deleteAll();
+  Future<void> removeAllIndexCards(final int deckId) async =>
+      _indexCardProvider.deleteAll(deckId);
 }

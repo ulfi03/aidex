@@ -42,7 +42,7 @@ class IndexCardItemWidget extends StatelessWidget {
           vertical: MediaQuery.of(context).size.width / 64,
         ),
         decoration: BoxDecoration(
-          color: mainTheme.colorScheme.onSurfaceVariant,
+          color: mainTheme.colorScheme.surface,
           // Set the background color from the deck
           border: Border.all(
             color: Colors.white,
@@ -51,7 +51,6 @@ class IndexCardItemWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.all(8),
@@ -64,15 +63,13 @@ class IndexCardItemWidget extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Align(
-                  alignment: const Alignment(-1.2, -0.5),
-                  child: Text(
-                    indexCard.title,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16, color: Colors.white),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                  ),
+                child: Text(
+                  indexCard.question,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                      fontSize: 16, color: mainTheme.colorScheme.onSurface),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                 ),
               ),
             ),

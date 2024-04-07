@@ -1,14 +1,17 @@
 /// IndexCard model
 class IndexCard {
   /// Create IndexCard object
-  IndexCard(this.indexCardId,
-      {required this.title, required this.contentJson, required this.deckId});
+  IndexCard(
+      {required this.question,
+      required this.answer,
+      required this.deckId,
+      this.indexCardId});
 
   /// Create IndexCard object from map
   IndexCard.fromMap(final Map<String, dynamic> map) {
     indexCardId = map[columnIndexCardId];
-    title = map[columnTitle];
-    contentJson = map[columnContentJson];
+    question = map[columnQuestion];
+    answer = map[columnAnswer];
     deckId = map[columnDeckId];
   }
 
@@ -19,10 +22,10 @@ class IndexCard {
   static const String columnIndexCardId = 'index_card_id';
 
   /// The name of the index card title column.
-  static const String columnTitle = 'title';
+  static const String columnQuestion = 'question';
 
   /// The name of the content column.
-  static const String columnContentJson = 'content_json';
+  static const String columnAnswer = 'answer';
 
   /// The name of the deck id column.
   static const String columnDeckId = 'deck_id';
@@ -31,18 +34,18 @@ class IndexCard {
   int? indexCardId;
 
   /// The title of the index card.
-  late String title;
+  late String question;
 
   /// The content of the index card in JSON format.
-  late String contentJson;
+  late String answer;
 
   /// The id of the deck the index card belongs to.
   late int deckId;
 
   /// Converts the index card to a map.
   Map<String, Object?> toMap() => <String, Object?>{
-        columnTitle: title,
-        columnContentJson: contentJson,
+        columnQuestion: question,
+        columnAnswer: answer,
         columnDeckId: deckId,
         if (indexCardId != null) columnIndexCardId: indexCardId
       };

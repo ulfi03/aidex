@@ -18,17 +18,17 @@ class DeckViewWidgetPage extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) => BlocProvider(
-      create: (final context) =>
-          IndexCardOverviewBloc(context.read<IndexCardRepository>()),
-      child: DeckViewWidget(deck: deck));
+      create: (final context) => IndexCardOverviewBloc(
+          context.read<IndexCardRepository>(), deck.deckId!),
+      child: IndexCardOverview(deck: deck));
 }
 
 /// A widget used to display the deck view.
 ///
-/// The [DeckViewWidget] requires a [deck] to be provided.
-class DeckViewWidget extends StatelessWidget {
-  /// Constructor for the [DeckViewWidget].
-  const DeckViewWidget({required this.deck, super.key});
+/// The [IndexCardOverview] requires a [deck] to be provided.
+class IndexCardOverview extends StatelessWidget {
+  /// Constructor for the [IndexCardOverview].
+  const IndexCardOverview({required this.deck, super.key});
 
   /// The deck to be displayed.
   final Deck deck;
@@ -41,13 +41,13 @@ class DeckViewWidget extends StatelessWidget {
       ),
       body: Column(
         children: [
-          const Padding(
-              padding: EdgeInsets.all(8),
+          Padding(
+              padding: const EdgeInsets.all(8),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(child: CardSearchBar()),
-                    AddCardButton()
+                    const Expanded(child: CardSearchBar()),
+                    AddCardButton(deck.deckId!)
                   ])),
           BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
               builder: (final context, final state) {
@@ -98,6 +98,15 @@ class SearchBarState extends State<CardSearchBar> {
   /// Whether to search by label.
   bool sort = false;
 
+  ///Key to identify the sort button (for testing).
+  static const Key sortButtonKey = Key('sortButton');
+
+  ///Icon for IconButton when indexCards are unsorted.
+  static const Icon unsortedIcon = Icon(Icons.type_specimen_outlined);
+
+  ///Icon for IconButton when indexCards are sorted.
+  static const Icon sortedIcon = Icon(Icons.type_specimen);
+
   @override
   Widget build(final BuildContext context) => SearchAnchor(
       isFullScreen: false,
@@ -115,14 +124,15 @@ class SearchBarState extends State<CardSearchBar> {
               Tooltip(
                 message: 'Toggle Sort',
                 child: IconButton(
+                  key: sortButtonKey,
                   isSelected: sort,
                   onPressed: () {
                     setState(() {
                       sort = !sort;
                     });
                   },
-                  icon: const Icon(Icons.type_specimen_outlined),
-                  selectedIcon: const Icon(Icons.type_specimen),
+                  icon: unsortedIcon,
+                  selectedIcon: sortedIcon,
                 ),
               )
             ],
@@ -141,17 +151,14 @@ class SearchBarState extends State<CardSearchBar> {
           }));
 }
 
-/// The widget used to display AddCardButton.
-class AddCardButton extends StatefulWidget {
-  /// Constructor for the [AddCardButton] widget.
-  const AddCardButton({super.key});
-
-  @override
-  AddCardButtonState createState() => AddCardButtonState();
-}
-
 /// The state of the AddCardButton.
-class AddCardButtonState extends State<AddCardButton> {
+class AddCardButton extends StatelessWidget {
+  /// Constructor for the [AddCardButton].
+  const AddCardButton(this._deckId, {super.key});
+
+  ///DeckId of the deck the indexCard belongs to.
+  final int _deckId;
+
   @override
   Widget build(final BuildContext context) => FloatingActionButton(
         onPressed: () => onAddCardButtonPressed(context),
@@ -160,14 +167,13 @@ class AddCardButtonState extends State<AddCardButton> {
       );
 
   /// Handles the addCard event when button is pressed.
-  Future<void> onAddCardButtonPressed(final BuildContext context) async {
-    final parentDeck = context.read<DeckViewWidget>().deck;
-    final indexCardId = context.read<IndexCardsLoaded>().indexCards.length;
+  Future<void> onAddCardButtonPressed(
+    final BuildContext context,
+  ) async {
     context.read<IndexCardOverviewBloc>().add(AddIndexCard(
-        indexCard: IndexCard(indexCardId,
-            title: 'Added Card',
-            contentJson: 'Lorem Ipsum',
-            deckId: parentDeck.deckId!)));
-    parentDeck.cardsCount++;
+        indexCard: IndexCard(
+            question: 'What is the answer to life the universe and everything',
+            answer: '42!',
+            deckId: _deckId)));
   }
 }

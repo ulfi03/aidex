@@ -1,4 +1,5 @@
 import 'package:aidex/data/model/index_card.dart';
+import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 
 /// A widget used to display an index card item.
@@ -17,11 +18,13 @@ class IndexCardViewWidget extends StatelessWidget {
   Widget build(final BuildContext context) => Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text(indexCard.title),
+          title: Text(indexCard.question),
         ),
         body: Center(
-          child: Text(
-              'Content of ${indexCard.title}: \n ${indexCard.contentJson}'),
+          child: Text('''
+              Question: ${indexCard.question} \n
+              Answer: ${indexCard.answer}
+              ''', style: mainTheme.textTheme.displayLarge),
         ),
       );
 }

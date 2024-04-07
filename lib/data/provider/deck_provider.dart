@@ -29,6 +29,9 @@ create table ${Deck.tableDeck} (
   ${Deck.columnColor} integer not null,
   ${Deck.columnCardsCount} integer not null)
 ''');
+    }, onConfigure: (final db) async {
+      await db.execute('PRAGMA foreign_keys = ON');
+      print('################################### On Configure');
     });
     return db;
   }
@@ -45,7 +48,7 @@ create table ${Deck.tableDeck} (
     return List.generate(maps.length, (final i) => Deck.fromMap(maps[i]));
   }
 
-  /// Returns all decks from the database.
+  /// Returns a deck from the database.
   Future<Deck?> getDeck(final int id) async {
     final List<Map<String, dynamic>> maps = await _db.query(Deck.tableDeck,
         columns: [
@@ -69,14 +72,14 @@ create table ${Deck.tableDeck} (
     return deck;
   }
 
-  /// Returns all decks from the database.
+  /// Delete a decks from the database.
   Future<int> delete(final int id) async => _db.delete(Deck.tableDeck,
       where: '${Deck.columnDeckId} = ?', whereArgs: [id]);
 
   /// Delete all decks from the database.
   Future<int> deleteAll() async => _db.delete(Deck.tableDeck);
 
-  /// Returns all decks from the database.
+  /// Update a decks from the database.
   Future<int> update(final Deck deck) async =>
       _db.update(Deck.tableDeck, deck.toMap(),
           where: '${Deck.columnDeckId} = ?', whereArgs: [deck.deckId]);
