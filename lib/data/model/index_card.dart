@@ -14,5 +14,5 @@ class IndexCard {
   final String contentJson;
 
   /// The id of the deck the index card belongs to.
-  final String deckId;
+  final int deckId;
 }

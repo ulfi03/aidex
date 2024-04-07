@@ -7,20 +7,31 @@ import 'package:flutter_quill_extensions/flutter_quill_embeds.dart';
 /// Rich text editor widget.
 class RichTextEditorWidget extends StatelessWidget {
   /// Constructor for the [RichTextEditorWidget].
-  RichTextEditorWidget({required final readonly, super.key})
-      : _readonly = readonly;
+  RichTextEditorWidget(
+      {required final readonly,
+      final RichTextEditorController? controller,
+      final String? contentJson,
+      super.key})
+      : _readonly = readonly,
+        _controller =
+            (controller != null) ? controller : RichTextEditorController() {
+    if (contentJson != null) {
+      _controller.fromJson(contentJson);
+    }
+  }
+
+  /// The controller for the quill editor.
+  final RichTextEditorController _controller;
 
   final bool _readonly;
 
-  /// The controller for the quill editor.
-  final _controller = QuillController.basic();
-
   /// Converts the content of the editor to JSON.
-  String toJson() => jsonEncode(_controller.document.toDelta().toJson());
+  String toJson() =>
+      jsonEncode(_controller.quillController.document.toDelta().toJson());
 
   /// Inserts the content described by the passed [json] in the editor.
-  void fromJson(final String json) =>
-      _controller.document = Document.fromJson(jsonDecode(json));
+  void fromJson(final String json) => _controller.quillController.document =
+      Document.fromJson(jsonDecode(json));
 
   @override
   Widget build(final BuildContext context) => Flex(
@@ -30,7 +41,7 @@ class RichTextEditorWidget extends StatelessWidget {
             visible: !_readonly,
             child: QuillToolbar.simple(
               configurations: QuillSimpleToolbarConfigurations(
-                controller: _controller,
+                controller: _controller.quillController,
                 multiRowsDisplay: false,
                 toolbarSize: 40,
                 sharedConfigurations: const QuillSharedConfigurations(
@@ -44,7 +55,8 @@ class RichTextEditorWidget extends StatelessWidget {
             child: QuillEditor.basic(
               configurations: QuillEditorConfigurations(
                 readOnly: _readonly,
-                controller: _controller,
+                showCursor: !_readonly,
+                controller: _controller.quillController,
                 sharedConfigurations: const QuillSharedConfigurations(
                   locale: Locale('de'),
                 ),
@@ -54,4 +66,21 @@ class RichTextEditorWidget extends StatelessWidget {
           ),
         ],
       );
+}
+
+/// Controller for the rich text editor.
+class RichTextEditorController {
+  /// Constructor for the [RichTextEditorController].
+  RichTextEditorController() : _quillController = QuillController.basic();
+  final QuillController _quillController;
+
+  /// The controller for the quill editor.
+  QuillController get quillController => _quillController;
+
+  /// Converts the content of the editor to JSON.
+  String toJson() => jsonEncode(_quillController.document.toDelta().toJson());
+
+  /// Inserts the content described by the passed [json] in the editor.
+  void fromJson(final String json) =>
+      _quillController.document = Document.fromJson(jsonDecode(json));
 }
