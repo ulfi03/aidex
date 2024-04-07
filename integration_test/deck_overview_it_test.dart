@@ -120,7 +120,8 @@ void main() {
       final inkWell =
           find.descendant(of: blackContainer, matching: find.byType(InkWell));
       expect(inkWell, findsOneWidget);
-      // tab black container
+      await tester.ensureVisible(inkWell);
+      // tap black color
       await tester.tap(inkWell);
       await tester.pumpAndSettle();
 
