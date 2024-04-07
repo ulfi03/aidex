@@ -1,7 +1,7 @@
 import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
-import 'package:aidex/ui/deck-view/index_card_item_Widget.dart';
+import 'package:aidex/ui/deck-view/index_card_item_widget.dart';
 import 'package:aidex/ui/deck-view/index_cards_overview_widget.dart';
 import 'package:aidex/ui/indexCard-view/index_card_view_widget.dart';
 import 'package:bloc_test/bloc_test.dart';
