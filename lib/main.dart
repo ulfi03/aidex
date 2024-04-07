@@ -9,14 +9,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  try {
-    runApp(AIDexApp(
-        deckRepository: DeckRepository(deckProvider: await DeckProvider.init()),
-        indexCardRepository: IndexCardRepository(
-            indexCardProvider: await IndexCardProvider.init())));
-  } on Exception catch (e) {
-    print(e);
-  }
+  runApp(AIDexApp(
+      deckRepository: DeckRepository(deckProvider: await DeckProvider.init()),
+      indexCardRepository: IndexCardRepository(
+          indexCardProvider: await IndexCardProvider.init())));
 }
 
 /// The main application widget.

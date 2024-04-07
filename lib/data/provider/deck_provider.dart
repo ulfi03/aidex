@@ -31,7 +31,6 @@ create table ${Deck.tableDeck} (
 ''');
     }, onConfigure: (final db) async {
       await db.execute('PRAGMA foreign_keys = ON');
-      print('################################### On Configure');
     });
     return db;
   }
