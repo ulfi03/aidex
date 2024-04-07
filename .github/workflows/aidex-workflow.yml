@@ -45,6 +45,14 @@ jobs:
     steps:
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
+          android: false
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
       - name: Checking out repository ${{ github.repository }} on branch ${{ github.ref }} ...
         uses: actions/checkout@v4
       - name: Listing source files ...
