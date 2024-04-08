@@ -1,6 +1,7 @@
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
-import 'package:aidex/ui/index-card-view/index_card_view.dart';
+import 'package:aidex/ui/deck-view/index_cards_overview_widget.dart';
+import 'package:aidex/ui/indexCard-view/index_card_view_widget.dart';
 import 'package:flutter/cupertino.dart';
 
 /// A route used to display the selected deck.
@@ -15,11 +16,21 @@ class ItemOnDeckOverviewSelectedRoute extends StatelessWidget {
   final Deck deck;
 
   @override
-  Widget build(final BuildContext context) => IndexCardViewPage(
-          card: IndexCard(
-        1,
-        deckId: deck.deckId!,
-        title: 'Was ist das Skalarprodukt?',
-        contentJson: '[{"insert":"hallo\\n"}]',
-      ));
+  Widget build(final BuildContext context) => DeckViewWidgetPage(deck: deck);
+}
+
+///A route used to display the selected index card.
+class ItemOnDeckViewWidgetSelectedRoute extends StatelessWidget {
+  /// Constructor for the [ItemOnDeckViewWidgetSelectedRoute].
+  ///
+  /// The [indexCard] is the index card to be displayed.
+  /// The [key] is used to identify the widget in the widget tree.
+  const ItemOnDeckViewWidgetSelectedRoute({required this.indexCard, super.key});
+
+  /// The index card to be displayed.
+  final IndexCard indexCard;
+
+  @override
+  Widget build(final BuildContext context) =>
+      IndexCardViewWidget(indexCard: indexCard);
 }

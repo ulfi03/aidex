@@ -16,6 +16,13 @@ jobs:
       - name: Listing test files ...
         run: |
           ls ${{ github.workspace }}/test -R
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+          check-latest: true
       - name: Setting up Flutter ...
         uses: subosito/flutter-action@v2
         with:
@@ -36,6 +43,16 @@ jobs:
         api-level: [ 28, 30, 32, 34 ]
       fail-fast: true
     steps:
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
+          android: false
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
       - name: Checking out repository ${{ github.repository }} on branch ${{ github.ref }} ...
         uses: actions/checkout@v4
       - name: Listing source files ...
@@ -46,6 +63,13 @@ jobs:
       - name: Listing test files ...
         run: |
           ls ${{ github.workspace }}/test -R
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+          check-latest: true
       - name: Setting up Flutter ...
         uses: subosito/flutter-action@v2
         with:
