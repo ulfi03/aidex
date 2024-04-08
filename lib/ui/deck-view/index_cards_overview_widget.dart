@@ -61,7 +61,7 @@ class IndexCardOverview extends StatelessWidget {
             } else if (state is IndexCardsLoaded) {
               return Expanded(child: () {
                 if (state.indexCards.isEmpty) {
-                  return Center(child: Text('Content of ${deck.name}'));
+                  return const Center(child: Text('No index cards found!'));
                 } else {
                   return SingleChildScrollView(
                     child: Wrap(

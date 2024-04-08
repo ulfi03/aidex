@@ -32,5 +32,5 @@ class ItemOnDeckViewWidgetSelectedRoute extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) =>
-      IndexCardViewPage(card: indexCard);
+      IndexCardViewPage(initialIndexCard: indexCard);
 }
