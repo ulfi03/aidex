@@ -1,8 +1,7 @@
 import 'package:aidex/data/model/index_card.dart';
+import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../data/repo/deck_repository.dart';
 
 /// The business logic component of the IndexCardView feature.
 class IndexCardViewBloc extends Bloc<IndexCardEvent, IndexCardState> {
