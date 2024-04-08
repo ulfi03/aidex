@@ -1,7 +1,7 @@
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/ui/deck-view/index_cards_overview_widget.dart';
-import 'package:aidex/ui/indexCard-view/index_card_view_widget.dart';
+import 'package:aidex/ui/index-card-view/index_card_view.dart';
 import 'package:flutter/cupertino.dart';
 
 /// A route used to display the selected deck.
@@ -32,5 +32,5 @@ class ItemOnDeckViewWidgetSelectedRoute extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) =>
-      IndexCardViewWidget(indexCard: indexCard);
+      IndexCardViewPage(card: indexCard);
 }

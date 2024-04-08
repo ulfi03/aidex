@@ -3,7 +3,7 @@ import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/ui/deck-view/index_card_item_widget.dart';
 import 'package:aidex/ui/deck-view/index_cards_overview_widget.dart';
-import 'package:aidex/ui/indexCard-view/index_card_view_widget.dart';
+import 'package:aidex/ui/index-card-view/index_card_view.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -160,7 +160,7 @@ void main() {
             expect(find.byType(IndexCardItemWidget), findsOneWidget);
             await tester.tap(find.byType(IndexCardItemWidget));
             await tester.pumpAndSettle();
-            expect(find.byType(IndexCardViewWidget), findsOneWidget);
+            expect(find.byType(IndexCardViewPage), findsOneWidget);
             expect(find.text(indexCardStub.question), findsOneWidget);
             expect(find.text('''
               Question: ${indexCardStub.question} \n

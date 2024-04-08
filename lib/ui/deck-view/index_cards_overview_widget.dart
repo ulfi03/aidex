@@ -173,7 +173,7 @@ class AddCardButton extends StatelessWidget {
     context.read<IndexCardOverviewBloc>().add(AddIndexCard(
         indexCard: IndexCard(
             question: 'What is the answer to life the universe and everything',
-            answer: '42!',
+            answer: r'[{"insert":"hallo\n"}]',
             deckId: _deckId)));
   }
 }

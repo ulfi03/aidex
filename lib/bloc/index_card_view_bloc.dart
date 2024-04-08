@@ -1,10 +1,9 @@
-import 'package:aidex/data/model/index_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// The business logic component of the IndexCardView feature.
 class IndexCardViewBloc extends Bloc<IndexCardEvent, IndexCardState> {
   /// Constructor for the [IndexCardViewBloc].
-  IndexCardViewBloc(this._indexCard) : super(IndexCardInitial()) {
+  IndexCardViewBloc() : super(IndexCardInitial()) {
     on<ViewIndexCard>((final event, final emit) async {
       emit(IndexCardLoading());
       // TODO: Implement loading the index card from the repository.
@@ -22,8 +21,6 @@ class IndexCardViewBloc extends Bloc<IndexCardEvent, IndexCardState> {
     });
     add(ViewIndexCard());
   }
-
-  final IndexCard _indexCard;
 }
 
 // ################################################################# States

@@ -16,8 +16,9 @@ class IndexCardViewPage extends StatelessWidget {
   final IndexCard card;
 
   @override
-  Widget build(final BuildContext context) => BlocProvider(
-        create: (final context) => IndexCardViewBloc(card),
+  Widget build(final BuildContext context) =>
+      BlocProvider(
+        create: (final context) => IndexCardViewBloc(),
         child: IndexCardView(card: card),
       );
 }
@@ -28,10 +29,10 @@ class IndexCardView extends StatelessWidget {
   /// Constructor for the [IndexCardView].s
   IndexCardView({required final IndexCard card, super.key})
       : _card = card,
-        _editQuestionController = TextEditingController(text: card.title),
+        _editQuestionController = TextEditingController(text: card.question),
         _editAnswerController = RichTextEditorController(),
         _flipCardController = FlipCardController() {
-    _editAnswerController.fromJson(card.contentJson);
+    _editAnswerController.fromJson(card.answer);
   }
 
   IndexCard _card;
@@ -42,17 +43,18 @@ class IndexCardView extends StatelessWidget {
   @override
   Widget build(final BuildContext context) =>
       BlocBuilder<IndexCardViewBloc, IndexCardState>(
-          builder: (final context, final state) => Scaffold(
-              appBar: AppBar(
-                title: Text('Index Card ${_card.indexCardId}'),
-                actions: _getActions(context, state),
-              ),
-              body: _getBody(state)));
+          builder: (final context, final state) =>
+              Scaffold(
+                  appBar: AppBar(
+                    title: Text('Index Card ${_card.indexCardId}'),
+                    actions: _getActions(context, state),
+                  ),
+                  body: _getBody(state)));
 
   // ################################################################# Actions
 
-  List<Widget> _getActions(
-      final BuildContext context, final IndexCardState state) {
+  List<Widget> _getActions(final BuildContext context,
+      final IndexCardState state) {
     if (state is IndexCardViewing) {
       return [
         IconButton(
@@ -99,9 +101,10 @@ class IndexCardView extends StatelessWidget {
 
   void _onSave(final BuildContext context) {
     context.read<IndexCardViewBloc>().add(SaveIndexCard());
-    this._card = IndexCard(_card.indexCardId,
-        title: _editQuestionController.text,
-        contentJson: _editAnswerController.toJson(),
+    _card = IndexCard(
+        indexCardId: _card.indexCardId,
+        question: _editQuestionController.text,
+        answer: _editAnswerController.toJson(),
         deckId: _card.deckId);
   }
 
@@ -121,26 +124,28 @@ class IndexCardView extends StatelessWidget {
     }
   }
 
-  Widget _getView() => Container(
-      constraints: const BoxConstraints.expand(),
-      child: FlipCard(
-          controller: _flipCardController,
-          fill: Fill.fillFront,
-          // The side to initially display.
-          front: Card(
-              color: mainTheme.colorScheme.primary.withOpacity(0.5),
-              child: Align(
-                child: Text(_card.title),
-              )),
-          back: Card(
-              color: mainTheme.colorScheme.secondary.withOpacity(0.5),
-              child: AbsorbPointer(
-                  child: RichTextEditorWidget(
-                readonly: true,
-                contentJson: _card.contentJson,
-              )))));
+  Widget _getView() =>
+      Container(
+          constraints: const BoxConstraints.expand(),
+          child: FlipCard(
+              controller: _flipCardController,
+              fill: Fill.fillFront,
+              // The side to initially display.
+              front: Card(
+                  color: mainTheme.colorScheme.primary.withOpacity(0.5),
+                  child: Align(
+                    child: Text(_card.question),
+                  )),
+              back: Card(
+                  color: mainTheme.colorScheme.secondary.withOpacity(0.5),
+                  child: AbsorbPointer(
+                      child: RichTextEditorWidget(
+                        readonly: true,
+                        contentJson: _card.answer,
+                      )))));
 
-  Widget _getEditView() => Column(
+  Widget _getEditView() =>
+      Column(
         children: <Widget>[
           // display deck name
           Align(
@@ -158,7 +163,7 @@ class IndexCardView extends StatelessWidget {
             child: RichTextEditorWidget(
               controller: _editAnswerController,
               readonly: false,
-              contentJson: _card.contentJson,
+              contentJson: _card.answer,
             ),
           ),
         ],
