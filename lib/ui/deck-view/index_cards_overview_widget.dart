@@ -1,9 +1,9 @@
 import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
-import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/deck-view/index_card_item_widget.dart';
+import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,7 +47,7 @@ class IndexCardOverview extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Expanded(child: CardSearchBar()),
-                    AddCardButton(deck.deckId!)
+                    AddCardButton(deck: deck)
                   ])),
           BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
               builder: (final context, final state) {
@@ -61,13 +61,28 @@ class IndexCardOverview extends StatelessWidget {
             } else if (state is IndexCardsLoaded) {
               return Expanded(child: () {
                 if (state.indexCards.isEmpty) {
-                  return Center(child: Text('Content of ${deck.name}'));
+                  return const Center(child: Text('No index cards found!'));
                 } else {
                   return SingleChildScrollView(
                     child: Wrap(
                       children: state.indexCards
-                          .map((final indexCard) =>
-                              IndexCardItemWidget(indexCard: indexCard))
+                          .map((final indexCard) => IndexCardItemWidget(
+                                indexCard: indexCard,
+                                onTap: (final context) async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (final context) =>
+                                          ItemOnDeckViewWidgetSelectedRoute(
+                                        indexCard: indexCard,
+                                        deckName: deck.name,
+                                      ),
+                                    ),
+                                  ).then((final value) => context
+                                      .read<IndexCardOverviewBloc>()
+                                      .add(const FetchIndexCards()));
+                                },
+                              ))
                           .toList(),
                     ),
                   );
@@ -154,10 +169,9 @@ class SearchBarState extends State<CardSearchBar> {
 /// The state of the AddCardButton.
 class AddCardButton extends StatelessWidget {
   /// Constructor for the [AddCardButton].
-  const AddCardButton(this._deckId, {super.key});
+  const AddCardButton({required final Deck deck, super.key}) : _deck = deck;
 
-  ///DeckId of the deck the indexCard belongs to.
-  final int _deckId;
+  final Deck _deck;
 
   @override
   Widget build(final BuildContext context) => FloatingActionButton(
@@ -170,10 +184,13 @@ class AddCardButton extends StatelessWidget {
   Future<void> onAddCardButtonPressed(
     final BuildContext context,
   ) async {
-    context.read<IndexCardOverviewBloc>().add(AddIndexCard(
-        indexCard: IndexCard(
-            question: 'What is the answer to life the universe and everything',
-            answer: '42!',
-            deckId: _deckId)));
+    await Navigator.of(context)
+        .push(MaterialPageRoute(
+          builder: (final context) =>
+              IndexCardCreateRoute(deckId: _deck.deckId!, deckName: _deck.name),
+        ))
+        .then((final value) => context.read<IndexCardOverviewBloc>().add(
+              const FetchIndexCards(),
+            ));
   }
 }

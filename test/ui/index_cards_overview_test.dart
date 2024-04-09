@@ -1,14 +1,21 @@
 import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
+import 'package:aidex/data/repo/deck_repository.dart';
+import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/deck-view/index_card_item_widget.dart';
 import 'package:aidex/ui/deck-view/index_cards_overview_widget.dart';
-import 'package:aidex/ui/indexCard-view/index_card_view_widget.dart';
+import 'package:aidex/ui/index-card-view/index_card_create_view.dart';
+import 'package:aidex/ui/index-card-view/index_card_view.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+
+class MockIndexCardRepository extends Mock implements IndexCardRepository {}
+
+class MockDeckRepository extends Mock implements DeckRepository {}
 
 class MockIndexCardOverviewBloc extends MockBloc<IndexCardEvent, IndexCardState>
     implements IndexCardOverviewBloc {}
@@ -18,9 +25,13 @@ void main() {
 
   // Widget tests --------------------------------------------------------------
 
+  late IndexCardRepository indexCardRepositoryMock;
+  late DeckRepository deckRepositoryMock;
   late IndexCardOverviewBloc indexCardOverviewBloc;
 
   setUp(() {
+    indexCardRepositoryMock = MockIndexCardRepository();
+    deckRepositoryMock = MockDeckRepository();
     indexCardOverviewBloc = MockIndexCardOverviewBloc();
     registerFallbackValue(const IndexCardEvent());
   });
@@ -29,6 +40,18 @@ void main() {
     await tester.pumpWidget(BlocProvider.value(
         value: indexCardOverviewBloc,
         child: MaterialApp(home: IndexCardOverview(deck: deckStub))));
+  }
+
+  Future<void> pumpIndexCardOverviewWithRepos(final WidgetTester tester) async {
+    await tester.pumpWidget(MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(value: indexCardRepositoryMock),
+        RepositoryProvider.value(value: deckRepositoryMock),
+      ],
+      child: BlocProvider.value(
+          value: indexCardOverviewBloc,
+          child: MaterialApp(home: IndexCardOverview(deck: deckStub))),
+    ));
   }
 
   group('IndexCardOverview', () {
@@ -97,11 +120,12 @@ void main() {
 
       testWidgets('All Elements loaded', (final tester) async {
         await pumpIndexCardOverview(tester);
+        await tester.pumpAndSettle();
         expect(getSearchbar, findsOneWidget);
         expect(getAddCardButton, findsOneWidget);
 
         /// if deck is empty IndexCardsOverview displays 'Content of [deckName]'
-        expect(find.text('Content of ${deckStub.name}'), findsOneWidget);
+        expect(find.text('No index cards found!'), findsOneWidget);
       });
 
       group('Query functionalities', () {
@@ -120,52 +144,40 @@ void main() {
         });
       });
       group('IndexCards functionalities', () {
+        const String answerContentStub = '42!';
         final indexCardStub = IndexCard(
+            indexCardId: 1,
             question: 'What is the answer to life the universe and everything',
-            answer: '42!',
+            answer: '[{"insert":"$answerContentStub\\n"}]',
             deckId: deckStub.deckId!);
         group('without pre-initialized-IndexCards', () {
           testWidgets('AddCardButton', (final tester) async {
-            ///Mock the state change when AddCardButton is pressed
-            whenListen(
-              indexCardOverviewBloc,
-              Stream.fromIterable([
-                IndexCardsLoaded(indexCards: [
-                  indexCardStub,
-                ]),
-              ]),
-            );
-            await pumpIndexCardOverview(tester);
+            await pumpIndexCardOverviewWithRepos(tester);
             expect(find.byType(IndexCardItemWidget), findsNothing);
             await tester.tap(getAddCardButton);
             await tester.pumpAndSettle();
-            expect(find.byType(IndexCardItemWidget), findsOneWidget);
-            verify(() => indexCardOverviewBloc.add(any(
-                that: isA<AddIndexCard>().having(
-                    (final addIndexCard) => addIndexCard.indexCard.question,
-                    'indexCard.question',
-                    equals('What is the answer '
-                        'to life the universe and everything'))))).called(1);
+            expect(find.byType(IndexCardCreateViewPage), findsOneWidget);
           });
         });
 
         group('with pre-initialized-IndexCards', () {
-          setUp(() => when(() => indexCardOverviewBloc.state)
-              .thenReturn(IndexCardsLoaded(indexCards: [indexCardStub])));
+          setUp(() {
+            when(() => indexCardRepositoryMock
+                    .fetchIndexCard(indexCardStub.indexCardId!))
+                .thenAnswer((final _) async => indexCardStub);
+            when(() => indexCardOverviewBloc.state)
+                .thenReturn(IndexCardsLoaded(indexCards: [indexCardStub]));
+          });
 
-          testWidgets(
-              'Tab on IndexCard -> IndexCardItemWidget of tabbed IndexCard',
-              (final tester) async {
-            await pumpIndexCardOverview(tester);
+          testWidgets('''
+              Tab on IndexCard -> IndexCardViewPage of tabbed IndexCard is shown
+              ''', (final tester) async {
+            await pumpIndexCardOverviewWithRepos(tester);
+            await tester.pumpAndSettle();
             expect(find.byType(IndexCardItemWidget), findsOneWidget);
             await tester.tap(find.byType(IndexCardItemWidget));
             await tester.pumpAndSettle();
-            expect(find.byType(IndexCardViewWidget), findsOneWidget);
-            expect(find.text(indexCardStub.question), findsOneWidget);
-            expect(find.text('''
-              Question: ${indexCardStub.question} \n
-              Answer: ${indexCardStub.answer}
-              '''), findsOneWidget);
+            expect(find.byType(IndexCardViewPage), findsOneWidget);
           });
         });
       });

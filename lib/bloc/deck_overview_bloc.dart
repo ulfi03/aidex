@@ -50,9 +50,7 @@ class DeckOverviewBloc extends Bloc<DeckEvent, DeckState> {
   }
 }
 
-
-
-/// ################################################################# States
+// ################################################################# States
 
 /// The deck state.
 abstract class DeckState extends Equatable {
@@ -76,7 +74,6 @@ class DecksLoading extends DeckState {
 
   @override
   List<Object> get props => [];
-
 }
 
 /// The deck loaded state.
@@ -89,7 +86,6 @@ class DecksLoaded extends DeckState {
 
   @override
   List<Object> get props => [decks];
-
 }
 
 /// The deck error state.
@@ -104,7 +100,7 @@ class DecksError extends DeckState {
   List<Object> get props => [message];
 }
 
-/// ################################################################# Events
+// ################################################################# Events
 
 /// The deck event.
 class DeckEvent {

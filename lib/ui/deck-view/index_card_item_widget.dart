@@ -1,5 +1,4 @@
 import 'package:aidex/data/model/index_card.dart';
-import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -17,25 +16,21 @@ import 'package:flutter/material.dart';
 /// The [key] is used to identify the widget in the widget tree.
 class IndexCardItemWidget extends StatelessWidget {
   /// Constructor for the [IndexCardItemWidget].
-  const IndexCardItemWidget({required this.indexCard, super.key});
+  const IndexCardItemWidget(
+      {required this.indexCard, required this.onTap, super.key});
 
   /// The index card to be displayed.
   final IndexCard indexCard;
+
+  /// The function to be called when the widget is tapped.
+  final Function(BuildContext context) onTap;
 
   @override
   Widget build(final BuildContext context) {
     final iconSize = MediaQuery.of(context).size.width / 4;
 
     return GestureDetector(
-      onTap: () async {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (final context) =>
-                ItemOnDeckViewWidgetSelectedRoute(indexCard: indexCard),
-          ),
-        );
-      },
+      onTap: () => onTap(context),
       child: Container(
         margin: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width / 32,

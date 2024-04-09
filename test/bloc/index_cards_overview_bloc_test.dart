@@ -58,8 +58,11 @@ void main() {
     group('On AddIndexCard', () {
       blocTest('Add indexCard and reload indexCards',
           setUp: () {
-            when(() => indexCardRepository.addIndexCard(any()))
-                .thenAnswer((final _) async {});
+            when(() => indexCardRepository.addIndexCard(any())).thenAnswer(
+                (final _) async => IndexCard(
+                    deckId: deckId,
+                    question: 'question-1',
+                    answer: 'answer-1'));
             when(() => indexCardRepository.fetchIndexCards(deckId))
                 .thenAnswer((final _) async => []);
           },
