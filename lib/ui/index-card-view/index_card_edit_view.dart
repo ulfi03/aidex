@@ -59,15 +59,13 @@ class IndexCardEditView extends StatelessWidget {
         child: BlocBuilder<IndexCardEditBloc, IndexCardEditState>(
           builder: (final context, final state) => Scaffold(
               appBar: AppBar(
-                title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(_deckName, style: mainTheme.textTheme.titleSmall),
-                      Text(
-                        'Index Card ${state.indexCard.indexCardId!}',
-                        style: mainTheme.textTheme.titleMedium,
-                      )
-                    ]),
+                title: Column(children: <Widget>[
+                  Text(_deckName, style: mainTheme.textTheme.titleSmall),
+                  Text(
+                    'Index Card ${state.indexCard.indexCardId!}',
+                    style: mainTheme.textTheme.titleMedium,
+                  )
+                ]),
                 actions: _getActions(context, state),
                 bottom: PreferredSize(
                     preferredSize: const Size.fromHeight(1),

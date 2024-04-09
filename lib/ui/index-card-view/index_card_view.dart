@@ -52,16 +52,13 @@ class IndexCardView extends StatelessWidget {
           child: BlocBuilder<IndexCardViewBloc, IndexCardViewState>(
               builder: (final context, final state) => Scaffold(
                   appBar: AppBar(
-                    title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(_deckName,
-                              style: mainTheme.textTheme.titleSmall),
-                          Text(
-                            'Index Card ${state.indexCardId}',
-                            style: mainTheme.textTheme.titleMedium,
-                          ),
-                        ]),
+                    title: Column(children: <Widget>[
+                      Text(_deckName, style: mainTheme.textTheme.titleSmall),
+                      Text(
+                        'Index Card ${state.indexCardId}',
+                        style: mainTheme.textTheme.titleMedium,
+                      ),
+                    ]),
                     actions: _getActions(context, state),
                   ),
                   body: _getBody(state))));

@@ -5,6 +5,7 @@ import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/deck-view/index_card_item_widget.dart';
 import 'package:aidex/ui/deck-view/index_cards_overview_widget.dart';
+import 'package:aidex/ui/index-card-view/index_card_create_view.dart';
 import 'package:aidex/ui/index-card-view/index_card_view.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
@@ -151,33 +152,19 @@ void main() {
             deckId: deckStub.deckId!);
         group('without pre-initialized-IndexCards', () {
           testWidgets('AddCardButton', (final tester) async {
-            ///Mock the state change when AddCardButton is pressed
-            whenListen(
-              indexCardOverviewBloc,
-              Stream.fromIterable([
-                IndexCardsLoaded(indexCards: [
-                  indexCardStub,
-                ]),
-              ]),
-            );
-            await pumpIndexCardOverview(tester);
+            await pumpIndexCardOverviewWithRepos(tester);
             expect(find.byType(IndexCardItemWidget), findsNothing);
             await tester.tap(getAddCardButton);
             await tester.pumpAndSettle();
-            expect(find.byType(IndexCardItemWidget), findsOneWidget);
-            verify(() => indexCardOverviewBloc.add(any(
-                that: isA<AddIndexCard>().having(
-                    (final addIndexCard) => addIndexCard.indexCard.question,
-                    'indexCard.question',
-                    equals('What is the answer '
-                        'to life the universe and everything'))))).called(1);
+            expect(find.byType(IndexCardCreateViewPage), findsOneWidget);
           });
         });
 
         group('with pre-initialized-IndexCards', () {
           setUp(() {
-            when(() => deckRepositoryMock.fetchDeckById(deckStub.deckId!))
-                .thenAnswer((final _) async => deckStub);
+            when(() => indexCardRepositoryMock
+                    .fetchIndexCard(indexCardStub.indexCardId!))
+                .thenAnswer((final _) async => indexCardStub);
             when(() => indexCardOverviewBloc.state)
                 .thenReturn(IndexCardsLoaded(indexCards: [indexCardStub]));
           });
@@ -186,6 +173,7 @@ void main() {
               Tab on IndexCard -> IndexCardViewPage of tabbed IndexCard is shown
               ''', (final tester) async {
             await pumpIndexCardOverviewWithRepos(tester);
+            await tester.pumpAndSettle();
             expect(find.byType(IndexCardItemWidget), findsOneWidget);
             await tester.tap(find.byType(IndexCardItemWidget));
             await tester.pumpAndSettle();
