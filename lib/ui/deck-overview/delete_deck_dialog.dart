@@ -1,8 +1,8 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
+import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 /// A dialog that asks the user if they want to delete a deck.
 class DeleteDeckDialog extends StatelessWidget {
   /// Creates a new delete deck dialog.
@@ -13,24 +13,19 @@ class DeleteDeckDialog extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) => AlertDialog(
-        title: const Text(
+        title: Text(
           'Delete Deck',
-          style: TextStyle(
-            color: Color(0xFF20EFC0),
-            fontWeight: FontWeight.bold,
-          ),
+          style: mainTheme.textTheme.titleMedium,
         ),
         content: RichText(
           text: TextSpan(
-            style: const TextStyle(
-              color: Colors.white,
-            ),
+            style: mainTheme.textTheme.bodyMedium,
             children: [
               const TextSpan(text: 'Are you sure you want to delete the Deck '),
               TextSpan(
                 text: _deck.name,
-                style: const TextStyle(
-                  color: Color(0xFF20EFC0),
+                style: TextStyle(
+                  color: mainTheme.colorScheme.primary,
                 ),
               ),
               const TextSpan(text: '?'),
@@ -44,10 +39,11 @@ class DeleteDeckDialog extends StatelessWidget {
               context.read<DeckOverviewBloc>().add(DeleteDeck(deck: _deck));
               Navigator.pop(context);
             },
-            child: const Text(
+            child: Text(
               'Delete',
               style: TextStyle(
-                color: Colors.red,
+                color: mainTheme.colorScheme.error,
+                fontSize: 16,
               ),
             ),
           ),
@@ -55,14 +51,12 @@ class DeleteDeckDialog extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text(
+            child: Text(
               'Cancel',
-              style: TextStyle(
-                color: Colors.white,
-              ),
+              style: mainTheme.textTheme.bodyMedium
             ),
           ),
         ],
-        backgroundColor: const Color(0xFF414141),
+        backgroundColor: mainTheme.colorScheme.background,
       );
 }

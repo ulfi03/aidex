@@ -1,5 +1,5 @@
+import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
-
 /// This widget is used to display an error message.
 class ErrorDisplayWidget extends StatelessWidget {
 
@@ -14,17 +14,17 @@ class ErrorDisplayWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const Icon(
+          Icon(
             Icons.error,
             size: 50,
-            color: Colors.red,
+            color: mainTheme.colorScheme.error,
           ),
           const SizedBox(height: 10),
           Text(
             errorMessage,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
-              color: Colors.white,
+              color: mainTheme.colorScheme.onError,
             ),
             textAlign: TextAlign.center,
           ),

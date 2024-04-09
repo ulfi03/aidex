@@ -1,14 +1,13 @@
+import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
-
 /// A widget used to display the Snackbar for creating a deck.
 class CreateDeckSnackbar extends SnackBar {
 
   /// Constructor for the [CreateDeckSnackbar].
   CreateDeckSnackbar({required final VoidCallback onManual,
-    required final VoidCallback onAI,
-    super.key})
+    required final VoidCallback onAI, super.key})
       : super(
-    backgroundColor: const Color(0xFF414141),
+    backgroundColor: mainTheme.colorScheme.background,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(20),
@@ -96,19 +95,15 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Center(
+          Center(
             child: Padding(
-              padding: EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.only(bottom: 10),
               child: Column(
                 children: [
                   Text(
                     key: CreateDeckSnackbar.snackbarTitleKey,
                     'Create Deck',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: mainTheme.textTheme.titleLarge
                   ),
                 ],
               ),
@@ -117,43 +112,39 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
           ElevatedButton.icon(
             key: CreateDeckSnackbar.createManuallyButtonKey,
             onPressed: onManual,
-            icon: const Icon(
+            icon: Icon(
               Icons.person,
-              color: Color(0xFF20EFC0),
+              color: mainTheme.colorScheme.primary,
             ),
-            label: const Text(
+            label: Text(
               key: CreateDeckSnackbar.createManuallyTitleKey,
               'Create manually',
-              style: TextStyle(
-                color: Colors.white,
-              ),
+              style: mainTheme.textTheme.bodySmall
             ),
             style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
               backgroundColor: Colors.transparent,
               shadowColor: Colors.transparent,
               padding: EdgeInsets.zero,
+              elevation: 0,
             ),
           ),
           const SizedBox(height: 10),
           ElevatedButton.icon(
             onPressed: onAI,
-            icon: const Icon(
+            icon: Icon(
               Icons.smart_toy,
-              color: Color(0xFF20EFC0),
+              color: mainTheme.colorScheme.primary,
             ),
-            label: const Text(
+            label: Text(
               key: CreateDeckSnackbar.createAITitleKey,
               'Create with AI',
-              style: TextStyle(
-                color: Colors.white,
-              ),
+              style: mainTheme.textTheme.bodySmall
             ),
             style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
               backgroundColor: Colors.transparent,
               shadowColor: Colors.transparent,
               padding: EdgeInsets.zero,
+              elevation: 0,
             ),
           ),
         ],
