@@ -13,9 +13,19 @@ class IndexCardRepository {
   Future<List<IndexCard>> fetchIndexCards(final int deckId) async =>
       _indexCardProvider.getIndexCards(deckId);
 
+  /// Fetches an index card.
+  Future<IndexCard?> fetchIndexCard(final int indexCardId) async =>
+      _indexCardProvider.getIndexCard(indexCardId);
+
   /// Adds an index card.
   Future<IndexCard> addIndexCard(final IndexCard indexCard) async =>
       _indexCardProvider.insert(indexCard);
+
+  /// Updates an index card.
+  Future<bool> updateIndexCard(final IndexCard indexCard) async {
+    final int count = await _indexCardProvider.update(indexCard);
+    return count == 1;
+  }
 
   /// Removes all index cards.
   Future<void> removeAllIndexCards(final int deckId) async =>

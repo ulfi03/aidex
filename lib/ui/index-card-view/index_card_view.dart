@@ -1,11 +1,11 @@
 import 'package:aidex/bloc/index_card_view_bloc.dart';
 import 'package:aidex/data/model/index_card.dart';
-import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
+import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/components/rich_text_editor_widget.dart';
+import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flip_card/flip_card.dart';
-import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,20 +13,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class IndexCardViewPage extends StatelessWidget {
   /// Constructor for the [IndexCardViewPage].
   const IndexCardViewPage(
-      {required final IndexCard initialIndexCard, super.key})
-      : _initialIndexCard = initialIndexCard;
+      {required final int indexCardId,
+      required final String deckName,
+      super.key})
+      : _indexCardId = indexCardId,
+        _deckName = deckName;
 
-  /// The index card to be displayed.
-  final IndexCard _initialIndexCard;
+  final int _indexCardId;
+  final String _deckName;
 
   @override
   Widget build(final BuildContext context) => BlocProvider(
         create: (final context) => IndexCardViewBloc(
-            initialIndexCard: _initialIndexCard,
-            indexCardRepository: context.read<IndexCardRepository>(),
-            deckRepository: context.read<DeckRepository>()),
+          indexCardId: _indexCardId,
+          indexCardRepository: context.read<IndexCardRepository>(),
+        ),
         child: IndexCardView(
-          initialIndexCard: _initialIndexCard,
+          deckName: _deckName,
         ),
       );
 }
@@ -35,43 +38,38 @@ class IndexCardViewPage extends StatelessWidget {
 /// for an answer. The answer is displayed in a readonly rich text editor.
 class IndexCardView extends StatelessWidget {
   /// Constructor for the [IndexCardView].s
-  IndexCardView({required final IndexCard initialIndexCard, super.key})
-      : _editQuestionController =
-            TextEditingController(text: initialIndexCard.question),
-        _editAnswerController = RichTextEditorController(),
-        _flipCardController = FlipCardController() {
-    _editAnswerController.fromJson(initialIndexCard.answer);
-  }
+  const IndexCardView({required final String deckName, super.key})
+      : _deckName = deckName;
 
-  final TextEditingController _editQuestionController;
-  final RichTextEditorController _editAnswerController;
-  final FlipCardController _flipCardController;
+  final String _deckName;
 
   @override
   Widget build(final BuildContext context) =>
-      BlocListener<IndexCardViewBloc, IndexCardState>(
-        listenWhen: (final previous, final current) =>
-            current is IndexCardDeleted,
-        listener: (final context, final state) => Navigator.pop(context),
-        child: BlocBuilder<IndexCardViewBloc, IndexCardState>(
-            builder: (final context, final state) => Scaffold(
-                appBar: AppBar(
-                  title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(state.deckName,
-                            style: mainTheme.textTheme.titleSmall),
-                        Text('Index Card ${state.indexCardId}'),
-                      ]),
-                  actions: _getActions(context, state),
-                ),
-                body: _getBody(state))),
-      );
+      BlocListener<IndexCardViewBloc, IndexCardViewState>(
+          listenWhen: (final previous, final current) =>
+              current is IndexCardDeleted,
+          listener: (final context, final state) => Navigator.pop(context),
+          child: BlocBuilder<IndexCardViewBloc, IndexCardViewState>(
+              builder: (final context, final state) => Scaffold(
+                  appBar: AppBar(
+                    title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(_deckName,
+                              style: mainTheme.textTheme.titleSmall),
+                          Text(
+                            'Index Card ${state.indexCardId}',
+                            style: mainTheme.textTheme.titleMedium,
+                          ),
+                        ]),
+                    actions: _getActions(context, state),
+                  ),
+                  body: _getBody(state))));
 
   // ################################################################# Actions
 
   List<Widget> _getActions(
-      final BuildContext context, final IndexCardState state) {
+      final BuildContext context, final IndexCardViewState state) {
     if (state is IndexCardViewing) {
       return [
         IconButton(
@@ -86,67 +84,49 @@ class IndexCardView extends StatelessWidget {
             Icons.delete,
             color: mainTheme.colorScheme.primary,
           ),
-          onPressed: () => _onDelete(context, state.indexCard),
+          onPressed: () => _onDelete(context, state.indexCardId),
         )
-      ];
-    } else if (state is IndexCardEditing) {
-      return [
-        IconButton(
-          icon: Icon(Icons.save, color: mainTheme.colorScheme.primary),
-          onPressed: () => _onSave(
-              context, state.indexCard.indexCardId!, state.indexCard.deckId),
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.cancel,
-            color: mainTheme.colorScheme.primary,
-          ),
-          onPressed: () => _onCancel(context, state.indexCard),
-        ),
       ];
     } else {
       return [];
     }
   }
 
-  void _onEdit(final BuildContext context, final IndexCard card) {
-    context.read<IndexCardViewBloc>().add(EditIndexCard(indexCard: card));
+  void _onEdit(final BuildContext context, final IndexCard indexCard) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+            builder: (final context) => IndexCardEditRoute(
+                initialIndexCard: indexCard, deckName: _deckName)))
+        .then((final value) => context
+            .read<IndexCardViewBloc>()
+            .add(FetchIndexCard(indexCardId: indexCard.indexCardId!)));
   }
 
-  void _onDelete(final BuildContext context, final IndexCard card) {
-    context.read<IndexCardViewBloc>().add(DeleteIndexCard(indexCard: card));
+  void _onDelete(final BuildContext context, final int indexCardId) {
+    context
+        .read<IndexCardViewBloc>()
+        .add(DeleteIndexCard(indexCardId: indexCardId));
   }
 
-  void _onSave(
-      final BuildContext context, final int indexCardId, final int deckId) {
-    final card = IndexCard(
-        indexCardId: indexCardId,
-        question: _editQuestionController.text,
-        answer: _editAnswerController.toJson(),
-        deckId: deckId);
-    context.read<IndexCardViewBloc>().add(SaveIndexCard(indexCard: card));
-  }
+// ################################################################# Body
 
-  void _onCancel(final BuildContext context, final IndexCard card) {
-    context.read<IndexCardViewBloc>().add(ViewIndexCard(indexCard: card));
-  }
-
-  // ################################################################# Body
-
-  Widget _getBody(final IndexCardState state) {
-    if (state is IndexCardViewing) {
+  Widget _getBody(final IndexCardViewState state) {
+    if (state is IndexCardInitial || state is IndexCardDeleted) {
+      return const SizedBox.shrink();
+    } else if (state is IndexCardViewing) {
       return _getView(state.indexCard);
-    } else if (state is IndexCardEditing) {
-      return _getEditView(state.indexCard);
-    } else {
+    } else if (state is IndexCardLoading) {
       return const Center(child: CircularProgressIndicator());
+    } else if (state is IndexCardError) {
+      return ErrorDisplayWidget(errorMessage: state.message);
+    } else {
+      return const ErrorDisplayWidget(errorMessage: 'Something went wrong!');
     }
   }
 
   Widget _getView(final IndexCard card) => Container(
       constraints: const BoxConstraints.expand(),
       child: FlipCard(
-          controller: _flipCardController,
           fill: Fill.fillFront,
           // The side to initially display.
           front: Card(
@@ -159,30 +139,6 @@ class IndexCardView extends StatelessWidget {
               child: AbsorbPointer(
                   child: RichTextEditorWidget(
                 readonly: true,
-                contentJson: card.answer,
+                controller: RichTextEditorController(contentJson: card.answer),
               )))));
-
-  Widget _getEditView(final IndexCard card) => Column(
-        children: <Widget>[
-          // display deck name
-          Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Deck: ${card.deckId}',
-                  style: const TextStyle(fontWeight: FontWeight.bold))),
-          TextField(
-            decoration: const InputDecoration(
-              labelText: 'Question',
-            ),
-            controller: _editQuestionController,
-          ),
-          const Align(alignment: Alignment.centerLeft, child: Text('Answer')),
-          Expanded(
-            child: RichTextEditorWidget(
-              controller: _editAnswerController,
-              readonly: false,
-              contentJson: card.answer,
-            ),
-          ),
-        ],
-      );
 }

@@ -1,88 +1,71 @@
 import 'package:aidex/data/model/index_card.dart';
-import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// The business logic component of the IndexCardView feature.
-class IndexCardViewBloc extends Bloc<IndexCardEvent, IndexCardState> {
+class IndexCardViewBloc extends Bloc<IndexCardEvent, IndexCardViewState> {
   /// Constructor for the [IndexCardViewBloc].
   IndexCardViewBloc(
-      {required final IndexCard initialIndexCard,
-      required final IndexCardRepository indexCardRepository,
-      required final DeckRepository deckRepository})
+      {required final int indexCardId,
+      required final IndexCardRepository indexCardRepository})
       : _indexCardRepository = indexCardRepository,
-        super(IndexCardInitial(indexCardId: initialIndexCard.indexCardId!)) {
+        super(IndexCardInitial(indexCardId: indexCardId)) {
     // event handlers
-    on<ViewIndexCard>((final event, final emit) async {
-      if (_deckName == null) {
-        final deck = await deckRepository.fetchDeckById(event.indexCard.deckId);
-        _deckName = deck!.name;
+    on<FetchIndexCard>((final event, final emit) async {
+      emit(IndexCardLoading(indexCardId: indexCardId));
+      final IndexCard? indexCard =
+          await _indexCardRepository.fetchIndexCard(event.indexCardId);
+      if (indexCard == null) {
+        emit(IndexCardError(
+            indexCardId: indexCardId, message: 'Failed to load index card!'));
+      } else {
+        emit(IndexCardViewing(indexCard: indexCard));
       }
-      emit(IndexCardViewing(indexCard: event.indexCard, deckName: _deckName!));
-    });
-    on<EditIndexCard>((final event, final emit) {
-      emit(IndexCardEditing(indexCard: event.indexCard, deckName: _deckName!));
     });
     on<DeleteIndexCard>((final event, final emit) async {
-      final bool success = await _indexCardRepository
-          .removeIndexCard(event.indexCard.indexCardId!);
+      final bool success =
+          await _indexCardRepository.removeIndexCard(event.indexCardId);
       if (success) {
-        emit(IndexCardDeleted(deckId: event.indexCard.deckId));
+        emit(IndexCardDeleted(indexCardId: indexCardId));
       } else {
         emit(IndexCardError(
-            indexCardId: event.indexCard.indexCardId!,
-            deckName: _deckName!,
-            message: '''
-            Failed to delete index card with id ${event.indexCard.indexCardId}
-            from deck $_deckName!
-                '''));
+            indexCardId: indexCardId, message: 'Failed to delete index card!'));
       }
     });
-    on<SaveIndexCard>((final event, final emit) async {
-      emit(SavingIndexCard(
-          indexCardId: event.indexCard.indexCardId!, deckName: _deckName!));
-      final IndexCard savedIndexCard =
-          await _indexCardRepository.addIndexCard(event.indexCard);
-      add(ViewIndexCard(indexCard: savedIndexCard));
-    });
     // initial
-    add(ViewIndexCard(indexCard: initialIndexCard));
+    add(FetchIndexCard(indexCardId: indexCardId));
   }
 
-  String? _deckName;
   final IndexCardRepository _indexCardRepository;
 }
 
 // ################################################################# States
 
 /// The states that can be emitted by the IndexCardViewBloc.
-abstract class IndexCardState {
-  /// Constructor for the [IndexCardState].
-  IndexCardState({required this.indexCardId, required this.deckName});
+abstract class IndexCardViewState {
+  /// Constructor for the [IndexCardViewState].
+  IndexCardViewState({required this.indexCardId});
 
   /// The index card id.
   final int indexCardId;
-
-  /// The deck name.
-  final String deckName;
 }
 
-/// The initial state of the IndexCardViewBloc.
-class IndexCardInitial extends IndexCardState {
+/// The state when the index card is being loaded.
+class IndexCardInitial extends IndexCardViewState {
   /// Constructor for the [IndexCardInitial].
-  IndexCardInitial({required super.indexCardId}) : super(deckName: '');
+  IndexCardInitial({required super.indexCardId});
 }
 
-/// The state when the index card is loading.
-class SavingIndexCard extends IndexCardState {
-  /// Constructor for the [SavingIndexCard].
-  SavingIndexCard({required super.indexCardId, required super.deckName});
+/// The state when the index card is being loaded.
+class IndexCardLoading extends IndexCardViewState {
+  /// Constructor for the [IndexCardLoading].
+  IndexCardLoading({required super.indexCardId});
 }
 
 /// The state when the index card is being viewed.
-class IndexCardViewing extends IndexCardState {
+class IndexCardViewing extends IndexCardViewState {
   /// Constructor for the [IndexCardViewing].
-  IndexCardViewing({required this.indexCard, required super.deckName})
+  IndexCardViewing({required this.indexCard})
       : super(indexCardId: indexCard.indexCardId!);
 
   /// The index card to view.
@@ -90,38 +73,21 @@ class IndexCardViewing extends IndexCardState {
 }
 
 /// The state when an error occurred while loading the index card.
-class IndexCardError extends IndexCardState {
+class IndexCardError extends IndexCardViewState {
   /// Constructor for the [IndexCardError].
   IndexCardError({
-    required super.indexCardId,
-    required super.deckName,
     required this.message,
+    required super.indexCardId,
   });
 
   /// The error message.
   final String message;
 }
 
-/// The state when the index card is being edited.
-class IndexCardEditing extends IndexCardState {
-  /// Constructor for the [IndexCardEditing].
-  IndexCardEditing({
-    required this.indexCard,
-    required super.deckName,
-  }) : super(indexCardId: indexCard.indexCardId!);
-
-  /// The index card to edit.
-  final IndexCard indexCard;
-}
-
 /// The state when the index card was deleted.
-class IndexCardDeleted extends IndexCardState {
+class IndexCardDeleted extends IndexCardViewState {
   /// Constructor for the [IndexCardDeleted].
-  IndexCardDeleted({required this.deckId})
-      : super(indexCardId: -1, deckName: '');
-
-  /// The deck id.
-  final int deckId;
+  IndexCardDeleted({required super.indexCardId});
 }
 
 // ################################################################# Events
@@ -129,38 +95,20 @@ class IndexCardDeleted extends IndexCardState {
 /// The events that can be processed by the IndexCardViewBloc.
 abstract class IndexCardEvent {}
 
-/// The event to view an index card.
-class ViewIndexCard extends IndexCardEvent {
-  /// Constructor for the [ViewIndexCard].
-  ViewIndexCard({required this.indexCard});
+/// The event to load the index card.
+class FetchIndexCard extends IndexCardEvent {
+  /// Constructor for the [FetchIndexCard].
+  FetchIndexCard({required this.indexCardId});
 
   /// The index card id.
-  final IndexCard indexCard;
-}
-
-/// The event to edit an index card.
-class EditIndexCard extends IndexCardEvent {
-  /// Constructor for the [EditIndexCard].
-  EditIndexCard({required this.indexCard});
-
-  /// The index card to edit.
-  final IndexCard indexCard;
+  final int indexCardId;
 }
 
 /// the event to delete an index card.
 class DeleteIndexCard extends IndexCardEvent {
   /// Constructor for the [DeleteIndexCard].
-  DeleteIndexCard({required this.indexCard});
+  DeleteIndexCard({required this.indexCardId});
 
-  /// The index card.
-  final IndexCard indexCard;
-}
-
-/// The event to save an index card.
-class SaveIndexCard extends IndexCardEvent {
-  /// Constructor for the [SaveIndexCard].
-  SaveIndexCard({required this.indexCard});
-
-  /// The index card to save.
-  final IndexCard indexCard;
+  /// The index card id.
+  final int indexCardId;
 }

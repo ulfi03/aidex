@@ -10,15 +10,10 @@ class RichTextEditorWidget extends StatelessWidget {
   RichTextEditorWidget(
       {required final readonly,
       final RichTextEditorController? controller,
-      final String? contentJson,
       super.key})
       : _readonly = readonly,
         _controller =
-            (controller != null) ? controller : RichTextEditorController() {
-    if (contentJson != null) {
-      _controller.fromJson(contentJson);
-    }
-  }
+            (controller != null) ? controller : RichTextEditorController();
 
   /// The controller for the quill editor.
   final RichTextEditorController _controller;
@@ -71,7 +66,13 @@ class RichTextEditorWidget extends StatelessWidget {
 /// Controller for the rich text editor.
 class RichTextEditorController {
   /// Constructor for the [RichTextEditorController].
-  RichTextEditorController() : _quillController = QuillController.basic();
+  RichTextEditorController({final String? contentJson})
+      : _quillController = QuillController.basic() {
+    if (contentJson != null) {
+      fromJson(contentJson);
+    }
+  }
+
   final QuillController _quillController;
 
   /// The controller for the quill editor.
