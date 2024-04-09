@@ -1,14 +1,13 @@
+import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
-
 /// A widget used to display the Snackbar for creating a deck.
 class CreateDeckSnackbar extends SnackBar {
 
   /// Constructor for the [CreateDeckSnackbar].
   CreateDeckSnackbar({required final VoidCallback onManual,
-    required final VoidCallback onAI,
-    required final BuildContext context, super.key})
+    required final VoidCallback onAI, super.key})
       : super(
-    backgroundColor: Theme.of(context).colorScheme.background,
+    backgroundColor: mainTheme.colorScheme.background,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(20),
@@ -104,11 +103,7 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
                   Text(
                     key: CreateDeckSnackbar.snackbarTitleKey,
                     'Create Deck',
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.bodyMedium?.color,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: mainTheme.textTheme.titleLarge
                   ),
                 ],
               ),
@@ -119,14 +114,12 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
             onPressed: onManual,
             icon: Icon(
               Icons.person,
-              color: Theme.of(context).colorScheme.primary,
+              color: mainTheme.colorScheme.primary,
             ),
             label: Text(
               key: CreateDeckSnackbar.createManuallyTitleKey,
               'Create manually',
-              style: TextStyle(
-                color: Theme.of(context).textTheme.bodyMedium?.color,
-              ),
+              style: mainTheme.textTheme.bodySmall
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
@@ -140,14 +133,12 @@ class _CreateDeckSnackbarWidget extends StatelessWidget {
             onPressed: onAI,
             icon: Icon(
               Icons.smart_toy,
-              color: Theme.of(context).colorScheme.primary,
+              color: mainTheme.colorScheme.primary,
             ),
             label: Text(
               key: CreateDeckSnackbar.createAITitleKey,
               'Create with AI',
-              style: TextStyle(
-                color: Theme.of(context).textTheme.bodyMedium?.color,
-              ),
+              style: mainTheme.textTheme.bodySmall
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,

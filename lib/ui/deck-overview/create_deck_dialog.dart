@@ -1,9 +1,9 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
+import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-
 /// This widget is used to display the create deck dialog.
 class CreateDeckDialog extends StatelessWidget {
   /// Constructor for the [CreateDeckDialog].
@@ -41,14 +41,11 @@ class CreateDeckDialog extends StatelessWidget {
     var pickerColor = Colors.transparent; // Initial color
     final deckNameController = TextEditingController();
     return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: mainTheme.colorScheme.background,
       title: Text(
         key: showCreateDeckDialogTitleKey,
         'Create Deck',
-        style: TextStyle(
-          color: Theme.of(context).textTheme.bodyMedium?.color,
-          fontSize: 18,
-        ),
+        style: mainTheme.textTheme.titleLarge 
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -68,26 +65,26 @@ class CreateDeckDialog extends StatelessWidget {
                   }
                   return null;
                 },
-                cursorColor: Theme.of(context).colorScheme.primary,
-                style: TextStyle(color: Theme.of(context).textTheme
-                .bodyMedium?.color),
+                cursorColor: mainTheme.colorScheme.primary,
+                style: mainTheme.textTheme.bodySmall,
                 decoration: InputDecoration(
                   hintText: 'deck name',
                   hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: mainTheme.colorScheme.onSurfaceVariant,
+                    fontSize: 14,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: mainTheme.colorScheme.primary,
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: mainTheme.colorScheme.primary,
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -105,12 +102,9 @@ class CreateDeckDialog extends StatelessWidget {
                           title: Text(
                             key: pickColorTextKey,
                             'Pick a color',
-                            style: TextStyle(
-                              color: Theme.of(context).textTheme
-                              .bodyMedium?.color,
-                            ),
+                            style: mainTheme.textTheme.bodyMedium
                           ),
-                          backgroundColor: Theme.of(context).
+                          backgroundColor: mainTheme.
                           colorScheme.background,
                           content: SingleChildScrollView(
                             child: BlockPicker(
@@ -128,10 +122,7 @@ class CreateDeckDialog extends StatelessWidget {
                               },
                               child: Text(
                                 'Select',
-                                style: TextStyle(
-                                  color: Theme.of(context)
-                                  .textTheme.bodyMedium?.color,
-                                ),
+                                style: mainTheme.textTheme.bodyMedium
                               ),
                             ),
                           ],
@@ -147,9 +138,7 @@ class CreateDeckDialog extends StatelessWidget {
                     child: Text(
                       key: selectColorTextKey,
                       'Color (optional)',
-                      style: TextStyle(
-                        color: Theme.of(context).textTheme.bodyMedium?.color,
-                      ),
+                      style: mainTheme.textTheme.bodySmall
                     ),
                   )),
           const SizedBox(height: 8),
@@ -164,9 +153,7 @@ class CreateDeckDialog extends StatelessWidget {
                 child: Text(
                   key: cancelButtonTextKey,
                   'Cancel',
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyMedium?.color,
-                  ),
+                  style: mainTheme.textTheme.bodySmall
                 ),
               ),
               ElevatedButton(key: okButtonKey,
@@ -177,14 +164,12 @@ class CreateDeckDialog extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  backgroundColor: mainTheme.colorScheme.primary,
                 ),
                 child: Text(
                   key: okButtonTextKey,
                   'Ok',
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyMedium?.color,
-                  ),
+                  style: mainTheme.textTheme.bodySmall
                 ),
               ),
             ],

@@ -2,9 +2,9 @@ import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/deck-overview/delete_deck_dialog.dart';
 import 'package:aidex/ui/routes.dart';
+import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 /// A widget that represents a deck item.
 class DeckItemWidget extends StatelessWidget {
   /// Creates a new deck item widget.
@@ -43,7 +43,7 @@ class DeckItemWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: deck.color,
           border: Border.all(
-            color: Theme.of(context).colorScheme.onBackground,
+            color: mainTheme.colorScheme.onBackground,
             width: 2,
           ),
           borderRadius: BorderRadius.circular(8),
@@ -56,7 +56,7 @@ class DeckItemWidget extends StatelessWidget {
               child: Icon(
                 Icons.layers,
                 size: iconSize * 0.4,
-                color: Theme.of(context).colorScheme.primary,
+                color: mainTheme.colorScheme.primary,
               ),
             ),
             Expanded(
@@ -68,7 +68,7 @@ class DeckItemWidget extends StatelessWidget {
                     key: deckNameKey,
                     deck.name,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, color: Theme.of(context)
+                    style: TextStyle(fontSize: 16, color: mainTheme
                     .colorScheme.onBackground),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
@@ -90,7 +90,7 @@ class DeckItemWidget extends StatelessWidget {
               },
               icon: Icon(
                 Icons.more_vert,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: mainTheme.colorScheme.onSurface,
               ),
               itemBuilder: (final context) => <PopupMenuEntry<String>>[
                 PopupMenuItem<String>(
@@ -98,18 +98,16 @@ class DeckItemWidget extends StatelessWidget {
                   child: ListTile(
                     leading: Icon(
                       Icons.delete,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: mainTheme.colorScheme.primary,
                     ),
                     title: Text(
                       'Delete Deck',
-                      style: TextStyle(
-                        color: Theme.of(context).textTheme.bodyMedium?.color,
-                      ),
+                      style: mainTheme.textTheme.titleSmall,
                     ),
                   ),
                 ),
               ],
-              color: Theme.of(context).colorScheme.background,
+              color: mainTheme.colorScheme.background,
             ),
           ],
         ),
