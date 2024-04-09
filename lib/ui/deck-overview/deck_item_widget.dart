@@ -2,9 +2,9 @@ import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/deck-overview/delete_deck_dialog.dart';
 import 'package:aidex/ui/routes.dart';
+import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 /// A widget that represents a deck item.
 class DeckItemWidget extends StatelessWidget {
   /// Creates a new deck item widget.
@@ -43,7 +43,7 @@ class DeckItemWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: deck.color,
           border: Border.all(
-            color: Colors.white,
+            color: mainTheme.colorScheme.onBackground,
             width: 2,
           ),
           borderRadius: BorderRadius.circular(8),
@@ -56,7 +56,7 @@ class DeckItemWidget extends StatelessWidget {
               child: Icon(
                 Icons.layers,
                 size: iconSize * 0.4,
-                color: const Color(0xFF20EFC0),
+                color: mainTheme.colorScheme.primary,
               ),
             ),
             Expanded(
@@ -68,7 +68,8 @@ class DeckItemWidget extends StatelessWidget {
                     key: deckNameKey,
                     deck.name,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16, color: Colors.white),
+                    style: TextStyle(fontSize: 16, color: mainTheme
+                    .colorScheme.onBackground),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),
@@ -87,28 +88,26 @@ class DeckItemWidget extends StatelessWidget {
                           child: DeleteDeckDialog(deck: deck)));
                 }
               },
-              icon: const Icon(
+              icon: Icon(
                 Icons.more_vert,
-                color: Colors.white,
+                color: mainTheme.colorScheme.onSurface,
               ),
               itemBuilder: (final context) => <PopupMenuEntry<String>>[
-                const PopupMenuItem<String>(
+                PopupMenuItem<String>(
                   value: 'delete',
                   child: ListTile(
                     leading: Icon(
                       Icons.delete,
-                      color: Color(0xFF20EFC0),
+                      color: mainTheme.colorScheme.primary,
                     ),
                     title: Text(
                       'Delete Deck',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
+                      style: mainTheme.textTheme.titleSmall,
                     ),
                   ),
                 ),
               ],
-              color: const Color(0xFF414141),
+              color: mainTheme.colorScheme.background,
             ),
           ],
         ),

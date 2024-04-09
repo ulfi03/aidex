@@ -4,9 +4,9 @@ import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
 import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
+import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 /// This widget is used to display the deck overview.
 class DeckOverviewPage extends StatelessWidget {
   /// Constructor for the [DeckOverviewPage].
@@ -41,25 +41,22 @@ class DeckOverview extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             centerTitle: true,
-            title: const Text(
+            title: Text(
               key: DeckOverviewPage.deckOverviewTitleKey,
               'All Decks',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
+              style: mainTheme.textTheme.titleLarge,
             ),
-            backgroundColor: const Color(0xFF121212),
+            backgroundColor: mainTheme.colorScheme.surface,
           ),
-          backgroundColor: const Color(0xFF121212),
+          backgroundColor: mainTheme.colorScheme.surface,
           body: BlocBuilder<DeckOverviewBloc, DeckState>(
             builder: (final context, final state) {
               if (state is DecksLoading) {
-                return const Center(
+                return Center(
                   child: CircularProgressIndicator(
                     valueColor:
-                        AlwaysStoppedAnimation<Color>(Color(0xFF20EFC0)),
+                        AlwaysStoppedAnimation<Color>(mainTheme
+                        .colorScheme.primary),
                   ),
                 );
               } else if (state is DecksLoaded) {
@@ -104,7 +101,7 @@ class AddButtonState extends State<AddButton> {
       visible: _isAddButtonVisible,
       child: FloatingActionButton(
         onPressed: () => onAddButtonPressed(context),
-        backgroundColor: const Color(0xFF20EFC0),
+        backgroundColor: mainTheme.colorScheme.primary,
         child: const Icon(Icons.add),
       ));
 

@@ -1,9 +1,9 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
+import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-
 /// This widget is used to display the create deck dialog.
 class CreateDeckDialog extends StatelessWidget {
   /// Constructor for the [CreateDeckDialog].
@@ -38,17 +38,14 @@ class CreateDeckDialog extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    var pickerColor = const Color(0xFF121212); // Initial color
+    var pickerColor = Colors.transparent; // Initial color
     final deckNameController = TextEditingController();
     return AlertDialog(
-      backgroundColor: const Color(0xFF414141),
-      title: const Text(
+      backgroundColor: mainTheme.colorScheme.background,
+      title: Text(
         key: showCreateDeckDialogTitleKey,
         'Create Deck',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-        ),
+        style: mainTheme.textTheme.titleLarge 
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -68,25 +65,26 @@ class CreateDeckDialog extends StatelessWidget {
                   }
                   return null;
                 },
-                cursorColor: const Color(0xFF20EFC0),
-                style: const TextStyle(color: Colors.white),
+                cursorColor: mainTheme.colorScheme.primary,
+                style: mainTheme.textTheme.bodySmall,
                 decoration: InputDecoration(
                   hintText: 'deck name',
-                  hintStyle: const TextStyle(
-                    color: Colors.white54,
+                  hintStyle: TextStyle(
+                    color: mainTheme.colorScheme.onSurfaceVariant,
+                    fontSize: 14,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFF20EFC0),
+                    borderSide: BorderSide(
+                      color: mainTheme.colorScheme.primary,
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFF20EFC0),
+                    borderSide: BorderSide(
+                      color: mainTheme.colorScheme.primary,
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -101,14 +99,13 @@ class CreateDeckDialog extends StatelessWidget {
                       showDialog(
                         context: context,
                         builder: (final context) => AlertDialog(
-                          title: const Text(
+                          title: Text(
                             key: pickColorTextKey,
                             'Pick a color',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
+                            style: mainTheme.textTheme.bodyMedium
                           ),
-                          backgroundColor: const Color(0xFF414141),
+                          backgroundColor: mainTheme.
+                          colorScheme.background,
                           content: SingleChildScrollView(
                             child: BlockPicker(
                               pickerColor: pickerColor,
@@ -123,11 +120,9 @@ class CreateDeckDialog extends StatelessWidget {
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text(
+                              child: Text(
                                 'Select',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
+                                style: mainTheme.textTheme.bodyMedium
                               ),
                             ),
                           ],
@@ -140,12 +135,10 @@ class CreateDeckDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       key: selectColorTextKey,
                       'Color (optional)',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
+                      style: mainTheme.textTheme.bodySmall
                     ),
                   )),
           const SizedBox(height: 8),
@@ -157,12 +150,10 @@ class CreateDeckDialog extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text(
+                child: Text(
                   key: cancelButtonTextKey,
                   'Cancel',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
+                  style: mainTheme.textTheme.bodySmall
                 ),
               ),
               ElevatedButton(key: okButtonKey,
@@ -173,14 +164,12 @@ class CreateDeckDialog extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF20EFC0),
+                  backgroundColor: mainTheme.colorScheme.primary,
                 ),
-                child: const Text(
+                child: Text(
                   key: okButtonTextKey,
                   'Ok',
-                  style: TextStyle(
-                    color: Color(0xFF414141),
-                  ),
+                  style: mainTheme.textTheme.bodySmall
                 ),
               ),
             ],
