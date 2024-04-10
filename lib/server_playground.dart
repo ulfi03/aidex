@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(MyApp());
@@ -10,30 +11,29 @@ class MyApp extends StatelessWidget {
   final String apiKey = '1234';
   final String userUuid = '1234';
 
-  Future<String> makeRequest() async {
+  TextEditingController responseController = TextEditingController();
+
+  Future<http.Response> makeRequest() async {
     final response = await http.post(
       Uri.parse(serverUrl),
       headers: {
         'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
         'user_uuid': userUuid,
         'openai_api_key': apiKey,
-      },
+      }),
     );
 
     if (response.statusCode == 200) {
-      return response.body;
+      return response;
     } else {
       throw Exception('Failed to make request: ${response.statusCode}');
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Server Playground',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+  Widget build(BuildContext context) => MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: Text('Server Playground'),
@@ -45,49 +45,26 @@ class MyApp extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   makeRequest().then((response) {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Server Response'),
-                          content: Text(response),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('Close'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
+                    print(response.body);
+                    responseController.text = response.body;
                   }).catchError((error) {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Error'),
-                          content: Text(error.toString()),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('Close'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
+                    responseController.text = 'Error: $error';
                   });
                 },
                 child: Text('Make Request'),
+              ),
+              SizedBox(height: 20),
+              TextField(
+                controller: responseController,
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: 'Response',
+                  border: OutlineInputBorder(),
+                ),
               ),
             ],
           ),
         ),
       ),
     );
-  }
 }
