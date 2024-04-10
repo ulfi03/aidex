@@ -32,7 +32,6 @@ class IndexCardItemWidget extends StatelessWidget {
     context
         .read<IndexCardOverviewBloc>()
         .add(IndexCardLongPressed(indexCardId: indexCard.indexCardId!));
-    print('############################ OnLongPress');
   }
 
   @override
