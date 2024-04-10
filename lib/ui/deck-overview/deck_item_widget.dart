@@ -11,8 +11,8 @@ class DeckItemWidget extends StatelessWidget {
   /// Creates a new deck item widget.
   const DeckItemWidget({
     required this.deck,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// A key used to identify the deck name widget in tests.
   static const deckNameKey = Key('deck_name');
@@ -132,30 +132,28 @@ class DeckItemWidget extends StatelessWidget {
     );
   }
 
-  void _renameDeck(
-      BuildContext context, Deck deck, DeckOverviewBloc deckOverviewBloc) {
+  void _renameDeck(final BuildContext context, final Deck deck,
+      final DeckOverviewBloc deckOverviewBloc) {
     showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Rename Deck'),
-          content: TextField(
-            controller: TextEditingController(text: deck.name),
-            decoration: InputDecoration(labelText: 'New name'),
-            onSubmitted: (newName) {
-              if (newName.trim().isEmpty) {
-                // Show an error message
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Deck name cannot be empty')),
-                );
-              } else {
-                deckOverviewBloc.add(RenameDeck(deck: deck, newName: newName));
-                Navigator.of(context).pop();
-              }
-            },
-          ),
-        );
-      },
+      builder: (final context) => AlertDialog(
+        title: const Text('Rename Deck'),
+        content: TextField(
+          controller: TextEditingController(text: deck.name),
+          decoration: const InputDecoration(labelText: 'New name'),
+          onSubmitted: (final newName) {
+            if (newName.trim().isEmpty) {
+              // Show an error message
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Deck name cannot be empty')),
+              );
+            } else {
+              deckOverviewBloc.add(RenameDeck(deck: deck, newName: newName));
+              Navigator.of(context).pop();
+            }
+          },
+        ),
+      ),
     );
   }
 }

@@ -86,6 +86,12 @@ create table ${Deck.tableDeck} (
   /// Closes the database.
   Future close() async => _db.close();
 
+  /// Renames a deck in the database.
+  ///
+  /// Takes a deck id as an [int] and a new name as a [String]. The method will
+  /// update the deck's name in the database.
+  ///
+  /// Throws an [Error] if the update operation fails.
   Future<void> rename(final int id, final String newName) async {
     await _db.update(
       Deck.tableDeck,

@@ -146,9 +146,19 @@ class DeleteDeck extends DeckEvent {
   final Deck deck;
 }
 
+/// [RenameDeck] is an event triggered when a deck needs to be renamed.
+///
+/// It requires a [Deck] object that needs to be renamed and a [String]
+/// representing the new name.
 class RenameDeck extends DeckEvent {
+  /// Creates a [RenameDeck] event.
+  ///
+  /// Requires the [Deck] to be renamed and the new name as a [String].
   const RenameDeck({required this.deck, required this.newName});
 
+  /// The [Deck] that needs to be renamed.
   final Deck deck;
+
+  /// The new name for the deck.
   final String newName;
 }
