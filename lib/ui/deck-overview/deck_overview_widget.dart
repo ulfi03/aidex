@@ -1,12 +1,14 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
-import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog_on_ai.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog_on_manual.dart';
 import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 /// This widget is used to display the deck overview.
 class DeckOverviewPage extends StatelessWidget {
   /// Constructor for the [DeckOverviewPage].
@@ -116,11 +118,11 @@ class AddButtonState extends State<AddButton> {
             key: DeckOverviewPage.createDeckSnackbarKey,
             onManual: () async {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              await _showCreateDeckDialog(context);
+              await _showCreateDeckDialogOnManual(context);
             },
             onAI: () async {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              context.read<DeckOverviewBloc>().add(const RemoveAllDecks());
+              await _showCreateDeckDialogOnAI(context);
               // Handle AI deck creation here
             },
           ),
@@ -135,13 +137,25 @@ class AddButtonState extends State<AddButton> {
   }
 }
 
-Future<void> _showCreateDeckDialog(final BuildContext context) async {
+Future<void> _showCreateDeckDialogOnManual(final BuildContext context) async {
   final deckOverviewBloc = context.read<DeckOverviewBloc>();
   await showDialog(
     context: context,
     builder: (final context) => BlocProvider.value(
       value: deckOverviewBloc,
-      child: const CreateDeckDialog(),
+      child: const CreateDeckDialogOnManual(),
+    ),
+  );
+}
+Future<void> _showCreateDeckDialogOnAI(final BuildContext context) async {
+  final deckOverviewBloc = context.read<DeckOverviewBloc>();
+  await showDialog(
+    context: context,
+    builder: (final context) => MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: deckOverviewBloc),
+      ],
+      child: const CreateDeckDialogOnAI(),      
     ),
   );
 }
