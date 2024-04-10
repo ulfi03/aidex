@@ -8,18 +8,20 @@ void main() {
 
 class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => MaterialApp(
+  Widget build(BuildContext context) => const MaterialApp(
       home: MyHomePage(),
     );
 }
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  TextEditingController _textFieldController = TextEditingController();
+  final TextEditingController _textFieldController = TextEditingController();
   String _response = '';
 
   Future<void> _makeRequest() async {
@@ -33,7 +35,6 @@ class _MyHomePageState extends State<MyHomePage> {
         'openai_api_key': '1234',
       }),
     );
-
     final decoded = json.decode(response.body);
 
     setState(() {
@@ -41,19 +42,17 @@ class _MyHomePageState extends State<MyHomePage> {
       _textFieldController.text = _response; // Update the text field with the response
     });
   }
-
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
-        title: Text('HTTP Request Example'),
+        title: const Text('HTTP Request Example'),
       ),
       body: Column(
         children: [
           Flexible(
             child: TextField(
               controller: _textFieldController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Response',
               ),
               maxLines: null, // Allow unlimited lines
@@ -61,11 +60,12 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           ElevatedButton(
-            onPressed: _makeRequest,
-            child: Text('Make Request'),
+            onPressed: () async {
+              await _makeRequest();
+            },
+            child: const Text('Make Request'),
           ),
         ],
       ),
     );
-  }
 }

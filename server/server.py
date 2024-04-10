@@ -21,7 +21,7 @@ def create_index_card_from_files():
     #file = request.files['file']
     openai_api_key = json.loads(request.data)['openai_api_key'] 
     uuid = json.loads(request.data)['user_uuid']
-    print(os.getcwd())
+    return jsonify({'openai_api_key': openai_api_key, 'user_uuid': uuid})
     open_api_key = "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"
     file = os.getcwd()+'/server/napoleon.pdf'
     file_type = filetype.guess(file)
@@ -92,8 +92,8 @@ def get_token_count_for_a_string(string):
 
 
 if __name__ == "__main__":
-    #from waitress import serve
-    #serve(app, host="0.0.0.0", port=5000) # for prod
-    app.run(debug=True) #for development
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=5000) # for prod
+    #app.run(debug=True) #for development
     #create_index_card_from_files()
    
