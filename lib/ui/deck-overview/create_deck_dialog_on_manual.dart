@@ -1,13 +1,14 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
+import 'package:aidex/ui/components/basic_error_dialog.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 /// This widget is used to display the create deck dialog.
-class CreateDeckDialog extends StatelessWidget {
-  /// Constructor for the [CreateDeckDialog].
-  const CreateDeckDialog({super.key});
+class CreateDeckDialogOnManual extends StatelessWidget {
+  /// Constructor for the [CreateDeckDialogOnManual].
+  const CreateDeckDialogOnManual({super.key});
 
   /// The key for the dialogMethods Widget title.
   static const Key showCreateDeckDialogTitleKey = Key('DeckDialogTitleKey');
@@ -158,6 +159,11 @@ class CreateDeckDialog extends StatelessWidget {
               ),
               ElevatedButton(key: okButtonKey,
                 onPressed: () async {
+                  if (deckNameController.text == '') {
+                    await showBasicErrorDialog(context,
+                     'Please enter a deck name');
+                    return;
+                  }
                   context.read<DeckOverviewBloc>().add(AddDeck(
                       deck: Deck(
                           name: deckNameController.text, color: pickerColor)));

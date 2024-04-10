@@ -23,7 +23,7 @@ class IndexCardCreateViewPage extends StatelessWidget {
   Widget build(final BuildContext context) => BlocProvider(
       create: (final context) => IndexCardCreateBloc(
           indexCardRepository: context.read<IndexCardRepository>(),
-          deckId: _deckId),
+            deckId: _deckId),
       child: IndexCardCreateView(
         deckName: _deckName,
       ));

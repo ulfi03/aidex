@@ -1,6 +1,6 @@
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
-import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog_on_manual.dart';
 import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
@@ -90,17 +90,18 @@ void main() {
       await tester.tap(manualCreateButton);
       await tester.pumpAndSettle();
 
-      final createDeckDialog = find.byType(CreateDeckDialog);
+      final createDeckDialog = find.byType(CreateDeckDialogOnManual);
       expect(createDeckDialog, findsOneWidget);
       // enter deck name
-      final deckNameField = find.byKey(CreateDeckDialog.deckNameTextFieldKey);
+      final deckNameField = find.byKey(CreateDeckDialogOnManual
+      .deckNameTextFieldKey);
       expect(deckNameField, findsOneWidget);
       await tester.enterText(deckNameField, 'Deck 3');
       await tester.pumpAndSettle();
 
       // select color
       final openColorPickerButton =
-          find.byKey(CreateDeckDialog.colorPickerButtonKey);
+          find.byKey(CreateDeckDialogOnManual.colorPickerButtonKey);
       expect(openColorPickerButton, findsOneWidget);
       await tester.tap(openColorPickerButton);
       await tester.pumpAndSettle();
@@ -127,13 +128,14 @@ void main() {
 
       // press color picker 'Select' button
       final selectColorButton =
-          find.byKey(CreateDeckDialog.colorPickerSelectButtonKey);
+          find.byKey(CreateDeckDialogOnManual.colorPickerSelectButtonKey);
       expect(selectColorButton, findsOneWidget);
       await tester.tap(selectColorButton);
       await tester.pumpAndSettle();
 
       // tap ok button
-      final createDeckOkButton = find.byKey(CreateDeckDialog.okButtonKey);
+      final createDeckOkButton = find.byKey(
+        CreateDeckDialogOnManual.okButtonKey);
       expect(createDeckOkButton, findsOneWidget);
       await tester.tap(createDeckOkButton);
       await tester.pumpAndSettle();
