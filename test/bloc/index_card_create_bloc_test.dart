@@ -54,8 +54,9 @@ void main() {
               bloc.add(CreateIndexCard(indexCard: indexCardStub)),
           expect: () => [isA<IndexCardSaving>(), isA<IndexCardCreateError>()]);
 
-      blocTest(
-          'Emits [IndexCardSaving, IndexCardCreateError] when no id is assigned to index card',
+      blocTest('''
+          Emits [IndexCardSaving, IndexCardCreateError] when no id is assigned to index card
+          ''',
           setUp: () {
             when(() => indexCardRepository.addIndexCard(indexCardStub))
                 .thenAnswer((final _) async =>
@@ -67,8 +68,9 @@ void main() {
               bloc.add(CreateIndexCard(indexCard: indexCardStub)),
           expect: () => [isA<IndexCardSaving>(), isA<IndexCardCreateError>()]);
 
-      blocTest(
-          'Emits [IndexCardSaving, IndexCardCreateError] when an id of "0" is assigned to the created index card',
+      blocTest('''
+          Emits [IndexCardSaving, IndexCardCreateError] when an id of "0" is assigned to the created index card
+          ''',
           setUp: () {
             when(() => indexCardRepository.addIndexCard(indexCardStub))
                 .thenAnswer((final _) async => IndexCard(
