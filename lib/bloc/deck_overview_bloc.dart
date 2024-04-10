@@ -47,6 +47,14 @@ class DeckOverviewBloc extends Bloc<DeckEvent, DeckState> {
         emit(DecksError(message: e.toString()));
       }
     });
+    on<RenameDeck>((final event, final emit) async {
+      try {
+        await _deckRepository.renameDeck(event.deck, event.newName);
+        add(const FetchDecks());
+      } on Exception catch (e) {
+        emit(DecksError(message: e.toString()));
+      }
+    });
   }
 }
 
@@ -136,4 +144,11 @@ class DeleteDeck extends DeckEvent {
 
   /// The deck to delete.
   final Deck deck;
+}
+
+class RenameDeck extends DeckEvent {
+  const RenameDeck({required this.deck, required this.newName});
+
+  final Deck deck;
+  final String newName;
 }

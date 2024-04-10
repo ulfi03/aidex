@@ -25,4 +25,7 @@ class DeckRepository {
 
   /// Removes all decks.
   Future<void> removeAllDecks() async => _deckProvider.deleteAll();
+
+  Future<void> renameDeck(final Deck deck, final String newName) async =>
+      _deckProvider.rename(deck.deckId!, newName);
 }

@@ -5,13 +5,14 @@ import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 /// A widget that represents a deck item.
 class DeckItemWidget extends StatelessWidget {
   /// Creates a new deck item widget.
   const DeckItemWidget({
     required this.deck,
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   /// A key used to identify the deck name widget in tests.
   static const deckNameKey = Key('deck_name');
@@ -65,11 +66,12 @@ class DeckItemWidget extends StatelessWidget {
                 child: Align(
                   alignment: const Alignment(-1.2, -0.5),
                   child: Text(
-                    key: deckNameKey,
                     deck.name,
+                    key: deckNameKey,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, color: mainTheme
-                    .colorScheme.onBackground),
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: mainTheme.colorScheme.onBackground),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),
@@ -78,14 +80,16 @@ class DeckItemWidget extends StatelessWidget {
             ),
             PopupMenuButton<String>(
               onSelected: (final value) async {
+                final DeckOverviewBloc deckOverviewBloc =
+                    context.read<DeckOverviewBloc>();
                 if (value == 'delete') {
-                  final DeckOverviewBloc deckOverviewBloc =
-                      context.read<DeckOverviewBloc>();
                   await showDialog(
                       context: context,
                       builder: (final context) => BlocProvider.value(
                           value: deckOverviewBloc,
                           child: DeleteDeckDialog(deck: deck)));
+                } else if (value == 'rename') {
+                  _renameDeck(context, deck, deckOverviewBloc);
                 }
               },
               icon: Icon(
@@ -106,12 +110,52 @@ class DeckItemWidget extends StatelessWidget {
                     ),
                   ),
                 ),
+                PopupMenuItem<String>(
+                  value: 'rename',
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.edit,
+                      color: mainTheme.colorScheme.primary,
+                    ),
+                    title: Text(
+                      'Rename Deck',
+                      style: mainTheme.textTheme.titleSmall,
+                    ),
+                  ),
+                ),
               ],
               color: mainTheme.colorScheme.background,
             ),
           ],
         ),
       ),
+    );
+  }
+
+  void _renameDeck(
+      BuildContext context, Deck deck, DeckOverviewBloc deckOverviewBloc) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Rename Deck'),
+          content: TextField(
+            controller: TextEditingController(text: deck.name),
+            decoration: InputDecoration(labelText: 'New name'),
+            onSubmitted: (newName) {
+              if (newName.trim().isEmpty) {
+                // Show an error message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Deck name cannot be empty')),
+                );
+              } else {
+                deckOverviewBloc.add(RenameDeck(deck: deck, newName: newName));
+                Navigator.of(context).pop();
+              }
+            },
+          ),
+        );
+      },
     );
   }
 }

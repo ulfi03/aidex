@@ -85,4 +85,13 @@ create table ${Deck.tableDeck} (
 
   /// Closes the database.
   Future close() async => _db.close();
+
+  Future<void> rename(final int id, final String newName) async {
+    await _db.update(
+      Deck.tableDeck,
+      {Deck.columnName: newName},
+      where: '${Deck.columnDeckId} = ?',
+      whereArgs: [id],
+    );
+  }
 }
