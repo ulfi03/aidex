@@ -92,8 +92,8 @@ def get_token_count_for_a_string(string):
 
 
 if __name__ == "__main__":
-    from waitress import serve
-    serve(app, host="0.0.0.0", port=5000) # for prod
-    #app.run(debug=True) #for development
+    #from waitress import serve
+    #serve(app, host="0.0.0.0", port=5000) # for prod
+    app.run(debug=True) #for development
     #create_index_card_from_files()
    

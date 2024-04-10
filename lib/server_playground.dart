@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -7,65 +6,88 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => const MaterialApp(
-      home: MyHomePage(),
-    );
-}
+  final String serverUrl = 'http://10.0.2.2:5000/create_index_cards_from_files';
+  final String apiKey = '1234';
+  final String userUuid = '1234';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  final TextEditingController _textFieldController = TextEditingController();
-  String _response = '';
-
-  Future<void> _makeRequest() async {
+  Future<String> makeRequest() async {
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:5000/create_index_cards_from_files'),
+      Uri.parse(serverUrl),
       headers: {
         'Content-Type': 'application/json',
+        'user_uuid': userUuid,
+        'openai_api_key': apiKey,
       },
-      body: jsonEncode({
-        'user_uuid': '1234',
-        'openai_api_key': '1234',
-      }),
     );
-    final decoded = json.decode(response.body);
 
-    setState(() {
-      _response = decoded.toString();
-      _textFieldController.text = _response; // Update the text field with the response
-    });
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      throw Exception('Failed to make request: ${response.statusCode}');
+    }
   }
+
   @override
-  Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(
-        title: const Text('HTTP Request Example'),
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Server Playground',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
-      body: Column(
-        children: [
-          Flexible(
-            child: TextField(
-              controller: _textFieldController,
-              decoration: const InputDecoration(
-                hintText: 'Response',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Server Playground'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  makeRequest().then((response) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Server Response'),
+                          content: Text(response),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('Close'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }).catchError((error) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Error'),
+                          content: Text(error.toString()),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('Close'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  });
+                },
+                child: Text('Make Request'),
               ),
-              maxLines: null, // Allow unlimited lines
-              keyboardType: TextInputType.multiline, // Enable multiline input
-            ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () async {
-              await _makeRequest();
-            },
-            child: const Text('Make Request'),
-          ),
-        ],
+        ),
       ),
     );
+  }
 }
