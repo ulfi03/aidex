@@ -1,6 +1,8 @@
+import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// A widget used to display an index card item.
 ///
@@ -25,12 +27,21 @@ class IndexCardItemWidget extends StatelessWidget {
   /// The function to be called when the widget is tapped.
   final Function(BuildContext context) onTap;
 
+  /// onLongPress function triggers selectedIndexCard
+  void onLongPress(final BuildContext context) {
+    context
+        .read<IndexCardOverviewBloc>()
+        .add(IndexCardLongPressed(indexCardId: indexCard.indexCardId!));
+    print('############################ OnLongPress');
+  }
+
   @override
   Widget build(final BuildContext context) {
     final iconSize = MediaQuery.of(context).size.width / 4;
 
     return GestureDetector(
       onTap: () => onTap(context),
+      onLongPress: () => onLongPress(context),
       child: Container(
         margin: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width / 32,
