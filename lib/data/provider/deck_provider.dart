@@ -43,7 +43,7 @@ create table ${Deck.tableDeck} (
     if (maps.isNotEmpty) {
       return maps.first[Deck.columnDeckId]+1 as int; /// dont remove +1!
     }
-    return -1;
+    return 0;
   }
   /// Returns all decks from the database.
   Future<List<Deck>> getDecks() async {

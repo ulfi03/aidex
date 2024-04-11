@@ -258,10 +258,6 @@ class CreateDeckDialogOnAI extends StatelessWidget {
                     // get the deck id from the deck we just created
                     final int deckId = await context.read<DeckRepository>()
                     .getLastDeckId();
-                    if (deckId == -1) {
-                      print("Deck couldnt be found by name");
-                      return;
-                    }
                     print('Last Deck ID: $deckId');
 
                     // initialising the arrays
@@ -270,20 +266,21 @@ class CreateDeckDialogOnAI extends StatelessWidget {
 
                     // start of server inquiry
                     print("Now making Server request");
-                    final response = await http.post(
+                    final request = http.MultipartRequest(
+                      'POST',
                       Uri.parse('https://aidex-server.onrender.com/create_index_cards_from_files'),
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                      body: jsonEncode({
-                        'user_uuid': '1234',
-                        'openai_api_key': '1234',
-                      }),
                     );
-
+                    request.fields['user_uuid'] = '1234';
+                    request.fields['openai_api_key'] = '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';
+                    request.files.add(await http.MultipartFile.fromPath(
+                      'file',
+                      result!.files.first.path!,
+                    ));
+                    final response = await request.send();
                     //server response handling
-                    final jsonResponse = jsonDecode(response.body);
-                    final ausgabe = jsonResponse['ausgabe'];
+                    final jsonResponse = await response.stream.bytesToString();
+                    print(jsonResponse);
+                    final ausgabe = jsonDecode(jsonResponse)['ausgabe'];
                     for (final item in ausgabe) {
                       final frage = item['Frage'];
                       final antwort = item['Antwort'];
@@ -293,17 +290,15 @@ class CreateDeckDialogOnAI extends StatelessWidget {
                       print('Antwort: $antwort');
                     }
 
-                    //creating index cards from server response
                     for (int i = 0; i < questions.length; i++) {
                       final IndexCard indexCard = IndexCard(
                         deckId: deckId,
                         question: questions[i],
                         answer: '[{"insert":"${answers[i]}\\n"}]',
                       );
-                      await context.read<IndexCardRepository>()
-                      .addIndexCard(indexCard);
+                      await context.read<IndexCardRepository>().addIndexCard(indexCard);
                     }
-
+        
                     //closing the menu, once everything is done
                     Navigator.pop(context);
                 },
