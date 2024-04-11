@@ -19,7 +19,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class IndexCardItemWidget extends StatelessWidget {
   /// Constructor for the [IndexCardItemWidget].
   const IndexCardItemWidget(
-      {required this.indexCard, required this.onTap, super.key});
+      {required this.indexCard,
+      required this.onTap,
+      required this.isInSelectedMode,
+      required this.indexCardIds,
+      super.key});
 
   /// The index card to be displayed.
   final IndexCard indexCard;
@@ -27,11 +31,21 @@ class IndexCardItemWidget extends StatelessWidget {
   /// The function to be called when the widget is tapped.
   final Function(BuildContext context) onTap;
 
+  ///toggle Widget between selected- and unselected-Mode
+  final bool isInSelectedMode;
+
+  /// The index card ids.
+  final List<int> indexCardIds;
+
   /// onLongPress function triggers selectedIndexCard
-  void onLongPress(final BuildContext context) {
-    context
-        .read<IndexCardOverviewBloc>()
-        .add(IndexCardLongPressed(indexCardId: indexCard.indexCardId!));
+  void onSelected(final BuildContext context) {
+    final bool select = !indexCardIds.contains(indexCard.indexCardId);
+    context.read<IndexCardOverviewBloc>().add(
+          IndexCardLongPressed(
+              indexCardIds: List.from(indexCardIds),
+              indexCardId: indexCard.indexCardId!,
+              select: select),
+        );
   }
 
   @override
@@ -39,15 +53,17 @@ class IndexCardItemWidget extends StatelessWidget {
     final iconSize = MediaQuery.of(context).size.width / 4;
 
     return GestureDetector(
-      onTap: () => onTap(context),
-      onLongPress: () => onLongPress(context),
+      onTap: () => isInSelectedMode ? onSelected(context) : onTap(context),
+      onLongPress: () => onSelected(context),
       child: Container(
         margin: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width / 32,
           vertical: MediaQuery.of(context).size.width / 64,
         ),
         decoration: BoxDecoration(
-          color: mainTheme.colorScheme.surface,
+          color: (indexCardIds.contains(indexCard.indexCardId))
+              ? mainTheme.colorScheme.onSurfaceVariant
+              : mainTheme.colorScheme.surface,
           // Set the background color from the deck
           border: Border.all(
             color: Colors.white,
@@ -57,6 +73,17 @@ class IndexCardItemWidget extends StatelessWidget {
         ),
         child: Row(
           children: [
+            if (isInSelectedMode)
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Icon(
+                  (indexCardIds.contains(indexCard.indexCardId))
+                      ? Icons.check_circle_outline
+                      : Icons.circle_outlined,
+                  size: iconSize * 0.2,
+                  color: mainTheme.colorScheme.primary,
+                ),
+              ),
             Padding(
               padding: const EdgeInsets.all(8),
               child: Icon(

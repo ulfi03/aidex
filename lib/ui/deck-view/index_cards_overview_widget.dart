@@ -78,12 +78,14 @@ class IndexCardOverview extends StatelessWidget {
                     return IndexCardsContainer(
                         indexCards: state.indexCards,
                         deckName: deck.name,
-                        isSelected: true);
+                        selectedCardsIds: state.indexCardIds,
+                        isInSelectedMode: true);
                   } else if (state is IndexCardsLoaded) {
                     return IndexCardsContainer(
                         indexCards: state.indexCards,
                         deckName: deck.name,
-                        isSelected: false);
+                        selectedCardsIds: const [],
+                        isInSelectedMode: false);
                   } else if (state is IndexCardsError) {
                     return ErrorDisplayWidget(errorMessage: state.message);
                   } else {
@@ -102,11 +104,13 @@ class IndexCardsContainer extends StatelessWidget {
   const IndexCardsContainer(
       {required final List<IndexCard> indexCards,
       required final String deckName,
-      required final bool isSelected,
+      required final bool isInSelectedMode,
+      required final List<int> selectedCardsIds,
       super.key})
       : _deckName = deckName,
         _indexCards = indexCards,
-        _isSelected = isSelected;
+        _isInSelectedMode = isInSelectedMode,
+        _selectedCardsIds = selectedCardsIds;
 
   /// The index cards to be displayed.
   final List<IndexCard> _indexCards;
@@ -115,7 +119,10 @@ class IndexCardsContainer extends StatelessWidget {
   final String _deckName;
 
   /// Whether the index card is selected.
-  final bool _isSelected;
+  final bool _isInSelectedMode;
+
+  ///selectedIndexCars
+  final List<int> _selectedCardsIds;
 
   @override
   Widget build(final BuildContext context) => Expanded(
@@ -140,6 +147,8 @@ class IndexCardsContainer extends StatelessWidget {
                                 .read<IndexCardOverviewBloc>()
                                 .add(const FetchIndexCards()));
                           },
+                          indexCardIds: _selectedCardsIds,
+                          isInSelectedMode: _isInSelectedMode,
                         ))
                     .toList(),
               ),
@@ -251,7 +260,7 @@ List<Widget> _getActions(
           Icons.delete,
           color: mainTheme.colorScheme.primary,
         ),
-        onPressed: () => _onRemove(context, state.indexCardId),
+        onPressed: () => _onRemove(context, state.indexCardIds),
       )
     ];
   } else {
@@ -260,8 +269,8 @@ List<Widget> _getActions(
 }
 
 /// The state of the DeleteCardButton.
-void _onRemove(final BuildContext context, final int indexCardId) {
+void _onRemove(final BuildContext context, final List<int> indexCardIds) {
   context
       .read<IndexCardOverviewBloc>()
-      .add(RemoveIndexCard(indexCardId: indexCardId));
+      .add(RemoveIndexCard(indexCardIds: indexCardIds));
 }

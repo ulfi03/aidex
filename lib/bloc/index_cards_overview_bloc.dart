@@ -38,19 +38,24 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
       }
     });
     on<IndexCardLongPressed>((final event, final emit) async {
+      event.select
+          ? event.indexCardIds.add(event.indexCardId)
+          : event.indexCardIds.remove(event.indexCardId);
       emit(IndexCardSelectionMode(
-          indexCardId: event.indexCardId, indexCards: indexCards!));
+          indexCardIds: event.indexCardIds, indexCards: indexCards!));
     });
     on<ExitIndexCardSelectionMode>((final event, final emit) async {
       emit(IndexCardsLoaded(indexCards: indexCards!));
     });
     on<RemoveIndexCard>((final event, final emit) async {
-      final bool success =
-          await _indexCardRepository.removeIndexCard(event.indexCardId);
-      if (success) {
-        add(const FetchIndexCards());
-      } else {
-        emit(const IndexCardsError(message: 'Failed to delete index card!'));
+      for (int i = 0; i < event.indexCardIds.length; i++) {
+        final bool success =
+            await _indexCardRepository.removeIndexCard(event.indexCardIds[i]);
+        if (success) {
+          add(const FetchIndexCards());
+        } else {
+          emit(const IndexCardsError(message: 'Failed to delete index card!'));
+        }
       }
     });
     on<RemoveAllIndexCards>((final event, final emit) async {
@@ -105,17 +110,19 @@ class IndexCardsLoaded extends IndexCardState {
 /// The index card is selected
 class IndexCardSelectionMode extends IndexCardState {
   /// Creates a new index card selected state.
-  const IndexCardSelectionMode(
-      {required this.indexCardId, required this.indexCards});
+  const IndexCardSelectionMode({
+    required this.indexCardIds,
+    required this.indexCards,
+  });
 
-  /// The index card id.
-  final int indexCardId;
+  /// The index card ids.
+  final List<int> indexCardIds;
 
   /// The indexCards in deck
   final List<IndexCard> indexCards;
 
   @override
-  List<Object> get props => [indexCardId];
+  List<Object> get props => [indexCardIds];
 }
 
 /// The index card error state.
@@ -147,23 +154,34 @@ class FetchIndexCards extends IndexCardEvent {
 ///The event for selecting an index card.
 class IndexCardLongPressed extends IndexCardEvent {
   /// Creates a new select card event.
-  const IndexCardLongPressed({required this.indexCardId});
+  IndexCardLongPressed(
+      {required this.indexCardIds,
+      required this.indexCardId,
+      required this.select});
+
+  /// The index card ids selected.
+  List<int> indexCardIds;
 
   /// The index card id.
   final int indexCardId;
+
+  /// select/unselect indexCard
+  final bool select;
 }
 
+///The event to exit CardSelectionMode
 class ExitIndexCardSelectionMode extends IndexCardEvent {
+  ///Creates ExitIndexCardSelectionMode event
   const ExitIndexCardSelectionMode();
 }
 
 /// The event for removing a card.
 class RemoveIndexCard extends IndexCardEvent {
   /// Creates a new remove card event.
-  const RemoveIndexCard({required this.indexCardId});
+  const RemoveIndexCard({required this.indexCardIds});
 
   /// The index card id.
-  final int indexCardId;
+  final List<int> indexCardIds;
 }
 
 /// The event for removing all cards.
