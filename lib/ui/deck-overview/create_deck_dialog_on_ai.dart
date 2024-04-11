@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
@@ -11,6 +12,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:http/http.dart' as http;
+
 /// This widget is used to display the create deck dialog.
 class CreateDeckDialogOnAI extends StatelessWidget {
   /// Constructor for the [CreateDeckDialogOnAI].
@@ -42,7 +45,6 @@ class CreateDeckDialogOnAI extends StatelessWidget {
 
   ///(Key to) Button to add the deck.
   static const Key okButtonKey = Key('OkButtonKey');
-
   @override
   Widget build(final BuildContext context) {
     var pickerColor = Colors.transparent; // Initial color
@@ -229,59 +231,81 @@ class CreateDeckDialogOnAI extends StatelessWidget {
               ),
               ElevatedButton(key: okButtonKey,
                 onPressed: () async {
-                  if (result == null) {
-                    if(deckNameController.text == ''){
+                    // verifying that all parameters have been set
+                    if (result == null) {
+                      if(deckNameController.text == ''){
                       await showBasicErrorDialog(context,
                        'Please enter a deck name\nNo file selected');
                       return;
-                    }else{
-                    await showBasicErrorDialog(context, 'No file selected');
+                      }else{
+                      await showBasicErrorDialog(context, 'No file selected');
+                      }
+                      return;
                     }
-                    return;
-                  }
-                  if (deckNameController.text == '') {
-                    await showBasicErrorDialog(context,
-                     'Please enter a deck name');
-                    return;
-                  }
-                  Navigator.pop(context);
-                  context.read<DeckOverviewBloc>().add(AddDeck(
-                    deck: Deck(
-                      name: deckNameController.text,
-                      color: pickerColor,
-                    ),
-                  ));
-                    final List<Deck> decks = await context
-                    .read<DeckRepository>()
-                    .fetchDecks();
-                    for (final deck in decks) {
-                      print('Deck ID: ${deck.deckId}, Deck Name: ${deck.name}');
+                    if (deckNameController.text == '') {
+                      await showBasicErrorDialog(context,
+                       'Please enter a deck name');
+                      return;
                     }
-                    final int lastDeckId = await context
-                    .read<DeckRepository>().getLastDeckId();
-                    print('Last Deck ID: $lastDeckId');
-                    final List<String> questions = <String>[
-                      'What year was Napoleon born?',
-                      'Where was Napoleon born?',
-                      "What was Napoleon's full name?",
-                      "What was Napoleon's height?",
-                    ];
+                    // add the deck like normal
+                    context.read<DeckOverviewBloc>().add(AddDeck(
+                      deck: Deck(
+                        name: deckNameController.text,
+                        color: pickerColor,
+                      ),
+                    ));
 
-                    final List<String> answers = <String>[
-                      '1769',
-                      'Corsica',
-                      'Napoleon Bonaparte',
-                      '5 feet 6 inches',
-                    ];
+                    // get the deck id from the deck we just created
+                    final int deckId = await context.read<DeckRepository>()
+                    .getLastDeckId();
+                    if (deckId == -1) {
+                      print("Deck couldnt be found by name");
+                      return;
+                    }
+                    print('Last Deck ID: $deckId');
+
+                    // initialising the arrays
+                    final List<String> questions = <String>[];
+                    final List<String> answers = <String>[];
+
+                    // start of server inquiry
+                    print("Now making Server request");
+                    final response = await http.post(
+                      Uri.parse('https://aidex-server.onrender.com/create_index_cards_from_files'),
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: jsonEncode({
+                        'user_uuid': '1234',
+                        'openai_api_key': '1234',
+                      }),
+                    );
+
+                    //server response handling
+                    final jsonResponse = jsonDecode(response.body);
+                    final ausgabe = jsonResponse['ausgabe'];
+                    for (final item in ausgabe) {
+                      final frage = item['Frage'];
+                      final antwort = item['Antwort'];
+                      questions.add(frage);
+                      answers.add(antwort);
+                      print('Frage: $frage');
+                      print('Antwort: $antwort');
+                    }
+
+                    //creating index cards from server response
                     for (int i = 0; i < questions.length; i++) {
                       final IndexCard indexCard = IndexCard(
-                        deckId: lastDeckId,
+                        deckId: deckId,
                         question: questions[i],
                         answer: '[{"insert":"${answers[i]}\\n"}]',
                       );
                       await context.read<IndexCardRepository>()
                       .addIndexCard(indexCard);
                     }
+
+                    //closing the menu, once everything is done
+                    Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: mainTheme.colorScheme.primary,

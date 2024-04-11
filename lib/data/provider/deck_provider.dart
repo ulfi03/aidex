@@ -41,7 +41,7 @@ create table ${Deck.tableDeck} (
         orderBy: '${Deck.columnDeckId} DESC',
         limit: 1);
     if (maps.isNotEmpty) {
-      return maps.first[Deck.columnDeckId] as int;
+      return maps.first[Deck.columnDeckId]+1 as int; /// dont remove +1!
     }
     return -1;
   }
@@ -80,14 +80,13 @@ create table ${Deck.tableDeck} (
         conflictAlgorithm: ConflictAlgorithm.replace);
     return deck;
   }
-
+  /// searches for a deck by its name and returns its id
   /// Delete a decks from the database.
   Future<int> delete(final int id) async => _db.delete(Deck.tableDeck,
       where: '${Deck.columnDeckId} = ?', whereArgs: [id]);
 
   /// Delete all decks from the database.
   Future<int> deleteAll() async => _db.delete(Deck.tableDeck);
-
   /// Update a decks from the database.
   Future<int> update(final Deck deck) async =>
       _db.update(Deck.tableDeck, deck.toMap(),
