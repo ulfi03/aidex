@@ -8,16 +8,16 @@ class DeckRepository {
       : _deckProvider = deckProvider;
 
   final DeckProvider _deckProvider;
-
+  /// Returns the id of the last deck.
+  Future<int> getLastDeckId() async => _deckProvider.getLastDeckId();
   /// Fetches the decks.
   Future<List<Deck>> fetchDecks() async => _deckProvider.getDecks();
-
   /// Fetches a deck by its id.
   Future<Deck?> fetchDeckById(final int deckId) async =>
       _deckProvider.getDeck(deckId);
 
   /// Adds a deck.
-  Future<void> addDeck(final Deck deck) async => _deckProvider.insert(deck);
+  Future<Deck> addDeck(final Deck deck) async => _deckProvider.insert(deck);
 
   /// Deletes a deck.
   Future<void> deleteDeck(final Deck deck) async =>

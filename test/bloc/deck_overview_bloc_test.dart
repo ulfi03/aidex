@@ -54,8 +54,8 @@ void main() {
     group('On AddDeck', () {
       blocTest('Add deck and reload decks',
           setUp: () {
-            when(() => deckRepository.addDeck(any()))
-                .thenAnswer((final _) async {});
+            //when(() => deckRepository.addDeck(any()))
+               // .thenAnswer((final _) async {});
             when(() => deckRepository.fetchDecks())
                 .thenAnswer((final _) async => []);
           },

@@ -1,9 +1,15 @@
 import 'dart:async';
 
+import 'package:aidex/bloc/deck_overview_bloc.dart';
+import 'package:aidex/data/model/deck.dart';
+import 'package:aidex/data/model/index_card.dart';
+import 'package:aidex/data/repo/deck_repository.dart';
+import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/components/basic_error_dialog.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 /// This widget is used to display the create deck dialog.
 class CreateDeckDialogOnAI extends StatelessWidget {
@@ -238,9 +244,44 @@ class CreateDeckDialogOnAI extends StatelessWidget {
                      'Please enter a deck name');
                     return;
                   }
-                  
-
                   Navigator.pop(context);
+                  context.read<DeckOverviewBloc>().add(AddDeck(
+                    deck: Deck(
+                      name: deckNameController.text,
+                      color: pickerColor,
+                    ),
+                  ));
+                    final List<Deck> decks = await context
+                    .read<DeckRepository>()
+                    .fetchDecks();
+                    for (final deck in decks) {
+                      print('Deck ID: ${deck.deckId}, Deck Name: ${deck.name}');
+                    }
+                    final int lastDeckId = await context
+                    .read<DeckRepository>().getLastDeckId();
+                    print('Last Deck ID: $lastDeckId');
+                    final List<String> questions = <String>[
+                      'What year was Napoleon born?',
+                      'Where was Napoleon born?',
+                      "What was Napoleon's full name?",
+                      "What was Napoleon's height?",
+                    ];
+
+                    final List<String> answers = <String>[
+                      '1769',
+                      'Corsica',
+                      'Napoleon Bonaparte',
+                      '5 feet 6 inches',
+                    ];
+                    for (int i = 0; i < questions.length; i++) {
+                      final IndexCard indexCard = IndexCard(
+                        deckId: lastDeckId,
+                        question: questions[i],
+                        answer: '[{"insert":"${answers[i]}\\n"}]',
+                      );
+                      await context.read<IndexCardRepository>()
+                      .addIndexCard(indexCard);
+                    }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: mainTheme.colorScheme.primary,

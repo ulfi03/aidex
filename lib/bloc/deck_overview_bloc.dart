@@ -128,7 +128,7 @@ class AddDeck extends DeckEvent {
   /// The deck to add.
   final Deck deck;
 }
-
+/// The event for adding a deck with AI.
 /// Represents an event for deleting a deck.
 class DeleteDeck extends DeckEvent {
   /// Creates a new delete deck event.

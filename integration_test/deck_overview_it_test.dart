@@ -67,9 +67,9 @@ void main() {
       // Stub the fetchDecks method to return a list of decks
       when(() => deckRepository.fetchDecks())
           .thenAnswer((final _) async => decks);
-      when(() => deckRepository.addDeck(any())).thenAnswer((final _) async {
-        decks.add(Deck(name: 'Deck 3', color: Colors.black));
-      });
+      //when(() => deckRepository.addDeck(any())).thenAnswer((final _) async {
+        //decks.add(Deck(name: 'Deck 3', color: Colors.black));
+      //});
 
       await tester.pumpWidget(RepositoryProvider.value(
           value: deckRepository,
