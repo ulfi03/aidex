@@ -1,0 +1,63 @@
+import 'package:aidex/bloc/deck_overview_bloc.dart';
+import 'package:aidex/ui/theme/aidex_theme.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+/// A dialog that asks the user if they want to delete a deck.
+class DeleteAllDecksDialog extends StatelessWidget {
+  /// Creates a new delete deck dialog.
+  const DeleteAllDecksDialog({super.key});
+
+
+  @override
+  Widget build(final BuildContext context) => AlertDialog(
+        title: Text(
+          'Delete all Decks',
+          style: mainTheme.textTheme.titleMedium,
+        ),
+        content: RichText(
+          text: TextSpan(
+            style: mainTheme.textTheme.bodyMedium,
+            children: [
+              const TextSpan(text: 'Are you sure you want to delete  '),
+              TextSpan(
+                text: 'all decks',
+                style: TextStyle(
+                  color: mainTheme.colorScheme.primary,
+                ),
+              ),
+              const TextSpan(text: '?\n'),
+              const TextSpan(
+                text: 'This action cannot be undone!',
+                
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Use the context passed to access DeckOverviewBloc
+              context.read<DeckOverviewBloc>().add(const RemoveAllDecks());
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Delete',
+              style: TextStyle(
+                color: mainTheme.colorScheme.error,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Cancel',
+              style: mainTheme.textTheme.bodyMedium
+            ),
+          ),
+        ],
+        backgroundColor: mainTheme.colorScheme.background,
+      );
+}

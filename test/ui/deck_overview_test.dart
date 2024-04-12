@@ -93,8 +93,8 @@ void main() {
       await prepareSnackbar(tester);
       await tester.tap(find.byKey(CreateDeckSnackbar.createManuallyButtonKey));
       await tester.pumpAndSettle();
-      //expect(find.byType(CreateDeckDialog), findsOneWidget); - change needed -> 
-      //createDialog now seperated into two files - one for manual and one for AI
+      //expect(find.byType(CreateDeckDialog), findsOneWidget); -change needed-> 
+      //createDialog now seperated into two files -one for manual and one for AI
     });
   });
 
@@ -108,8 +108,8 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(CreateDeckSnackbar.createManuallyButtonKey));
       await tester.pumpAndSettle();
-      ///expect(find.byType(CreateDeckDialog), findsOneWidget); - change needed -> 
-      ///createDialog now seperated into two files - one for manual and one for AI
+    ///expect(find.byType(CreateDeckDialog), findsOneWidget); -change needed-> 
+    ///createDialog now seperated into two files -one for manual and one for AI
     }
 
     testWidgets('Return to DeckOverview by pressing "Cancel")',

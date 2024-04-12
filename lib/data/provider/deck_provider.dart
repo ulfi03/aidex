@@ -41,7 +41,7 @@ create table ${Deck.tableDeck} (
         orderBy: '${Deck.columnDeckId} DESC',
         limit: 1);
     if (maps.isNotEmpty) {
-      return maps.first[Deck.columnDeckId]+1 as int; /// dont remove +1!
+      return (maps.first[Deck.columnDeckId] as int) + 1; /// dont remove +1!
     }
     return 0;
   }

@@ -171,7 +171,8 @@ class CreateDeckDialogOnAI extends StatelessWidget {
                     ),
                   )),
             ElevatedButton(
-              onPressed: () async {
+              
+                onPressed: () async {
                 result = await FilePicker.platform
                 .pickFiles();
                 if (result != null) {
@@ -201,7 +202,10 @@ class CreateDeckDialogOnAI extends StatelessWidget {
                     ));
                   }
               },
-              child: const Text('File Chooser'),
+              style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                    ),
+              child: Text('File Chooser', style: mainTheme.textTheme.bodySmall),
             ),
             TextField(
               enabled: false,
@@ -265,13 +269,14 @@ class CreateDeckDialogOnAI extends StatelessWidget {
                     final List<String> answers = <String>[];
 
                     // start of server inquiry
-                    print("Now making Server request");
+                    print('Now making Server request');
                     final request = http.MultipartRequest(
                       'POST',
                       Uri.parse('https://aidex-server.onrender.com/create_index_cards_from_files'),
                     );
                     request.fields['user_uuid'] = '1234';
-                    request.fields['openai_api_key'] = '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';
+                    request.fields['openai_api_key'] 
+                    = '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';
                     request.files.add(await http.MultipartFile.fromPath(
                       'file',
                       result!.files.first.path!,
@@ -296,7 +301,8 @@ class CreateDeckDialogOnAI extends StatelessWidget {
                         question: questions[i],
                         answer: '[{"insert":"${answers[i]}\\n"}]',
                       );
-                      await context.read<IndexCardRepository>().addIndexCard(indexCard);
+                      await context.read<IndexCardRepository>()
+                      .addIndexCard(indexCard);
                     }
         
                     //closing the menu, once everything is done
