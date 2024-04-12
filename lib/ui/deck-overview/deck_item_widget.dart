@@ -134,25 +134,50 @@ class DeckItemWidget extends StatelessWidget {
 
   void _renameDeck(final BuildContext context, final Deck deck,
       final DeckOverviewBloc deckOverviewBloc) {
+    final TextEditingController textController =
+        TextEditingController(text: deck.name);
+
     showDialog(
       context: context,
       builder: (final context) => AlertDialog(
         title: const Text('Rename Deck'),
         content: TextField(
-          controller: TextEditingController(text: deck.name),
+          controller: textController,
           decoration: const InputDecoration(labelText: 'New name'),
-          onSubmitted: (final newName) {
-            if (newName.trim().isEmpty) {
-              // Show an error message
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Deck name cannot be empty')),
-              );
-            } else {
-              deckOverviewBloc.add(RenameDeck(deck: deck, newName: newName));
-              Navigator.of(context).pop();
-            }
-          },
         ),
+        actions: <Widget>[
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white, // This is the color of the text
+              backgroundColor:
+                  Colors.transparent, // This is the background color
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor:
+                  const Color(0xFF20EFC0), // This is the background color
+            ),
+            onPressed: () {
+              final newName = textController.text;
+              if (newName.trim().isEmpty) {
+                // Show an error message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Deck name cannot be empty')),
+                );
+              } else {
+                deckOverviewBloc.add(RenameDeck(deck: deck, newName: newName));
+                Navigator.of(context).pop();
+              }
+            },
+            child: const Text('Rename'),
+          ),
+        ],
       ),
     );
   }
