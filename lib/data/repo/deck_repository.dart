@@ -34,5 +34,5 @@ class DeckRepository {
   ///
   /// Throws an [Error] if the deck's id is null.
   Future<void> renameDeck(final Deck deck, final String newName) async =>
-      _deckProvider.rename(deck.deckId!, newName);
+      _deckProvider.renameDeck(deck.deckId!, newName);
 }
