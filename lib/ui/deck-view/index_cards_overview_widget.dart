@@ -45,11 +45,15 @@ class IndexCardOverview extends StatelessWidget {
             appBar: AppBar(
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back),
-                  onPressed: (state is IndexCardSelectionMode)
-                      ? () => context
+                  onPressed: () {
+                    if (state is IndexCardSelectionMode) {
+                      context
                           .read<IndexCardOverviewBloc>()
-                          .add(const ExitIndexCardSelectionMode())
-                      : () => Navigator.pop(context),
+                          .add(const ExitIndexCardSelectionMode());
+                    } else {
+                      Navigator.pop(context);
+                    }
+                  },
                 ),
                 centerTitle: true,
                 title: Text(deck.name),
@@ -76,16 +80,10 @@ class IndexCardOverview extends StatelessWidget {
                     );
                   } else if (state is IndexCardSelectionMode) {
                     return IndexCardsContainer(
-                        indexCards: state.indexCards,
-                        deckName: deck.name,
-                        selectedCardsIds: state.indexCardIds,
-                        isInSelectedMode: true);
+                        state: state, deckName: deck.name);
                   } else if (state is IndexCardsLoaded) {
                     return IndexCardsContainer(
-                        indexCards: state.indexCards,
-                        deckName: deck.name,
-                        selectedCardsIds: const [],
-                        isInSelectedMode: false);
+                        state: state, deckName: deck.name);
                   } else if (state is IndexCardsError) {
                     return ErrorDisplayWidget(errorMessage: state.message);
                   } else {
@@ -102,35 +100,30 @@ class IndexCardOverview extends StatelessWidget {
 class IndexCardsContainer extends StatelessWidget {
   /// Constructor for the [IndexCardsContainer].
   const IndexCardsContainer(
-      {required final List<IndexCard> indexCards,
+      {required final IndexCardState state,
       required final String deckName,
-      required final bool isInSelectedMode,
-      required final List<int> selectedCardsIds,
       super.key})
-      : _deckName = deckName,
-        _indexCards = indexCards,
-        _isInSelectedMode = isInSelectedMode,
-        _selectedCardsIds = selectedCardsIds;
+      : _state = state,
+        _deckName = deckName;
 
-  /// The index cards to be displayed.
-  final List<IndexCard> _indexCards;
+  /// state to determine indexCards, selectedCards and selectedMode
+  final IndexCardState _state;
 
   /// The name of the deck for routing.
   final String _deckName;
 
-  /// Whether the index card is selected.
-  final bool _isInSelectedMode;
-
-  ///selectedIndexCars
-  final List<int> _selectedCardsIds;
+  /// Returns the index cards based on the state.
+  List<IndexCard> get indexCards => (_state is IndexCardsLoaded)
+      ? _state.indexCards
+      : (_state as IndexCardSelectionMode).indexCards;
 
   @override
   Widget build(final BuildContext context) => Expanded(
-      child: (_indexCards.isEmpty)
+      child: (indexCards.isEmpty)
           ? const Center(child: Text('No index cards found!'))
           : SingleChildScrollView(
               child: Wrap(
-                children: _indexCards
+                children: indexCards
                     .map((final indexCard) => IndexCardItemWidget(
                           indexCard: indexCard,
                           onTap: (final context) async {
@@ -147,8 +140,6 @@ class IndexCardsContainer extends StatelessWidget {
                                 .read<IndexCardOverviewBloc>()
                                 .add(const FetchIndexCards()));
                           },
-                          indexCardIds: _selectedCardsIds,
-                          isInSelectedMode: _isInSelectedMode,
                         ))
                     .toList(),
               ),
@@ -251,10 +242,33 @@ class AddCardButton extends StatelessWidget {
   }
 }
 
+///toggleSelectAll is used to toggle the select all Iconbutton.
+final ValueNotifier<bool> toggleSelectAll = ValueNotifier<bool>(false);
+
 List<Widget> _getActions(
     final BuildContext context, final IndexCardState state) {
   if (state is IndexCardSelectionMode) {
+    if (state.indexCards.length == state.indexCardIds.length) {
+      toggleSelectAll.value = true;
+    } else {
+      toggleSelectAll.value = false;
+    }
     return [
+      ValueListenableBuilder<bool>(
+        valueListenable: toggleSelectAll,
+        builder: (final context, final value, final child) => IconButton(
+          icon: toggleSelectAll.value
+              ? Icon(
+                  Icons.check_circle,
+                  color: mainTheme.colorScheme.primary,
+                )
+              : Icon(
+                  Icons.circle_outlined,
+                  color: mainTheme.colorScheme.primary,
+                ),
+          onPressed: () => _onSelectAll(context, state, toggleSelectAll),
+        ),
+      ),
       IconButton(
         icon: Icon(
           Icons.delete,
@@ -272,5 +286,40 @@ List<Widget> _getActions(
 void _onRemove(final BuildContext context, final List<int> indexCardIds) {
   context
       .read<IndexCardOverviewBloc>()
-      .add(RemoveIndexCard(indexCardIds: indexCardIds));
+      .add(RemoveIndexCard(selectedIndexCardsIds: indexCardIds));
+}
+
+/// The history of selected card ids.
+List<List<int>> selectedCardIdsHistory = [];
+
+void _onSelectAll(final BuildContext context,
+    final IndexCardSelectionMode state, final ValueNotifier<bool> selectAll) {
+  /// stash History change
+  selectedCardIdsHistory.add(state.indexCardIds);
+  print(selectedCardIdsHistory);
+  if (!selectAll.value) {
+    final selectedIndexCardIds = state.indexCards
+        .map((final indexCard) => indexCard.indexCardId!)
+        .toList();
+    context
+        .read<IndexCardOverviewBloc>()
+        .add(ManageSelectedIndexCards(indexCardIds: selectedIndexCardIds));
+  } else {
+    ///if all cards where selected then deselect all
+    if ((selectedCardIdsHistory[0].length == state.indexCards.length) &&
+        selectedCardIdsHistory[1].length == state.indexCards.length) {
+      selectedCardIdsHistory[0] = [];
+    }
+
+    /// get selected card ids before all cards where selected
+    context.read<IndexCardOverviewBloc>().add(ManageSelectedIndexCards(
+        indexCardIds:
+            selectedCardIdsHistory[selectedCardIdsHistory.length - 2]));
+  }
+
+  /// remove history
+  if (selectedCardIdsHistory.length > 1) {
+    selectedCardIdsHistory.removeAt(0);
+  }
+  selectAll.value = !selectAll.value;
 }
