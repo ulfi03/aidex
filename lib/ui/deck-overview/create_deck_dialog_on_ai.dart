@@ -285,7 +285,15 @@ class CreateDeckDialogOnAI extends StatelessWidget {
                     //server response handling
                     final jsonResponse = await response.stream.bytesToString();
                     print(jsonResponse);
-                    final ausgabe = jsonDecode(jsonResponse)['ausgabe'];
+                    final serverResponse = jsonDecode(jsonResponse);
+                    final serverErrorBoolean = serverResponse['error'];
+                    final serverErrorMessage = serverResponse['error_message'];
+                    if(serverErrorBoolean != false){
+                      await showBasicErrorDialog(context,
+                      'There was an error in the server while creating the index cards. \n Error: $serverErrorMessage');
+                      return;
+                    }
+                    final ausgabe = serverResponse['ausgabe'];
                     for (final item in ausgabe) {
                       final frage = item['Frage'];
                       final antwort = item['Antwort'];
@@ -307,6 +315,18 @@ class CreateDeckDialogOnAI extends StatelessWidget {
         
                     //closing the menu, once everything is done
                     Navigator.pop(context);
+                    await showDialog(context: context, builder: (final context) => AlertDialog(
+                        title: const Text('Success'),
+                        content: const Text('Deck created successfully'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Ok'),
+                          ),
+                        ],
+                      ));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: mainTheme.colorScheme.primary,
