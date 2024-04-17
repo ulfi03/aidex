@@ -1,7 +1,7 @@
 import 'package:aidex/data/model/deck.dart';
-import 'package:flutter/material.dart';
+import 'package:aidex/data/model/index_card.dart';
 import 'package:flip_card/flip_card.dart';
-import 'index_card.dart';
+import 'package:flutter/material.dart';
 
 class LearningFunction extends StatefulWidget {
   final List<IndexCard> cards;
@@ -20,10 +20,13 @@ class _LearningFunctionState extends State<LearningFunction> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Learning Function'),
+          automaticallyImplyLeading: false,
+          title: Opacity(opacity: 0.5, child: Text('Learning Function')),
           actions: [
             IconButton(
               icon: Icon(Icons.close),
+              color: Color(0xFF20EFC0),
+              iconSize: 30.0,
               onPressed: () {
                 Navigator.pop(context);
               },
