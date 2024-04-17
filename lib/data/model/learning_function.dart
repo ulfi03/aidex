@@ -1,5 +1,7 @@
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
+import 'package:aidex/ui/components/rich_text_editor_widget.dart';
+import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 
@@ -40,31 +42,27 @@ class _LearningFunctionState extends State<LearningFunction> {
               onTap: () => cardKey.currentState?.toggleCard(),
             ),
             Center(
-              child: widget.cards.isEmpty
-                  ? Text('No cards available')
-                  : FlipCard(
-                      key: cardKey,
-                      direction: FlipDirection.HORIZONTAL, // default
-                      front: Container(
-                        child: Text(
-                          widget.cards[currentIndex].question,
-                          style: TextStyle(
-                            fontSize: 16, // set the font size to 16
-                          ),
-                          textAlign: TextAlign.center, // center the text
-                        ),
-                      ),
-                      back: Container(
-                        child: Text(
-                          widget.cards[currentIndex].answer,
-                          style: TextStyle(
-                            fontSize: 16, // set the font size to 16
-                          ),
-                          textAlign: TextAlign.center, // center the text
-                        ),
-                      ),
-                    ),
-            ),
+                child: widget.cards.isEmpty
+                    ? Text('No cards available')
+                    : FlipCard(
+                        fill: Fill.fillFront,
+                        // The side to initially display.
+                        front: Card(
+                            color:
+                                mainTheme.colorScheme.primary.withOpacity(0.5),
+                            child: Align(
+                              child: Text(widget.cards[currentIndex].question),
+                            )),
+                        back: Card(
+                            color: mainTheme.colorScheme.secondary
+                                .withOpacity(0.5),
+                            child: AbsorbPointer(
+                                child: RichTextEditorWidget(
+                              readonly: true,
+                              controller: RichTextEditorController(
+                                  contentJson:
+                                      widget.cards[currentIndex].answer),
+                            ))))),
             Positioned(
               bottom: 10,
               left: 10,
