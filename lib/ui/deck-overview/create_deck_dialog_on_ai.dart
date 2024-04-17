@@ -15,10 +15,15 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:http/http.dart' as http;
 
 /// This widget is used to display the create deck dialog.
-class CreateDeckDialogOnAI extends StatelessWidget {
+class CreateDeckDialogOnAI extends StatefulWidget {
   /// Constructor for the [CreateDeckDialogOnAI].
   const CreateDeckDialogOnAI({super.key});
 
+  @override
+  CreateDeckDialogOnAIState createState() => CreateDeckDialogOnAIState();
+}
+/// The state of the [CreateDeckDialogOnAI].
+class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
   /// The key for the dialogMethods Widget title.
   static const Key showCreateDeckDialogTitleKey = Key('DeckDialogTitleKey');
 
@@ -45,36 +50,44 @@ class CreateDeckDialogOnAI extends StatelessWidget {
 
   ///(Key to) Button to add the deck.
   static const Key okButtonKey = Key('OkButtonKey');
+
+  /// Variable to disable the button.
+  bool isButtonDisabled = false;
+  /// Variable to display the loading animation.
+  bool isLoading = false;
+  /// Variable to store the color selected by the user.
+  Color pickerColor = Colors.transparent; // Initial color
+  /// Controller for the deck name text field.
+  final deckNameController = TextEditingController();
+  /// Controller for the file name text field.
+  final fileNameController = TextEditingController();
+  /// Variable to store the file picker result.
+  FilePickerResult? result;
+
   @override
-  Widget build(final BuildContext context) {
-    var pickerColor = Colors.transparent; // Initial color
-    final deckNameController = TextEditingController();
-    final fileNameController = TextEditingController();
-     /// The result of the file picker.
-    FilePickerResult? result;
-    return AlertDialog(
+  Widget build(final BuildContext context) => AlertDialog(
       backgroundColor: mainTheme.colorScheme.background,
       title: Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text(
-        key: showCreateDeckDialogTitleKey,
-        'Create Deck',
-        style: mainTheme.textTheme.titleLarge,
-        ),
-        const SizedBox(width: 8),
-        Padding(
-        padding: const EdgeInsets.only(bottom: 2.5),
-        child: Text(
-          'with AI',
-          style: TextStyle(
-          fontSize: 12,
-          color: mainTheme.colorScheme.primary,
-          fontWeight: FontWeight.bold,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            'Create Deck',
+            key: showCreateDeckDialogTitleKey,
+            style: mainTheme.textTheme.titleLarge,
           ),
-        ),
-        ),
-      ],
+          const SizedBox(width: 8),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 2.5),
+            child: Text(
+              'with AI',
+              style: TextStyle(
+                fontSize: 12,
+                color: mainTheme.colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -122,225 +135,261 @@ class CreateDeckDialogOnAI extends StatelessWidget {
             ],
           ),
           StatefulBuilder(
-              builder: (final context, final setState) => ElevatedButton(
-                key: colorPickerButtonKey,
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (final context) => AlertDialog(
-                          title: Text(
-                            key: pickColorTextKey,
-                            'Pick a color',
-                            style: mainTheme.textTheme.bodyMedium
-                          ),
-                          backgroundColor: mainTheme.
-                          colorScheme.background,
-                          content: SingleChildScrollView(
-                            child: BlockPicker(
-                              pickerColor: pickerColor,
-                              onColorChanged: (final color) {
-                                setState(() => pickerColor = color);
-                              },
-                            ),
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              key: colorPickerSelectButtonKey,
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(
-                                'Select',
-                                style: mainTheme.textTheme.bodyMedium
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: pickerColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+            builder: (final context, final setState) => ElevatedButton(
+              key: colorPickerButtonKey,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (final context) => AlertDialog(
+                    title: Text(
+                      'Pick a color',
+                      key: pickColorTextKey,
+                      style: mainTheme.textTheme.bodyMedium,
+                    ),
+                    backgroundColor: mainTheme.colorScheme.background,
+                    content: SingleChildScrollView(
+                      child: BlockPicker(
+                        pickerColor: pickerColor,
+                        onColorChanged: (final color) {
+                          setState(() => pickerColor = color);
+                        },
                       ),
                     ),
-                    child: Text(
-                      key: selectColorTextKey,
-                      'Color (optional)',
-                      style: mainTheme.textTheme.bodySmall
-                    ),
-                  )),
-            ElevatedButton(
-              
-                onPressed: () async {
-                result = await FilePicker.platform
-                .pickFiles();
-                if (result != null) {
-                  final selectedFileName = result?.files.first.name;
-                  // Set the selected file name to the text field
-                  fileNameController.text = selectedFileName!; 
-                } else {
-                    unawaited(showDialog(
-                      context: context,
-                      builder: (final context) => AlertDialog(
-                          title: const Text('Alert'),
-                            content: Text(
-                            'No file selected',
-                            style: TextStyle(
-                              color: mainTheme.colorScheme.error,
-                            ),
-                            ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
+                    actions: <Widget>[
+                      TextButton(
+                        key: colorPickerSelectButtonKey,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'Select',
+                          style: mainTheme.textTheme.bodyMedium,
                         ),
-                    ));
-                  }
+                      ),
+                    ],
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                    ),
-              child: Text('File Chooser', style: mainTheme.textTheme.bodySmall),
+                backgroundColor: pickerColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                'Color (optional)',
+                key: selectColorTextKey,
+                style: mainTheme.textTheme.bodySmall,
+              ),
             ),
-            TextField(
-              enabled: false,
-              controller: fileNameController,
-              decoration: InputDecoration(
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              result = await FilePicker.platform.pickFiles(
+                type: FileType.custom,
+                allowedExtensions: ['pdf', 'txt', 'docx'],
+              );
+              if (result != null) {
+                final selectedFileName = result?.files.first.name;
+                // Set the selected file name to the text field
+                fileNameController.text = selectedFileName!;
+              } else {
+                unawaited(showDialog(
+                  context: context,
+                  builder: (final context) => AlertDialog(
+                    title: const Text('Alert'),
+                    content: Text(
+                      'No file selected',
+                      style: TextStyle(
+                        color: mainTheme.colorScheme.error,
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                ));
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+            ),
+            child: Text(
+              'File Chooser',
+              style: mainTheme.textTheme.bodySmall,
+            ),
+          ),
+          TextField(
+            enabled: false,
+            controller: fileNameController,
+            decoration: InputDecoration(
               hintText: 'No file selected',
               hintStyle: TextStyle(
                 color: mainTheme.colorScheme.error,
                 fontSize: 14,
               ),
-              ),
             ),
-            // Buttons
+          ),
+          // Buttons
           const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TextButton(
-                onPressed: () {
+                Visibility(
+                visible: !isLoading,
+                child: TextButton(
+                  onPressed: isLoading ? null : () {
                   Navigator.of(context).pop();
-                },
-                child: Text(
-                  key: cancelButtonTextKey,
+                  },
+                  child: Text(
                   'Cancel',
-                  style: mainTheme.textTheme.bodySmall
+                  key: cancelButtonTextKey,
+                  style: mainTheme.textTheme.bodySmall,
+                  ),
                 ),
-              ),
-              ElevatedButton(key: okButtonKey,
-                onPressed: () async {
-                    // verifying that all parameters have been set
-                    if (result == null) {
-                      if(deckNameController.text == ''){
-                      await showBasicErrorDialog(context,
-                       'Please enter a deck name\nNo file selected');
-                      return;
-                      }else{
-                      await showBasicErrorDialog(context, 'No file selected');
-                      }
-                      return;
-                    }
+                ),
+              ElevatedButton(
+                key: okButtonKey,
+                
+                onPressed: isButtonDisabled ? null : () async {
+                  // verifying that all parameters have been set
+                  if (result == null) {
                     if (deckNameController.text == '') {
-                      await showBasicErrorDialog(context,
-                       'Please enter a deck name');
-                      return;
+                      await showBasicErrorDialog(
+                        context,
+                        'Please enter a deck name\nNo file selected',
+                      );
+                    } else {
+                      await showBasicErrorDialog(
+                        context,
+                        'No file selected',
+                      );
                     }
-                    // add the deck like normal
-                    context.read<DeckOverviewBloc>().add(AddDeck(
+                    return;
+                  }
+                  if (deckNameController.text == '') {
+                    await showBasicErrorDialog(
+                      context,
+                      'Please enter a deck name',
+                    );
+                    return;
+                  }
+                  // disabling the button to prevent multiple clicks
+                  setState(() {
+                    isButtonDisabled = true;
+                    isLoading = true;
+                  });
+                  // add the deck like normal
+                  context.read<DeckOverviewBloc>().add(
+                    AddDeck(
                       deck: Deck(
                         name: deckNameController.text,
                         color: pickerColor,
                       ),
-                    ));
+                    ),
+                  );
 
-                    // get the deck id from the deck we just created
-                    final int deckId = await context.read<DeckRepository>()
-                    .getLastDeckId();
-                    print('Last Deck ID: $deckId');
+                  // get the deck id from the deck we just created
+                  final int deckId =
+                      await context.read<DeckRepository>().getLastDeckId();
+                  print('Last Deck ID: $deckId');
 
-                    // initialising the arrays
-                    final List<String> questions = <String>[];
-                    final List<String> answers = <String>[];
+                  // initialising the arrays
+                  final List<String> questions = <String>[];
+                  final List<String> answers = <String>[];
 
-                    // start of server inquiry
-                    print('Now making Server request');
-                    final request = http.MultipartRequest(
-                      'POST',
-                      Uri.parse('https://aidex-server.onrender.com/create_index_cards_from_files'),
+                  // start of server inquiry
+                  print('Now making Server request');
+                  final request = http.MultipartRequest(
+                    'POST',
+                    Uri.parse(
+                        'https://aidex-server.onrender.com/create_index_cards_from_files'),
+                  );
+                  request.fields['user_uuid'] = '1234';
+                  request.fields['openai_api_key'] =
+                      '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';
+                  request.files.add(await http.MultipartFile.fromPath(
+                    'file',
+                    result!.files.first.path!,
+                  ));
+                  final response = await request.send();
+                  //server response handling
+                  final jsonResponse =
+                      await response.stream.bytesToString();
+                  print(jsonResponse);
+                  final serverResponse = jsonDecode(jsonResponse);
+                  final serverErrorBoolean = serverResponse['error'];
+                  final serverErrorMessage = serverResponse['error_message'];
+                  if (serverErrorBoolean != false) {
+                    await showBasicErrorDialog(
+                      context,
+                      'There was an error in the server while creating the index cards. \n Error: $serverErrorMessage',
                     );
-                    request.fields['user_uuid'] = '1234';
-                    request.fields['openai_api_key'] 
-                    = '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';
-                    request.files.add(await http.MultipartFile.fromPath(
-                      'file',
-                      result!.files.first.path!,
-                    ));
-                    final response = await request.send();
-                    //server response handling
-                    final jsonResponse = await response.stream.bytesToString();
-                    print(jsonResponse);
-                    final serverResponse = jsonDecode(jsonResponse);
-                    final serverErrorBoolean = serverResponse['error'];
-                    final serverErrorMessage = serverResponse['error_message'];
-                    if(serverErrorBoolean != false){
-                      await showBasicErrorDialog(context,
-                      'There was an error in the server while creating the index cards. \n Error: $serverErrorMessage');
-                      return;
-                    }
-                    final ausgabe = serverResponse['ausgabe'];
-                    for (final item in ausgabe) {
-                      final frage = item['Frage'];
-                      final antwort = item['Antwort'];
-                      questions.add(frage);
-                      answers.add(antwort);
-                      print('Frage: $frage');
-                      print('Antwort: $antwort');
-                    }
-
-                    for (int i = 0; i < questions.length; i++) {
-                      final IndexCard indexCard = IndexCard(
-                        deckId: deckId,
-                        question: questions[i],
-                        answer: '[{"insert":"${answers[i]}\\n"}]',
-                      );
-                      await context.read<IndexCardRepository>()
-                      .addIndexCard(indexCard);
-                    }
-        
-                    //closing the menu, once everything is done
                     Navigator.pop(context);
-                    await showDialog(context: context, builder: (final context) => AlertDialog(
-                        title: const Text('Success'),
-                        content: const Text('Deck created successfully'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('Ok'),
-                          ),
-                        ],
-                      ));
+                    return;
+                  }
+                  final ausgabe = serverResponse['ausgabe'];
+                  for (final item in ausgabe) {
+                    final frage = item['Frage'];
+                    final antwort = item['Antwort'];
+                    questions.add(frage);
+                    answers.add(antwort);
+                    print('Frage: $frage');
+                    print('Antwort: $antwort');
+                  }
+
+                  for (int i = 0; i < questions.length; i++) {
+                    final IndexCard indexCard = IndexCard(
+                      deckId: deckId,
+                      question: questions[i],
+                      answer: '[{"insert":"${answers[i]}\\n"}]',
+                    );
+                    await context
+                        .read<IndexCardRepository>()
+                        .addIndexCard(indexCard);
+                  }
+
+                  //closing the menu, once everything is done
+                  Navigator.pop(context);
+                  await showDialog(
+                    context: context,
+                    builder: (final context) => AlertDialog(
+                      title: const Text('Success'),
+                      content: const Text('Deck created successfully'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Ok'),
+                        ),
+                      ],
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: mainTheme.colorScheme.primary,
                 ),
-                child: Text(
-                  key: okButtonTextKey,
+                child: isLoading
+                  ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(),
+                  ) // Display loading animation with fixed size
+                  : Text(
                   'Ok',
-                  style: mainTheme.textTheme.bodySmall
-                ),
+                  key: okButtonTextKey,
+                  style: mainTheme.textTheme.bodySmall,
+                  ),
               ),
             ],
           ),
         ],
       ),
     );
-  }
 }
