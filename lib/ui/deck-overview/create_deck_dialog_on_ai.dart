@@ -220,7 +220,7 @@ class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
               backgroundColor: Colors.transparent,
             ),
             child: Text(
-              'File Chooser',
+              'Choose a file',
               style: mainTheme.textTheme.bodySmall,
             ),
           ),

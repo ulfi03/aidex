@@ -25,15 +25,26 @@ class DeleteAllDecksDialog extends StatelessWidget {
                   color: mainTheme.colorScheme.primary,
                 ),
               ),
-              const TextSpan(text: '?\n'),
-              const TextSpan(
+              const TextSpan(text: '?\n\n'),
+              TextSpan(
                 text: 'This action cannot be undone!',
-                
+                style: TextStyle(
+                  color: mainTheme.colorScheme.error,
+                ),
               ),
             ],
           ),
         ),
         actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Cancel',
+              style: mainTheme.textTheme.bodyMedium
+            ),
+          ),
           TextButton(
             onPressed: () {
               // Use the context passed to access DeckOverviewBloc
@@ -46,15 +57,6 @@ class DeleteAllDecksDialog extends StatelessWidget {
                 color: mainTheme.colorScheme.error,
                 fontSize: 16,
               ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text(
-              'Cancel',
-              style: mainTheme.textTheme.bodyMedium
             ),
           ),
         ],

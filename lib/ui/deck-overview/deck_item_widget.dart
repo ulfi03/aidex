@@ -159,9 +159,7 @@ class DeckItemWidget extends StatelessWidget {
           ),
           TextButton(
             style: TextButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor:
-                  const Color(0xFF20EFC0), // This is the background color
+              foregroundColor: const Color(0xFF20EFC0)
             ),
             onPressed: () {
               final newName = textController.text;

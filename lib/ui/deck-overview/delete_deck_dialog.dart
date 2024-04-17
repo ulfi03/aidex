@@ -35,6 +35,15 @@ class DeleteDeckDialog extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Cancel',
+              style: mainTheme.textTheme.bodyMedium
+            ),
+          ),
+          TextButton(
+            onPressed: () {
               // Use the context passed to access DeckOverviewBloc
               context.read<DeckOverviewBloc>().add(DeleteDeck(deck: _deck));
               Navigator.pop(context);
@@ -45,15 +54,6 @@ class DeleteDeckDialog extends StatelessWidget {
                 color: mainTheme.colorScheme.error,
                 fontSize: 16,
               ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text(
-              'Cancel',
-              style: mainTheme.textTheme.bodyMedium
             ),
           ),
         ],
