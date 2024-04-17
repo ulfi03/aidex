@@ -35,7 +35,6 @@ class DeckOverviewPage extends StatelessWidget {
 class DeckOverview extends StatelessWidget {
   /// Constructor for the [DeckOverview].
   const DeckOverview({super.key});
-
   @override
   Widget build(final BuildContext context) => GestureDetector(
         onTap: () {
@@ -138,7 +137,6 @@ class AddButtonState extends State<AddButton> {
             onAI: () async {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               await _showCreateDeckDialogOnAI(context);
-              // Handle AI deck creation here
             },
           ),
         )
