@@ -1,5 +1,8 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
+import 'package:aidex/ui/components/custom_buttons.dart';
+import 'package:aidex/ui/components/custom_text_form_field.dart';
+import 'package:aidex/ui/deck-overview/deck_validators.dart';
 import 'package:aidex/ui/deck-overview/delete_deck_dialog.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
@@ -136,48 +139,40 @@ class DeckItemWidget extends StatelessWidget {
       final DeckOverviewBloc deckOverviewBloc) {
     final TextEditingController textController =
         TextEditingController(text: deck.name);
+    final formKey = GlobalKey<FormState>();
 
     showDialog(
       context: context,
-      builder: (final context) => AlertDialog(
-        title: const Text('Rename Deck'),
-        content: TextField(
-          controller: textController,
-          decoration: const InputDecoration(labelText: 'New name'),
-        ),
-        actions: <Widget>[
-          TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.white, // This is the color of the text
-              backgroundColor:
-                  Colors.transparent, // This is the background color
+      builder: (final context) => StatefulBuilder(
+        builder: (final context, final setState) => AlertDialog(
+          title: const Text('Rename Deck'),
+          content: Form(
+            key: formKey,
+            child: CustomTextFormField(
+              controller: textController,
+              maxLength: 21,
+              hintText: 'New name',
+              validator: deckNameValidator,
             ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cancel'),
           ),
-          TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor:
-                  const Color(0xFF20EFC0), // This is the background color
-            ),
-            onPressed: () {
-              final newName = textController.text;
-              if (newName.trim().isEmpty) {
-                // Show an error message
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Deck name cannot be empty')),
-                );
-              } else {
-                deckOverviewBloc.add(RenameDeck(deck: deck, newName: newName));
+          actions: <Widget>[
+            CancelButton(
+              onPressed: () {
                 Navigator.of(context).pop();
-              }
-            },
-            child: const Text('Rename'),
-          ),
-        ],
+              },
+            ),
+            OkButton(
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  final newName = textController.text;
+                  deckOverviewBloc
+                      .add(RenameDeck(deck: deck, newName: newName));
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
