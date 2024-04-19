@@ -1,5 +1,8 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
+import 'package:aidex/ui/components/custom_buttons.dart';
+import 'package:aidex/ui/components/custom_text_form_field.dart';
+import 'package:aidex/ui/deck-overview/deck_validators.dart';
 import 'package:aidex/ui/deck-overview/delete_deck_dialog.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
@@ -145,48 +148,20 @@ class DeckItemWidget extends StatelessWidget {
           title: const Text('Rename Deck'),
           content: Form(
             key: formKey,
-            child: TextFormField(
+            child: CustomTextFormField(
               controller: textController,
               maxLength: 21,
-              decoration: InputDecoration(
-                labelText: 'New name',
-                errorBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red),
-                ),
-                counterText: '${textController.text.length}/21',
-              ),
-              onChanged: (final text) {
-                setState(() {}); // update counterText
-              },
-              validator: (final value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Please enter a new name';
-                }
-                if (!RegExp(r'^[a-zA-Z0-9 ]*$').hasMatch(value)) {
-                  return 'Only a-z, A-Z, 0-9\nand spaces allowed';
-                }
-                return null;
-              },
+              hintText: 'New name',
+              validator: deckNameValidator,
             ),
           ),
           actions: <Widget>[
-            TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white, // This is the color of the text
-                backgroundColor:
-                    Colors.transparent, // This is the background color
-              ),
+            CancelButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel'),
             ),
-            TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor:
-                    const Color(0xFF20EFC0), // This is the background color
-              ),
+            OkButton(
               onPressed: () {
                 if (formKey.currentState!.validate()) {
                   final newName = textController.text;
@@ -195,7 +170,6 @@ class DeckItemWidget extends StatelessWidget {
                   Navigator.of(context).pop();
                 }
               },
-              child: const Text('Ok'),
             ),
           ],
         ),
