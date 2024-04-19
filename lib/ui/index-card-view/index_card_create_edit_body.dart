@@ -12,6 +12,9 @@ class IndexCardCreateEditBody extends StatelessWidget {
   })  : _questionController = questionController ?? TextEditingController(),
         _answerController = answerController ?? RichTextEditorController();
 
+  /// The key for the question field.
+  static const Key questionKey = Key('question_key');
+
   final TextEditingController _questionController;
   final RichTextEditorController _answerController;
 
@@ -19,6 +22,7 @@ class IndexCardCreateEditBody extends StatelessWidget {
   Widget build(final BuildContext context) => Column(
         children: <Widget>[
           TextField(
+            key: questionKey,
             decoration: const InputDecoration(
               labelText: 'Question',
             ),

@@ -12,11 +12,17 @@ class IndexCardEditBloc extends Bloc<IndexCardEditEvent, IndexCardEditState> {
         super(EditingIndexCard(indexCard: initialIndexCard)) {
     on<UpdateIndexCard>((final event, final emit) async {
       emit(UpdatingIndexCard(indexCard: event.indexCard));
-      final bool success =
-          await _indexCardRepository.updateIndexCard(event.indexCard);
-      if (success) {
-        emit(IndexCardUpdated(indexCard: event.indexCard));
-      } else {
+      try {
+        final bool success =
+            await _indexCardRepository.updateIndexCard(event.indexCard);
+        if (success) {
+          emit(IndexCardUpdated(indexCard: event.indexCard));
+        } else {
+          emit(IndexCardEditError(
+              indexCard: event.indexCard,
+              message: 'Failed to save index card!'));
+        }
+      } on Exception {
         emit(IndexCardEditError(
             indexCard: event.indexCard, message: 'Failed to save index card!'));
       }
