@@ -1,10 +1,11 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
-import 'package:aidex/ui/deck-overview/delete_deck_dialog.dart';
+import 'package:aidex/ui/components/delete_dialog.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 /// A widget that represents a deck item.
 class DeckItemWidget extends StatelessWidget {
   /// Creates a new deck item widget.
@@ -68,8 +69,9 @@ class DeckItemWidget extends StatelessWidget {
                     key: deckNameKey,
                     deck.name,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, color: mainTheme
-                    .colorScheme.onBackground),
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: mainTheme.colorScheme.onBackground),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),

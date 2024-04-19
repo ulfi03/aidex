@@ -2,6 +2,7 @@ import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
+import 'package:aidex/ui/components/delete_dialog.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/deck-view/index_card_item_widget.dart';
 import 'package:aidex/ui/routes.dart';
@@ -126,6 +127,7 @@ class IndexCardsContainer extends StatelessWidget {
                 children: indexCards
                     .map((final indexCard) => IndexCardItemWidget(
                           indexCard: indexCard,
+                          state: _state,
                           onTap: (final context) async {
                             await Navigator.push(
                               context,
@@ -283,10 +285,16 @@ List<Widget> _getActions(
 }
 
 /// The state of the DeleteCardButton.
-void _onRemove(final BuildContext context, final List<int> indexCardIds) {
-  context
-      .read<IndexCardOverviewBloc>()
-      .add(RemoveIndexCard(selectedIndexCardsIds: indexCardIds));
+Future<void> _onRemove(
+    final BuildContext context, final List<int> indexCardIds) async {
+  final IndexCardOverviewBloc indexCardOverviewBloc =
+      context.read<IndexCardOverviewBloc>();
+  await showDialog(
+    context: context,
+    builder: (final context) => BlocProvider.value(
+        value: indexCardOverviewBloc,
+        child: DeleteIndexCardsDialog(indexCardIds: indexCardIds)),
+  );
 }
 
 /// The history of selected card ids.
@@ -296,14 +304,13 @@ void _onSelectAll(final BuildContext context,
     final IndexCardSelectionMode state, final ValueNotifier<bool> selectAll) {
   /// stash History change
   selectedCardIdsHistory.add(state.indexCardIds);
-  print(selectedCardIdsHistory);
   if (!selectAll.value) {
     final selectedIndexCardIds = state.indexCards
         .map((final indexCard) => indexCard.indexCardId!)
         .toList();
     context
         .read<IndexCardOverviewBloc>()
-        .add(ManageSelectedIndexCards(indexCardIds: selectedIndexCardIds));
+        .add(UpdateSelectedIndexCards(indexCardIds: selectedIndexCardIds));
   } else {
     ///if all cards where selected then deselect all
     if ((selectedCardIdsHistory[0].length == state.indexCards.length) &&
@@ -312,7 +319,7 @@ void _onSelectAll(final BuildContext context,
     }
 
     /// get selected card ids before all cards where selected
-    context.read<IndexCardOverviewBloc>().add(ManageSelectedIndexCards(
+    context.read<IndexCardOverviewBloc>().add(UpdateSelectedIndexCards(
         indexCardIds:
             selectedCardIdsHistory[selectedCardIdsHistory.length - 2]));
   }

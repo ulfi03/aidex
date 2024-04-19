@@ -37,10 +37,8 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
         emit(IndexCardsError(message: e.toString()));
       }
     });
-    on<ManageSelectedIndexCards>((final event, final emit) async {
+    on<UpdateSelectedIndexCards>((final event, final emit) async {
       emit(IndexCardSelectionMode(
-          indexCardIds: event.indexCardIds, indexCards: indexCards!));
-      emit(IsThisCardSelected(
           indexCardIds: event.indexCardIds, indexCards: indexCards!));
     });
     on<ExitIndexCardSelectionMode>((final event, final emit) async {
@@ -71,13 +69,13 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
 /// ################################################################# States
 
 /// The index card state.
-abstract class IndexCardState extends Equatable {
+abstract class IndexCardState {
   /// Creates a new index card state.
   const IndexCardState();
 }
 
 /// The index card initial state.
-class IndexCardInitial extends IndexCardState {
+class IndexCardInitial extends IndexCardState with EquatableMixin {
   /// Creates a new index card initial state.
   const IndexCardInitial();
 
@@ -86,7 +84,7 @@ class IndexCardInitial extends IndexCardState {
 }
 
 /// The index card loading state.
-class IndexCardsLoading extends IndexCardState {
+class IndexCardsLoading extends IndexCardState with EquatableMixin {
   /// Creates a new index card loading state.
   const IndexCardsLoading();
 
@@ -95,7 +93,7 @@ class IndexCardsLoading extends IndexCardState {
 }
 
 /// The index cards loaded state.
-class IndexCardsLoaded extends IndexCardState {
+class IndexCardsLoaded extends IndexCardState with EquatableMixin {
   /// Creates a new index cards loaded state.
   const IndexCardsLoaded({required this.indexCards});
 
@@ -118,23 +116,13 @@ class IndexCardSelectionMode extends IndexCardState {
   /// The indexCards in deck
   final List<IndexCard> indexCards;
 
-  @override
-  List<Object> get props => indexCardIds;
-}
-
-/// State to check if a card is selected an update the UI accordingly
-class IsThisCardSelected extends IndexCardSelectionMode {
-  /// Creates a new index card selected state
-  const IsThisCardSelected(
-      {required super.indexCards, required super.indexCardIds});
-
   /// Check if the card is selected
   bool isThisCardSelected(final int indexCardId) =>
       indexCardIds.contains(indexCardId);
 }
 
 /// The index card error state.
-class IndexCardsError extends IndexCardState {
+class IndexCardsError extends IndexCardState with EquatableMixin {
   /// Creates a new index card error state.
   const IndexCardsError({required this.message});
 
@@ -159,10 +147,10 @@ class FetchIndexCards extends IndexCardEvent {
   const FetchIndexCards();
 }
 
-///The event for selecting an index card.
-class ManageSelectedIndexCards extends IndexCardEvent {
-  /// Creates a new select card event.
-  ManageSelectedIndexCards({required this.indexCardIds});
+///The event for updating the list of selected IndexCards.
+class UpdateSelectedIndexCards extends IndexCardEvent {
+  /// Creates a new update selected index cardIds event.
+  UpdateSelectedIndexCards({required this.indexCardIds});
 
   /// The index card ids that are selected.
   List<int> indexCardIds;
