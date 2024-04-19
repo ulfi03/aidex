@@ -13,11 +13,16 @@ class IndexCardCreateBloc
         super(IndexCardCreateInitial(deckId: deckId)) {
     on<CreateIndexCard>((final event, final emit) async {
       emit(IndexCardSaving());
-      final IndexCard savedIndexCard =
-          await _indexCardRepository.addIndexCard(event.indexCard);
-      if (savedIndexCard.indexCardId! > 0) {
-        emit(IndexCardCreated());
-      } else {
+      try {
+        final IndexCard savedIndexCard =
+            await _indexCardRepository.addIndexCard(event.indexCard);
+        if (savedIndexCard.indexCardId != null &&
+            savedIndexCard.indexCardId! > 0) {
+          emit(IndexCardCreated());
+        } else {
+          emit(IndexCardCreateError(message: 'Failed to save new index card!'));
+        }
+      } on Exception {
         emit(IndexCardCreateError(message: 'Failed to save new index card!'));
       }
     });
