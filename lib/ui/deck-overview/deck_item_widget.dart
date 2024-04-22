@@ -1,10 +1,14 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
+import 'package:aidex/ui/components/custom_buttons.dart';
+import 'package:aidex/ui/components/custom_text_form_field.dart';
+import 'package:aidex/ui/deck-overview/deck_validators.dart';
 import 'package:aidex/ui/deck-overview/delete_deck_dialog.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 /// A widget that represents a deck item.
 class DeckItemWidget extends StatelessWidget {
   /// Creates a new deck item widget.
@@ -65,11 +69,12 @@ class DeckItemWidget extends StatelessWidget {
                 child: Align(
                   alignment: const Alignment(-1.2, -0.5),
                   child: Text(
-                    key: deckNameKey,
                     deck.name,
+                    key: deckNameKey,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, color: mainTheme
-                    .colorScheme.onBackground),
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: mainTheme.colorScheme.onBackground),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),
@@ -78,14 +83,16 @@ class DeckItemWidget extends StatelessWidget {
             ),
             PopupMenuButton<String>(
               onSelected: (final value) async {
+                final DeckOverviewBloc deckOverviewBloc =
+                    context.read<DeckOverviewBloc>();
                 if (value == 'delete') {
-                  final DeckOverviewBloc deckOverviewBloc =
-                      context.read<DeckOverviewBloc>();
                   await showDialog(
                       context: context,
                       builder: (final context) => BlocProvider.value(
                           value: deckOverviewBloc,
                           child: DeleteDeckDialog(deck: deck)));
+                } else if (value == 'rename') {
+                  _renameDeck(context, deck, deckOverviewBloc);
                 }
               },
               icon: Icon(
@@ -106,8 +113,63 @@ class DeckItemWidget extends StatelessWidget {
                     ),
                   ),
                 ),
+                PopupMenuItem<String>(
+                  value: 'rename',
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.edit,
+                      color: mainTheme.colorScheme.primary,
+                    ),
+                    title: Text(
+                      'Rename Deck',
+                      style: mainTheme.textTheme.titleSmall,
+                    ),
+                  ),
+                ),
               ],
               color: mainTheme.colorScheme.background,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _renameDeck(final BuildContext context, final Deck deck,
+      final DeckOverviewBloc deckOverviewBloc) {
+    final TextEditingController textController =
+        TextEditingController(text: deck.name);
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (final context) => StatefulBuilder(
+        builder: (final context, final setState) => AlertDialog(
+          title: const Text('Rename Deck'),
+          content: Form(
+            key: formKey,
+            child: CustomTextFormField(
+              controller: textController,
+              maxLength: 21,
+              hintText: 'New name',
+              validator: deckNameValidator,
+            ),
+          ),
+          actions: <Widget>[
+            CancelButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            OkButton(
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  final newName = textController.text;
+                  deckOverviewBloc
+                      .add(RenameDeck(deck: deck, newName: newName));
+                  Navigator.of(context).pop();
+                }
+              },
             ),
           ],
         ),

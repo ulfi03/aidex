@@ -1,8 +1,10 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
+import 'package:aidex/ui/components/custom_buttons.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 /// A dialog that asks the user if they want to delete a deck.
 class DeleteDeckDialog extends StatelessWidget {
   /// Creates a new delete deck dialog.
@@ -33,29 +35,12 @@ class DeleteDeckDialog extends StatelessWidget {
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () {
-              // Use the context passed to access DeckOverviewBloc
-              context.read<DeckOverviewBloc>().add(DeleteDeck(deck: _deck));
-              Navigator.pop(context);
-            },
-            child: Text(
-              'Delete',
-              style: TextStyle(
-                color: mainTheme.colorScheme.error,
-                fontSize: 16,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text(
-              'Cancel',
-              style: mainTheme.textTheme.bodyMedium
-            ),
-          ),
+          DeleteButton(onPressed: () {
+            // Use the context passed to access DeckOverviewBloc
+            context.read<DeckOverviewBloc>().add(DeleteDeck(deck: _deck));
+            Navigator.pop(context);
+          }),
+          CancelButton(onPressed: () => Navigator.pop(context)),
         ],
         backgroundColor: mainTheme.colorScheme.background,
       );
