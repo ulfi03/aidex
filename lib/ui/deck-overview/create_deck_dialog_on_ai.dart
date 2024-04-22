@@ -334,7 +334,8 @@ class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
                       Navigator.pop(context);
                       return;
                     }
-                    final ausgabe = serverResponse['ausgabe'];
+                    final _ausgabe = serverResponse['ausgabe'];
+                    final ausgabe = jsonDecode(_ausgabe.toString());
                     for (final item in ausgabe) {
                       final frage = item['Frage'];
                       final antwort = item['Antwort'];

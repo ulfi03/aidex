@@ -80,7 +80,6 @@ create table ${Deck.tableDeck} (
         conflictAlgorithm: ConflictAlgorithm.replace);
     return deck;
   }
-  /// searches for a deck by its name and returns its id
   /// Delete a decks from the database.
   Future<int> delete(final int id) async => _db.delete(Deck.tableDeck,
       where: '${Deck.columnDeckId} = ?', whereArgs: [id]);

@@ -1,5 +1,6 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog_on_manual.dart';
 import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
@@ -93,8 +94,7 @@ void main() {
       await prepareSnackbar(tester);
       await tester.tap(find.byKey(CreateDeckSnackbar.createManuallyButtonKey));
       await tester.pumpAndSettle();
-      //expect(find.byType(CreateDeckDialog), findsOneWidget); -change needed-> 
-      //createDialog now seperated into two files -one for manual and one for AI
+      expect(find.byType(const CreateDeckDialogOnManual() as Type), findsOneWidget); 
     });
   });
 
@@ -108,8 +108,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(CreateDeckSnackbar.createManuallyButtonKey));
       await tester.pumpAndSettle();
-    ///expect(find.byType(CreateDeckDialog), findsOneWidget); -change needed-> 
-    ///createDialog now seperated into two files -one for manual and one for AI
+      expect(find.byType(const CreateDeckDialogOnManual() as Type), findsOneWidget);
     }
 
     testWidgets('Return to DeckOverview by pressing "Cancel")',
@@ -120,8 +119,7 @@ void main() {
       //manual and one for AI
       await tester.pumpAndSettle();
       expect(find.byType(DeckOverview), findsOneWidget);
-      //expect(find.byType(CreateDeckDialog), findsNothing);- change needed -> 
-    //createDialog now seperated into two files - one for manual and one for AI
+      expect(find.byType(CreateDeckDialogOnManual), findsNothing);
       expect(find.bySubtype<SnackBar>(), findsNothing);
     });
 

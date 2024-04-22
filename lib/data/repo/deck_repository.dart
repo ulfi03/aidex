@@ -15,7 +15,7 @@ class DeckRepository {
   /// Fetches a deck by its id.
   Future<Deck?> fetchDeckById(final int deckId) async =>
       _deckProvider.getDeck(deckId);
-  /// Fetches a deck by its name and returns its ID.
+  /// Adds a deck.
   Future<Deck> addDeck(final Deck deck) async => _deckProvider.insert(deck);
 
   /// Deletes a deck.
