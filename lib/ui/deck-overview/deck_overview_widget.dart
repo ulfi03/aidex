@@ -164,10 +164,8 @@ Future<void> _showCreateDeckDialogOnAI(final BuildContext context) async {
   final deckOverviewBloc = context.read<DeckOverviewBloc>();
   await showDialog(
     context: context,
-    builder: (final context) => MultiBlocProvider(
-      providers: [
-        BlocProvider.value(value: deckOverviewBloc),
-      ],
+    builder: (final context) => BlocProvider.value(
+      value: deckOverviewBloc,
       child: const CreateDeckDialogOnAI(),      
     ),
   );
