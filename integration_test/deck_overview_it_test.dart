@@ -1,6 +1,7 @@
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
-import 'package:aidex/ui/deck-overview/create_deck_dialog_on_manual.dart';
+import 'package:aidex/ui/components/custom_buttons.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
 import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
@@ -134,8 +135,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // tap ok button
-      final createDeckOkButton = find.byKey(
-        CreateDeckDialogOnManual.okButtonKey);
+      final createDeckOkButton = find.byKey(OkButton.okButtonKey);
       expect(createDeckOkButton, findsOneWidget);
       await tester.tap(createDeckOkButton);
       await tester.pumpAndSettle();

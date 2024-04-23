@@ -1,6 +1,7 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
-import 'package:aidex/ui/deck-overview/create_deck_dialog_on_manual.dart';
+import 'package:aidex/ui/components/custom_buttons.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
 import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
@@ -114,9 +115,7 @@ void main() {
     testWidgets('Return to DeckOverview by pressing "Cancel")',
         (final tester) async {
       await prepareCreateDeckDialog(tester);
-      //await tester.tap(find.byKey(CreateDeckDialog.cancelButtonTextKey)); - 
-      //change needed -> createDialog now seperated into two files - one for 
-      //manual and one for AI
+      await tester.tap(find.byKey(CancelButton.cancelButtonKey));
       await tester.pumpAndSettle();
       expect(find.byType(DeckOverview), findsOneWidget);
       expect(find.byType(CreateDeckDialogOnManual), findsNothing);
@@ -125,20 +124,14 @@ void main() {
 
     testWidgets('Create deck by pressing "OK"', (final tester) async {
       await prepareCreateDeckDialog(tester);
-      ///await tester.enterText(
-          ///find.byKey(CreateDeckDialog.deckNameTextFieldKey), 'Deck 1');- 
-          ///change needed -> createDialog now seperated into two files - one 
-          ///for manual and one for AI
-      ///await tester.tap(find.byKey(CreateDeckDialog.okButtonKey));- change 
-      ///needed -> createDialog now seperated into two files - one for manual 
-      ///and one for AI
-      //await tester.pumpAndSettle();
-      //expect(find.byType(DeckOverview), findsOneWidget);
-      ///verify(() => deckOverviewBloc.add(any(
-     ///     that: isA<AddDeck>().having((final addDeck) => addDeck.deck.name,
-     ///         'deck.name', equals('Deck 1'))))).called(1);
-      }
-     );
-    }
-    );
+      await tester.enterText(
+          find.byKey(CreateDeckDialog.deckNameTextFieldKey), 'Deck 1');
+      await tester.tap(find.byKey(OkButton.okButtonKey));
+      await tester.pumpAndSettle();
+      expect(find.byType(DeckOverview), findsOneWidget);
+      verify(() => deckOverviewBloc.add(any(
+          that: isA<AddDeck>().having((final addDeck) => addDeck.deck.name,
+              'deck.name', equals('Deck 1'))))).called(1);
+    });
+  });
 }
