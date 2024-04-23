@@ -1,6 +1,7 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/components/basic_error_dialog.dart';
+import 'package:aidex/ui/components/custom_buttons.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -147,15 +148,11 @@ class CreateDeckDialogOnManual extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TextButton(
+              CancelButton(
+                key: cancelButtonTextKey,
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.pop(context);
                 },
-                child: Text(
-                  key: cancelButtonTextKey,
-                  'Cancel',
-                  style: mainTheme.textTheme.bodySmall
-                ),
               ),
               ElevatedButton(key: okButtonKey,
                 onPressed: () async {

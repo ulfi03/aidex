@@ -1,4 +1,5 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
+import 'package:aidex/ui/components/custom_buttons.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,29 +37,12 @@ class DeleteAllDecksDialog extends StatelessWidget {
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text(
-              'Cancel',
-              style: mainTheme.textTheme.bodyMedium
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              // Use the context passed to access DeckOverviewBloc
-              context.read<DeckOverviewBloc>().add(const RemoveAllDecks());
-              Navigator.pop(context);
-            },
-            child: Text(
-              'Delete',
-              style: TextStyle(
-                color: mainTheme.colorScheme.error,
-                fontSize: 16,
-              ),
-            ),
-          ),
+          CancelButton(onPressed: () => Navigator.pop(context)),
+          DeleteButton(onPressed: () {
+            BlocProvider.of<DeckOverviewBloc>(context)
+                .add(const RemoveAllDecks());
+            Navigator.pop(context);
+          }),
         ],
         backgroundColor: mainTheme.colorScheme.background,
       );

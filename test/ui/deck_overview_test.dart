@@ -1,7 +1,7 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/components/custom_buttons.dart';
-import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog_on_manual.dart';
 import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
@@ -95,7 +95,8 @@ void main() {
       await prepareSnackbar(tester);
       await tester.tap(find.byKey(CreateDeckSnackbar.createManuallyButtonKey));
       await tester.pumpAndSettle();
-      expect(find.byType(const CreateDeckDialogOnManual() as Type), findsOneWidget); 
+      expect(find.byType(const CreateDeckDialogOnManual() as Type),
+       findsOneWidget); 
     });
   });
 
@@ -109,7 +110,8 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(CreateDeckSnackbar.createManuallyButtonKey));
       await tester.pumpAndSettle();
-      expect(find.byType(const CreateDeckDialogOnManual() as Type), findsOneWidget);
+      expect(find.byType(const CreateDeckDialogOnManual() as Type),
+       findsOneWidget);
     }
 
     testWidgets('Return to DeckOverview by pressing "Cancel")',
@@ -125,7 +127,7 @@ void main() {
     testWidgets('Create deck by pressing "OK"', (final tester) async {
       await prepareCreateDeckDialog(tester);
       await tester.enterText(
-          find.byKey(CreateDeckDialog.deckNameTextFieldKey), 'Deck 1');
+        find.byKey(CreateDeckDialogOnManual.deckNameTextFieldKey), 'Deck 1');
       await tester.tap(find.byKey(OkButton.okButtonKey));
       await tester.pumpAndSettle();
       expect(find.byType(DeckOverview), findsOneWidget);

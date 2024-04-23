@@ -7,8 +7,10 @@ import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/components/basic_error_dialog.dart';
+import 'package:aidex/ui/components/custom_buttons.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -244,15 +246,8 @@ class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
               children: [
                 Visibility(
                   visible: !isLoading,
-                  child: TextButton(
-                    onPressed: isLoading ? null : () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      'Cancel',
-                      key: cancelButtonTextKey,
-                      style: mainTheme.textTheme.bodySmall,
-                    ),
+                  child: CancelButton(
+                    onPressed: () => Navigator.pop(context),
                   ),
                 ),
                 ElevatedButton(
@@ -298,14 +293,18 @@ class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
                     // get the deck id from the deck we just created
                     final int deckId =
                         await context.read<DeckRepository>().getLastDeckId();
-                    print('Last Deck ID: $deckId');
+                    if (kDebugMode) {
+                      print('Last Deck ID: $deckId');
+                    }
 
                     // initialising the arrays
                     final List<String> questions = <String>[];
                     final List<String> answers = <String>[];
 
                     // start of server inquiry
-                    print('Now making Server request');
+                    if (kDebugMode) {
+                      print('Now making Server request');
+                    }
                     final request = http.MultipartRequest(
                       'POST',
                       Uri.parse(
@@ -322,27 +321,36 @@ class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
                     //server response handling
                     final jsonResponse =
                         await response.stream.bytesToString();
-                    print(jsonResponse);
-                    final serverResponse = jsonDecode(jsonResponse);
+                    if (kDebugMode) {
+                      print(jsonResponse);
+                    }
+                    final Map<String, dynamic> serverResponse 
+                    = jsonDecode(jsonResponse);
                     final serverErrorBoolean = serverResponse['error'];
                     final serverErrorMessage = serverResponse['error_message'];
                     if (serverErrorBoolean != false) {
                       await showBasicErrorDialog(
                         context,
-                        'There was an error in the server while creating the index cards. \n Error: $serverErrorMessage',
+                        'There was an error in the server while creating the'
+                        ' index cards. \nError: $serverErrorMessage',
                       );
                       Navigator.pop(context);
                       return;
                     }
-                    final _ausgabe = serverResponse['ausgabe'];
-                    final ausgabe = jsonDecode(_ausgabe.toString());
+                    final serverAusgabe = serverResponse['ausgabe'];
+                    final ausgabe = jsonDecode(serverAusgabe.toString());
                     for (final item in ausgabe) {
-                      final frage = item['Frage'];
-                      final antwort = item['Antwort'];
+                      final Map<String, dynamic> itemMap = item;
+                      final String frage = itemMap['Frage'] as String;
+                      final String antwort = itemMap['Antwort'] as String;
                       questions.add(frage);
                       answers.add(antwort);
-                      print('Frage: $frage');
-                      print('Antwort: $antwort');
+                      if (kDebugMode) {
+                        print('Frage: $frage');
+                      }
+                      if (kDebugMode) {
+                        print('Antwort: $antwort');
+                      }
                     }
 
                     for (int i = 0; i < questions.length; i++) {
@@ -364,12 +372,9 @@ class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
                         title: const Text('Success'),
                         content: const Text('Deck created successfully'),
                         actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('Ok'),
-                          ),
+                          OkButton(onPressed: () {
+                            Navigator.pop(context);
+                          }),
                         ],
                       ),
                     );
@@ -384,7 +389,7 @@ class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
                     child: CircularProgressIndicator(),
                   ) // Display loading animation with fixed size
                       : Text(
-                    'Ok',
+                    'Create',
                     key: okButtonTextKey,
                     style: mainTheme.textTheme.bodySmall,
                   ),
