@@ -74,13 +74,19 @@ class _LearningFunctionState extends State<LearningFunction> {
                     Container(
                       margin: EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Color(0xFF20EFC0), width: 2),
+                        border: Border.all(
+                            color: currentIndex > 0
+                                ? Color(0xFF20EFC0)
+                                : Colors.grey,
+                            width: 2),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: TextButton(
                         child: Text('Back'),
                         style: TextButton.styleFrom(
-                          foregroundColor: Color(0xFF20EFC0),
+                          foregroundColor: currentIndex > 0
+                              ? Color(0xFF20EFC0)
+                              : Colors.grey,
                           backgroundColor: Colors.transparent,
                           padding: EdgeInsets.symmetric(
                               horizontal: 30, vertical: 15),
@@ -104,13 +110,20 @@ class _LearningFunctionState extends State<LearningFunction> {
                     Container(
                       margin: EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Color(0xFF20EFC0), width: 2),
+                        border: Border.all(
+                            color: currentIndex < widget.cards.length - 1
+                                ? Color(0xFF20EFC0)
+                                : Colors.grey,
+                            width: 2),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: TextButton(
                         child: Text('Next'),
                         style: TextButton.styleFrom(
-                          foregroundColor: Color(0xFF20EFC0),
+                          foregroundColor:
+                              currentIndex < widget.cards.length - 1
+                                  ? Color(0xFF20EFC0)
+                                  : Colors.grey,
                           backgroundColor: Colors.transparent,
                           padding: EdgeInsets.symmetric(
                               horizontal: 30, vertical: 15),
