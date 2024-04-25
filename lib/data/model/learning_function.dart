@@ -1,7 +1,6 @@
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/ui/components/rich_text_editor_widget.dart';
-import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 
@@ -81,6 +80,7 @@ class _LearningFunctionState extends State<LearningFunction> {
                         child: Text('Back'),
                         style: TextButton.styleFrom(
                           foregroundColor: Color(0xFF20EFC0),
+                          backgroundColor: Colors.transparent,
                           padding: EdgeInsets.symmetric(
                               horizontal: 30, vertical: 15),
                           textStyle: TextStyle(fontSize: 20),
@@ -107,6 +107,7 @@ class _LearningFunctionState extends State<LearningFunction> {
                         child: Text('Next'),
                         style: TextButton.styleFrom(
                           foregroundColor: Color(0xFF20EFC0),
+                          backgroundColor: Colors.transparent,
                           padding: EdgeInsets.symmetric(
                               horizontal: 30, vertical: 15),
                           textStyle: TextStyle(fontSize: 20),
