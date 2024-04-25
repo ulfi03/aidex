@@ -1,5 +1,7 @@
 import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
+import 'package:aidex/data/model/index_card.dart';
+import 'package:aidex/data/model/learning_function.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/deck-view/index_card_item_widget.dart';
@@ -38,6 +40,43 @@ class IndexCardOverview extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: Text(deck.name),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.play_arrow),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (final context) {
+                    final indexCardRepository =
+                        RepositoryProvider.of<IndexCardRepository>(context);
+                    final cardsFuture =
+                        indexCardRepository.fetchIndexCards(deck.deckId!);
+
+                    return FutureBuilder<List<IndexCard>>(
+                      future: cardsFuture,
+                      builder: (final context, final snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return LearningFunction(
+                              key: const Key('cards'),
+                              cards: snapshot.data!,
+                              deck: deck,
+                            );
+                          }
+                        } else {
+                          return CircularProgressIndicator();
+                        }
+                      },
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [

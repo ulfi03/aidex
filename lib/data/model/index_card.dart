@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 /// IndexCard model
 class IndexCard {
   /// Create IndexCard object
@@ -49,4 +51,10 @@ class IndexCard {
         columnDeckId: deckId,
         if (indexCardId != null) columnIndexCardId: indexCardId
       };
+
+  /// Parses the JSON string and sets the answer field.
+  void parseAnswerFromJson(String jsonString) {
+    Map<String, dynamic> jsonObject = jsonDecode(jsonString);
+    answer = jsonObject['insert'].trim();
+  }
 }
