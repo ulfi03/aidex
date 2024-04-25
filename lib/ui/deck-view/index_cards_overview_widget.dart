@@ -122,48 +122,84 @@ class SearchBarState extends State<CardSearchBar> {
   ///Icon for IconButton when indexCards are sorted.
   static const Icon sortedIcon = Icon(Icons.type_specimen);
 
+  /// The searchController
+  final SearchController searchController = SearchController();
+
+  /// The indexCardOverviewBloc
+  IndexCardOverviewBloc? indexCardOverviewBloc;
+
+  final List<String> _suggestions = List.empty(growable: true);
+
+  void _search() {
+    print('######################## ... searching');
+    if (indexCardOverviewBloc != null) {
+      indexCardOverviewBloc!
+          .add(SearchIndexCards(query: searchController.text));
+    }
+  }
+
   @override
-  Widget build(final BuildContext context) => SearchAnchor(
-      isFullScreen: false,
-      viewConstraints: const BoxConstraints(minHeight: 100, maxHeight: 230),
-      builder: (final context, final controller) => SearchBar(
-            controller: controller,
-            padding: const MaterialStatePropertyAll<EdgeInsets>(
-                EdgeInsets.symmetric(horizontal: 16)),
-            onTap: controller.openView,
-            onChanged: (final _) {
-              controller.openView();
-            },
-            leading: const Icon(Icons.search),
-            trailing: <Widget>[
-              Tooltip(
-                message: 'Toggle Sort',
-                child: IconButton(
-                  key: sortButtonKey,
-                  isSelected: sort,
-                  onPressed: () {
-                    setState(() {
-                      sort = !sort;
-                    });
+  void initState() {
+    searchController.addListener(_search);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(final BuildContext context) {
+    indexCardOverviewBloc ??= context.read<IndexCardOverviewBloc>();
+    return BlocListener<IndexCardOverviewBloc, IndexCardState>(
+        listener: (final context, final state) {
+          if (state is IndexCardsLoaded) {
+            _suggestions.clear();
+            for (final indexCard in state.indexCards) {
+              _suggestions.add(indexCard.question);
+            }
+          }
+        },
+        child: SearchAnchor(
+            isFullScreen: false,
+            viewConstraints: const BoxConstraints(),
+            searchController: searchController,
+            builder: (final context, final controller) => SearchBar(
+                  controller: controller,
+                  onTap: controller.openView,
+                  onChanged: (final _) {
+                    controller.openView();
                   },
-                  icon: unsortedIcon,
-                  selectedIcon: sortedIcon,
+                  leading: const Icon(Icons.search),
+                  trailing: <Widget>[
+                    Tooltip(
+                      message: 'Toggle Sort',
+                      child: IconButton(
+                        key: sortButtonKey,
+                        isSelected: sort,
+                        onPressed: () {
+                          setState(() {
+                            sort = !sort;
+                          });
+                        },
+                        icon: unsortedIcon,
+                        selectedIcon: sortedIcon,
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
-      suggestionsBuilder: (final context, final controller) =>
-          List<ListTile>.generate(50, (final index) {
-            final String item = 'Card $index';
-            return ListTile(
-              title: Text(item),
-              onTap: () {
-                setState(() {
-                  controller.closeView(item);
-                });
-              },
-            );
-          }));
+            suggestionsBuilder: (final context, final controller) =>
+                List<ListTile>.generate(
+                    _suggestions.length,
+                    (final index) => ListTile(
+                          title: Text(_suggestions[index]),
+                          onTap: () {
+                            controller.closeView(_suggestions[index]);
+                          },
+                        ))));
+  }
 }
 
 /// The state of the AddCardButton.

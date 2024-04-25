@@ -98,4 +98,22 @@ CREATE TABLE IF NOT EXISTS ${IndexCard.tableIndexCard} (
 
   /// Closes the database.
   Future close() async => _db.close();
+
+  /// Searches the index cards.
+  Future<List<IndexCard>> searchIndexCards(
+      final int deckId, final String query) async {
+    final List<Map<String, dynamic>> maps = await _db.query(
+      IndexCard.tableIndexCard,
+      columns: [
+        IndexCard.columnIndexCardId,
+        IndexCard.columnQuestion,
+        IndexCard.columnAnswer,
+        IndexCard.columnDeckId
+      ],
+      where:
+          '${IndexCard.columnDeckId} = ? AND ${IndexCard.columnQuestion} LIKE ?',
+      whereArgs: [deckId, '%$query%'],
+    );
+    return List.generate(maps.length, (final i) => IndexCard.fromMap(maps[i]));
+  }
 }

@@ -42,6 +42,16 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
         emit(IndexCardsError(message: e.toString()));
       }
     });
+    on<SearchIndexCards>((final event, final emit) async {
+      emit(const IndexCardsLoading());
+      try {
+        final indexCards =
+            await _indexCardRepository.searchIndexCards(_deckId, event.query);
+        emit(IndexCardsLoaded(indexCards: indexCards));
+      } on Exception catch (e) {
+        emit(IndexCardsError(message: e.toString()));
+      }
+    });
   }
 }
 
@@ -122,4 +132,13 @@ class AddIndexCard extends IndexCardEvent {
 
   /// The IndexCard to add.
   final IndexCard indexCard;
+}
+
+/// Query for searching index cards.
+class SearchIndexCards extends IndexCardEvent {
+  /// Creates a new search index cards event.
+  const SearchIndexCards({required this.query});
+
+  /// The query to search for.
+  final String query;
 }
