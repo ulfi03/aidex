@@ -44,6 +44,7 @@ class _LearningFunctionState extends State<LearningFunction> {
                 child: widget.cards.isEmpty
                     ? Text('No cards available')
                     : FlipCard(
+                        key: ValueKey(currentIndex),
                         fill: Fill.fillFront,
                         // The side to initially display.
                         front: Card(
@@ -92,6 +93,9 @@ class _LearningFunctionState extends State<LearningFunction> {
                             ? () {
                                 setState(() {
                                   currentIndex--;
+                                  if (cardKey.currentState?.isFront == false) {
+                                    cardKey.currentState?.toggleCard();
+                                  }
                                 });
                               }
                             : null,
@@ -119,6 +123,9 @@ class _LearningFunctionState extends State<LearningFunction> {
                             ? () {
                                 setState(() {
                                   currentIndex++;
+                                  if (cardKey.currentState?.isFront == false) {
+                                    cardKey.currentState?.toggleCard();
+                                  }
                                 });
                               }
                             : null,
