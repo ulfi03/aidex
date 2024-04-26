@@ -131,7 +131,6 @@ class SearchBarState extends State<CardSearchBar> {
   final List<String> _suggestions = List.empty(growable: true);
 
   void _search() {
-    print('######################## ... searching');
     if (indexCardOverviewBloc != null) {
       indexCardOverviewBloc!
           .add(SearchIndexCards(query: searchController.text));
@@ -168,10 +167,6 @@ class SearchBarState extends State<CardSearchBar> {
             searchController: searchController,
             builder: (final context, final controller) => SearchBar(
                   controller: controller,
-                  onTap: controller.openView,
-                  onChanged: (final _) {
-                    controller.openView();
-                  },
                   leading: const Icon(Icons.search),
                   trailing: <Widget>[
                     Tooltip(
