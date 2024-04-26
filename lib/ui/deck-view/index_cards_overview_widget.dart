@@ -2,6 +2,7 @@ import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
+import 'package:aidex/ui/deck-view/card_serach_bar.dart';
 import 'package:aidex/ui/deck-view/index_card_item_widget.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
@@ -23,9 +24,7 @@ class DeckViewWidgetPage extends StatelessWidget {
       child: IndexCardOverview(deck: deck));
 }
 
-/// A widget used to display the deck view.
-///
-/// The [IndexCardOverview] requires a [deck] to be provided.
+/// The view of the index cards.
 class IndexCardOverview extends StatelessWidget {
   /// Constructor for the [IndexCardOverview].
   const IndexCardOverview({required this.deck, super.key});
@@ -43,12 +42,14 @@ class IndexCardOverview extends StatelessWidget {
         children: [
           Padding(
               padding: const EdgeInsets.all(8),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Expanded(child: CardSearchBar()),
-                    AddCardButton(deck: deck)
-                  ])),
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Expanded(
+                    child: CardSearchBar(
+                        indexCardOverviewBloc:
+                            context.read<IndexCardOverviewBloc>())),
+                AddCardButton(deck: deck)
+              ])),
           BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
               builder: (final context, final state) {
             if (state is IndexCardsLoading) {
@@ -97,73 +98,6 @@ class IndexCardOverview extends StatelessWidget {
           }),
         ],
       ));
-}
-
-/// This widget is used to display the search bar.
-class CardSearchBar extends StatefulWidget {
-  /// Constructor for the [SearchBar].
-  const CardSearchBar({super.key});
-
-  @override
-  SearchBarState createState() => SearchBarState();
-}
-
-/// The state of the [SearchBar].
-class SearchBarState extends State<CardSearchBar> {
-  /// Whether to search by label.
-  bool sort = false;
-
-  ///Key to identify the sort button (for testing).
-  static const Key sortButtonKey = Key('sortButton');
-
-  ///Icon for IconButton when indexCards are unsorted.
-  static const Icon unsortedIcon = Icon(Icons.type_specimen_outlined);
-
-  ///Icon for IconButton when indexCards are sorted.
-  static const Icon sortedIcon = Icon(Icons.type_specimen);
-
-  @override
-  Widget build(final BuildContext context) => SearchAnchor(
-      isFullScreen: false,
-      viewConstraints: const BoxConstraints(minHeight: 100, maxHeight: 230),
-      builder: (final context, final controller) => SearchBar(
-            controller: controller,
-            padding: const MaterialStatePropertyAll<EdgeInsets>(
-                EdgeInsets.symmetric(horizontal: 16)),
-            onTap: controller.openView,
-            onChanged: (final _) {
-              controller.openView();
-            },
-            leading: const Icon(Icons.search),
-            trailing: <Widget>[
-              Tooltip(
-                message: 'Toggle Sort',
-                child: IconButton(
-                  key: sortButtonKey,
-                  isSelected: sort,
-                  onPressed: () {
-                    setState(() {
-                      sort = !sort;
-                    });
-                  },
-                  icon: unsortedIcon,
-                  selectedIcon: sortedIcon,
-                ),
-              )
-            ],
-          ),
-      suggestionsBuilder: (final context, final controller) =>
-          List<ListTile>.generate(50, (final index) {
-            final String item = 'Card $index';
-            return ListTile(
-              title: Text(item),
-              onTap: () {
-                setState(() {
-                  controller.closeView(item);
-                });
-              },
-            );
-          }));
 }
 
 /// The state of the AddCardButton.

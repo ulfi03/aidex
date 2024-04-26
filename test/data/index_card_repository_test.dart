@@ -78,5 +78,19 @@ void main() {
       await repository.removeIndexCard(1);
       verify(() => indexCardProvider.delete(1)).called(1);
     });
+
+    test('Search indexCards', () async {
+      final expectedIndexCards = [
+        IndexCard(question: 'question-1', answer: 'answer-1', deckId: deckId),
+        IndexCard(question: 'question-2', answer: 'answer-2', deckId: deckId),
+        IndexCard(question: 'question-3', answer: 'answer-3', deckId: deckId)
+      ];
+      when(() => indexCardProvider.searchIndexCards(deckId, 'query'))
+          .thenAnswer((final _) async => expectedIndexCards);
+      final IndexCardRepository repository =
+          IndexCardRepository(indexCardProvider: indexCardProvider);
+      final indexCards = await repository.searchIndexCards(deckId, 'query');
+      expect(indexCards, expectedIndexCards);
+    });
   });
 }

@@ -36,4 +36,9 @@ class IndexCardRepository {
     final rowsAffected = await _indexCardProvider.delete(indexCardId);
     return rowsAffected == 1;
   }
+
+  /// Searches the index cards.
+  Future<List<IndexCard>> searchIndexCards(
+          final int deckId, final String query) async =>
+      _indexCardProvider.searchIndexCards(deckId, query);
 }

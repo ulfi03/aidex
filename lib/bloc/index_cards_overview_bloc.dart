@@ -14,14 +14,19 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
 
   final int _deckId;
 
+  final List<IndexCard> _indexCards = List.empty(growable: true);
+
   final IndexCardRepository _indexCardRepository;
 
   void _initEventHandlers() {
     on<FetchIndexCards>((final event, final emit) async {
       emit(const IndexCardsLoading());
       try {
-        final indexCards = await _indexCardRepository.fetchIndexCards(_deckId);
-        emit(IndexCardsLoaded(indexCards: indexCards));
+        _indexCards.clear();
+        // Fetch index cards and add elements to _indexCards
+        (await _indexCardRepository.fetchIndexCards(_deckId))
+            .forEach(_indexCards.add);
+        emit(IndexCardsLoaded(indexCards: _indexCards));
       } on Exception catch (e) {
         emit(IndexCardsError(message: e.toString()));
       }
@@ -38,6 +43,32 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
       try {
         await _indexCardRepository.removeAllIndexCards(_deckId);
         add(const FetchIndexCards());
+      } on Exception catch (e) {
+        emit(IndexCardsError(message: e.toString()));
+      }
+    });
+    on<SearchIndexCards>((final event, final emit) async {
+      emit(const IndexCardsLoading());
+      try {
+        _indexCards.clear();
+        (await _indexCardRepository.searchIndexCards(_deckId, event.query))
+            .forEach(_indexCards.add);
+        emit(IndexCardsLoaded(indexCards: _indexCards));
+      } on Exception catch (e) {
+        emit(IndexCardsError(message: e.toString()));
+      }
+    });
+    on<SortIndexCards>((final event, final emit) async {
+      try {
+        emit(const IndexCardsLoading());
+        _indexCards.sort((final a, final b) {
+          if (event.sortAsc) {
+            return a.question.compareTo(b.question);
+          } else {
+            return b.question.compareTo(a.question);
+          }
+        });
+        emit(IndexCardsLoaded(indexCards: _indexCards));
       } on Exception catch (e) {
         emit(IndexCardsError(message: e.toString()));
       }
@@ -122,4 +153,22 @@ class AddIndexCard extends IndexCardEvent {
 
   /// The IndexCard to add.
   final IndexCard indexCard;
+}
+
+/// Query for searching index cards.
+class SearchIndexCards extends IndexCardEvent {
+  /// Creates a new search index cards event.
+  const SearchIndexCards({required this.query});
+
+  /// The query to search for.
+  final String query;
+}
+
+/// The event for sorting index cards.
+class SortIndexCards extends IndexCardEvent {
+  /// Creates a new sort index cards event.
+  const SortIndexCards({required this.sortAsc});
+
+  /// Whether to sort ascending.
+  final bool sortAsc;
 }
