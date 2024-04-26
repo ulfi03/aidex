@@ -7,6 +7,7 @@ import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 /// This widget is used to display the deck overview.
 class DeckOverviewPage extends StatelessWidget {
   /// Constructor for the [DeckOverviewPage].
@@ -54,19 +55,19 @@ class DeckOverview extends StatelessWidget {
               if (state is DecksLoading) {
                 return Center(
                   child: CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(mainTheme
-                        .colorScheme.primary),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        mainTheme.colorScheme.primary),
                   ),
                 );
               } else if (state is DecksLoaded) {
                 return SingleChildScrollView(
-                  child: Wrap(
-                    children: state.decks
-                        .map((final deck) => DeckItemWidget(deck: deck))
-                        .toList(),
-                  ),
-                );
+                    child: Column(
+                  children: state.decks
+                      .map((final deck) => Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: DeckItemWidget(deck: deck)))
+                      .toList(),
+                ));
               } else if (state is DecksError) {
                 return ErrorDisplayWidget(errorMessage: state.message);
               } else {

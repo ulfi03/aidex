@@ -2,6 +2,7 @@ import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/components/custom_buttons.dart';
 import 'package:aidex/ui/components/custom_text_form_field.dart';
+import 'package:aidex/ui/components/icons.dart';
 import 'package:aidex/ui/deck-overview/deck_validators.dart';
 import 'package:aidex/ui/deck-overview/delete_deck_dialog.dart';
 import 'package:aidex/ui/routes.dart';
@@ -25,8 +26,7 @@ class DeckItemWidget extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    final iconSize = MediaQuery.of(context).size.width / 4;
-
+    final iconSize = MediaQuery.of(context).size.width / 12;
     return GestureDetector(
       onTap: () async {
         await Navigator.push(
@@ -35,103 +35,115 @@ class DeckItemWidget extends StatelessWidget {
             builder: (final context) =>
                 ItemOnDeckOverviewSelectedRoute(deck: deck),
           ),
-        );
+        ).then((final value) =>
+            context.read<DeckOverviewBloc>().add(const FetchDecks()));
       },
-      child: Container(
-        margin: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width / 32,
-          vertical: MediaQuery.of(context).size.width / 64,
-        ),
-        width: iconSize * 1.7,
-        height: iconSize * 0.8,
-        decoration: BoxDecoration(
-          color: deck.color,
-          border: Border.all(
-            color: mainTheme.colorScheme.onBackground,
-            width: 2,
+      child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: deck.color,
+            border: Border.all(
+              color: mainTheme.colorScheme.onBackground,
+            ),
+            borderRadius: BorderRadius.circular(8),
           ),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Icon(
-                Icons.layers,
-                size: iconSize * 0.4,
-                color: mainTheme.colorScheme.primary,
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Align(
-                  alignment: const Alignment(-1.2, -0.5),
-                  child: Text(
-                    deck.name,
-                    key: deckNameKey,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: mainTheme.colorScheme.onBackground),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                  ),
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: mainTheme.colorScheme.surface,
+                        ),
+                        width: iconSize * 1.25,
+                        height: iconSize * 1.25),
+                    aiDexLogo,
+                  ],
                 ),
-              ),
-            ),
-            PopupMenuButton<String>(
-              onSelected: (final value) async {
-                final DeckOverviewBloc deckOverviewBloc =
-                    context.read<DeckOverviewBloc>();
-                if (value == 'delete') {
-                  await showDialog(
-                      context: context,
-                      builder: (final context) => BlocProvider.value(
-                          value: deckOverviewBloc,
-                          child: DeleteDeckDialog(deck: deck)));
-                } else if (value == 'rename') {
-                  _renameDeck(context, deck, deckOverviewBloc);
-                }
-              },
-              icon: Icon(
-                Icons.more_vert,
-                color: mainTheme.colorScheme.onSurface,
-              ),
-              itemBuilder: (final context) => <PopupMenuEntry<String>>[
-                PopupMenuItem<String>(
-                  value: 'delete',
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.delete,
-                      color: mainTheme.colorScheme.primary,
+                Expanded(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      deck.name,
+                      key: deckNameKey,
+                      textAlign: TextAlign.center,
+                      style: mainTheme.textTheme.bodyMedium
+                          ?.copyWith(color: mainTheme.colorScheme.onBackground),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
                     ),
-                    title: Text(
-                      'Delete Deck',
-                      style: mainTheme.textTheme.titleSmall,
+                    RichText(
+                      text: TextSpan(children: [
+                        TextSpan(
+                          text: '${deck.cardsCount}',
+                          style: mainTheme.textTheme.bodySmall
+                              ?.copyWith(color: mainTheme.colorScheme.primary),
+                        ),
+                        TextSpan(
+                          text: ' cards',
+                          style: mainTheme.textTheme.bodySmall?.copyWith(
+                              color: mainTheme.colorScheme.onBackground),
+                        ),
+                      ]),
                     ),
+                  ],
+                )),
+                PopupMenuButton<String>(
+                  padding: EdgeInsets.zero,
+                  onSelected: (final value) async {
+                    final DeckOverviewBloc deckOverviewBloc =
+                        context.read<DeckOverviewBloc>();
+                    if (value == 'delete') {
+                      await showDialog(
+                          context: context,
+                          builder: (final context) => BlocProvider.value(
+                              value: deckOverviewBloc,
+                              child: DeleteDeckDialog(deck: deck)));
+                    } else if (value == 'rename') {
+                      _renameDeck(context, deck, deckOverviewBloc);
+                    }
+                  },
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: mainTheme.colorScheme.onSurface,
                   ),
-                ),
-                PopupMenuItem<String>(
-                  value: 'rename',
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.edit,
-                      color: mainTheme.colorScheme.primary,
+                  itemBuilder: (final context) => <PopupMenuEntry<String>>[
+                    PopupMenuItem<String>(
+                      value: 'delete',
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.delete,
+                          color: mainTheme.colorScheme.primary,
+                        ),
+                        title: Text(
+                          'Delete Deck',
+                          style: mainTheme.textTheme.titleSmall,
+                        ),
+                      ),
                     ),
-                    title: Text(
-                      'Rename Deck',
-                      style: mainTheme.textTheme.titleSmall,
+                    PopupMenuItem<String>(
+                      value: 'rename',
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.edit,
+                          color: mainTheme.colorScheme.primary,
+                        ),
+                        title: Text(
+                          'Rename Deck',
+                          style: mainTheme.textTheme.titleSmall,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
+                  color: mainTheme.colorScheme.background,
                 ),
               ],
-              color: mainTheme.colorScheme.background,
             ),
-          ],
-        ),
-      ),
+          )),
     );
   }
 
