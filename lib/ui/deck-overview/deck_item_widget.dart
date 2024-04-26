@@ -1,6 +1,6 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
-import 'package:aidex/ui/components/delete_dialog.dart';
+import 'package:aidex/ui/deck-overview/deck_delete_dialog.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';

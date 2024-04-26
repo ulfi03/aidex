@@ -39,14 +39,5 @@ void main() {
       await repository.addIndexCard(indexCard);
       verify(() => indexCardProvider.insert(indexCard)).called(1);
     });
-
-    test('Remove all indexCards', () async {
-      when(() => indexCardProvider.deleteAll(deckId))
-          .thenAnswer((final _) async => 1);
-      final IndexCardRepository repository =
-          IndexCardRepository(indexCardProvider: indexCardProvider);
-      await repository.removeAllIndexCards(deckId);
-      verify(() => indexCardProvider.deleteAll(deckId)).called(1);
-    });
   });
 }

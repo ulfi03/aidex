@@ -10,13 +10,12 @@ class IndexCardRepositoryMock extends Mock implements IndexCardRepository {}
 void main() {
   late IndexCardRepository indexCardRepository;
   const int deckId = 0;
+  final IndexCard indexCardStub = IndexCard(
+      question: 'question-fallback', answer: 'answer-fallback', deckId: deckId);
 
   setUp(() {
     indexCardRepository = IndexCardRepositoryMock();
-    registerFallbackValue(IndexCard(
-        question: 'question-fallback',
-        answer: 'answer-fallback',
-        deckId: deckId));
+    registerFallbackValue(indexCardStub);
   });
 
   group('IndexCardOverviewBloc', () {
@@ -94,34 +93,36 @@ void main() {
           expect: () => [isA<IndexCardsError>()]);
     });
 
-    group('On RemoveAllIndexCards', () {
-      blocTest('Remove all indexCards and reload indexCards',
+    group('On RemoveIndexCard', () {
+      blocTest('Remove an indexCard and reload indexCards',
           setUp: () {
-            when(() => indexCardRepository.removeAllIndexCards(deckId))
-                .thenAnswer((final _) async {});
+            when(() => indexCardRepository
+                    .removeIndexCards([indexCardStub.indexCardId!]))
+                .thenAnswer((final _) async => true);
             when(() => indexCardRepository.fetchIndexCards(deckId))
                 .thenAnswer((final _) async => []);
           },
           build: () => IndexCardOverviewBloc(indexCardRepository, deckId),
-          act: (final bloc) => bloc.add(const RemoveAllIndexCards()),
+          act: (final bloc) => bloc.add(RemoveIndexCardsById(
+              selectedIndexCardsIds: [indexCardStub.indexCardId!])),
           skip: 2,
           // skip the first two states [IndexCardsLoading, IndexCardsLoaded]
           verify: (final _) {
-            verify(() => indexCardRepository.removeAllIndexCards(deckId))
-                .called(1);
+            verify(() => indexCardRepository
+                .removeIndexCards([indexCardStub.indexCardId!])).called(1);
             verify(() => indexCardRepository.fetchIndexCards(deckId)).called(2);
           },
           expect: () => [isA<IndexCardsLoading>(), isA<IndexCardsLoaded>()]);
 
-      blocTest('Emit IndexCardError when an exception occurs',
+      blocTest('Emit IndexCardError when deletion unsuccessful',
           setUp: () {
-            when(() => indexCardRepository.fetchIndexCards(deckId))
-                .thenAnswer((final _) async => []);
-            when(() => indexCardRepository.removeAllIndexCards(deckId))
-                .thenThrow(Exception());
+            when(() => indexCardRepository
+                    .removeIndexCards([indexCardStub.indexCardId!]))
+                .thenAnswer((final _) async => false);
           },
           build: () => IndexCardOverviewBloc(indexCardRepository, deckId),
-          act: (final bloc) => bloc.add(const RemoveAllIndexCards()),
+          act: (final bloc) => bloc.add(RemoveIndexCardsById(
+              selectedIndexCardsIds: [indexCardStub.indexCardId!])),
           skip: 2,
           // skip the first two states [IndexCardsLoading, IndexCardsLoaded]
           expect: () => [isA<IndexCardsError>()]);

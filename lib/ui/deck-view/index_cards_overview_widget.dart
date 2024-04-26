@@ -2,8 +2,8 @@ import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
-import 'package:aidex/ui/components/delete_dialog.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
+import 'package:aidex/ui/deck-view/index_card_delete_dialog.dart';
 import 'package:aidex/ui/deck-view/index_card_item_widget.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
@@ -271,20 +271,22 @@ List<Widget> _getActions(
           onPressed: () => _onSelectAll(context, state, toggleSelectAll),
         ),
       ),
-      IconButton(
-        icon: Icon(
-          Icons.delete,
-          color: mainTheme.colorScheme.primary,
-        ),
-        onPressed: () => _onRemove(context, state.indexCardIds),
-      )
+      if (state.indexCardIds.isNotEmpty)
+        IconButton(
+          icon: Icon(
+            Icons.delete,
+            color: mainTheme.colorScheme.primary,
+          ),
+          onPressed: () => _onRemove(context, state.indexCardIds),
+        )
     ];
   } else {
     return [];
   }
 }
 
-/// The state of the DeleteCardButton.
+/// Handle the delete button.
+/// -> initiate a dialog to confirm the deletion of the selected index cards.
 Future<void> _onRemove(
     final BuildContext context, final List<int> indexCardIds) async {
   final IndexCardOverviewBloc indexCardOverviewBloc =
@@ -297,13 +299,9 @@ Future<void> _onRemove(
   );
 }
 
-/// The history of selected card ids.
-List<List<int>> selectedCardIdsHistory = [];
-
+/// Handles the Button to select all index cards or deselect them.
 void _onSelectAll(final BuildContext context,
     final IndexCardSelectionMode state, final ValueNotifier<bool> selectAll) {
-  /// stash History change
-  selectedCardIdsHistory.add(state.indexCardIds);
   if (!selectAll.value) {
     final selectedIndexCardIds = state.indexCards
         .map((final indexCard) => indexCard.indexCardId!)
@@ -312,21 +310,21 @@ void _onSelectAll(final BuildContext context,
         .read<IndexCardOverviewBloc>()
         .add(UpdateSelectedIndexCards(indexCardIds: selectedIndexCardIds));
   } else {
-    ///if all cards where selected then deselect all
-    if ((selectedCardIdsHistory[0].length == state.indexCards.length) &&
-        selectedCardIdsHistory[1].length == state.indexCards.length) {
-      selectedCardIdsHistory[0] = [];
+    /// get selected card ids before all cards where selected
+    List<int> lastSelectedCardIds = state.selectedCardsHistory[0];
+
+    ///if all cards where selected (previously) then deselect all
+    if (state.selectedCardsHistory[0].length == state.indexCards.length &&
+        state.selectedCardsHistory[1].length == state.indexCards.length) {
+      lastSelectedCardIds = [];
     }
 
     /// get selected card ids before all cards where selected
-    context.read<IndexCardOverviewBloc>().add(UpdateSelectedIndexCards(
-        indexCardIds:
-            selectedCardIdsHistory[selectedCardIdsHistory.length - 2]));
+    context
+        .read<IndexCardOverviewBloc>()
+        .add(UpdateSelectedIndexCards(indexCardIds: lastSelectedCardIds));
   }
 
-  /// remove history
-  if (selectedCardIdsHistory.length > 1) {
-    selectedCardIdsHistory.removeAt(0);
-  }
+  ///toggle Button Icon
   selectAll.value = !selectAll.value;
 }

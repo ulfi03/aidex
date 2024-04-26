@@ -36,7 +36,7 @@ class IndexCardItemWidget extends StatelessWidget {
 
   /// onLongPress function manages the selection of the index card.
   /// > adds an index card to the selected index cards list if it isn't selected
-  /// > removes an index card from the selected index cards list if it was selected
+  /// > removes index card from the selected index cards list if it was selected
   /// -> after one of these operations on the selected index cards list
   /// > update the selected index cards list in the bloc
   void onSelected(final BuildContext context) {
