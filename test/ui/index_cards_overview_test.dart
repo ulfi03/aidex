@@ -21,6 +21,14 @@ class MockDeckRepository extends Mock implements DeckRepository {}
 class MockIndexCardOverviewBloc extends MockBloc<IndexCardEvent, IndexCardState>
     implements IndexCardOverviewBloc {}
 
+class SortIndexCardsFake extends SortIndexCards implements Fake {
+  SortIndexCardsFake() : super(sortAsc: true);
+}
+
+class SearchIndexCardsFake extends SearchIndexCards implements Fake {
+  SearchIndexCardsFake() : super(query: 'query');
+}
+
 void main() {
   final deckStub = Deck(name: 'Deck1', color: Colors.black, deckId: 0);
 
@@ -35,6 +43,8 @@ void main() {
     deckRepositoryMock = MockDeckRepository();
     indexCardOverviewBloc = MockIndexCardOverviewBloc();
     registerFallbackValue(const IndexCardEvent());
+    registerFallbackValue(SortIndexCardsFake());
+    registerFallbackValue(SearchIndexCardsFake());
   });
 
   Future<void> pumpIndexCardOverview(final WidgetTester tester) async {
@@ -140,6 +150,8 @@ void main() {
               CardSearchBar.unsortedIcon);
           await tester.tap(getSortButton);
           await tester.pumpAndSettle();
+          verify(() => indexCardOverviewBloc.add(any<SortIndexCards>()))
+              .called(1);
           expect((tester.widget(getSortButton) as IconButton).selectedIcon,
               CardSearchBar.sortedIcon);
         });
@@ -179,6 +191,17 @@ void main() {
             await tester.tap(find.byType(IndexCardItemWidget));
             await tester.pumpAndSettle();
             expect(find.byType(IndexCardViewPage), findsOneWidget);
+          });
+
+          /// test the search functionality
+          testWidgets('SearchBar', (final tester) async {
+            await pumpIndexCardOverviewWithRepos(tester);
+            await tester.pumpAndSettle();
+            // enter search query
+            await tester.enterText(getSearchbar, 'question-1');
+            await tester.pumpAndSettle();
+            verify(() => indexCardOverviewBloc.add(any<SearchIndexCards>()))
+                .called(2);
           });
         });
       });
