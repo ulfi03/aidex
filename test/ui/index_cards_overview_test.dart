@@ -3,6 +3,7 @@ import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
+import 'package:aidex/ui/deck-view/card_serach_bar.dart';
 import 'package:aidex/ui/deck-view/index_card_item_widget.dart';
 import 'package:aidex/ui/deck-view/index_cards_overview_widget.dart';
 import 'package:aidex/ui/index-card-view/index_card_create_view.dart';
@@ -116,7 +117,7 @@ void main() {
       ];
       final getSearchbar = find.byType(CardSearchBar);
       final getAddCardButton = find.byType(AddCardButton);
-      final getSortButton = find.byKey(SearchBarState.sortButtonKey);
+      final getSortButton = find.byKey(CardSearchBar.sortButtonKey);
 
       testWidgets('All Elements loaded', (final tester) async {
         await pumpIndexCardOverview(tester);
@@ -136,11 +137,11 @@ void main() {
         testWidgets('SortButton', (final tester) async {
           await pumpIndexCardOverview(tester);
           expect((tester.widget(getSortButton) as IconButton).icon,
-              SearchBarState.unsortedIcon);
+              CardSearchBar.unsortedIcon);
           await tester.tap(getSortButton);
           await tester.pumpAndSettle();
           expect((tester.widget(getSortButton) as IconButton).selectedIcon,
-              SearchBarState.sortedIcon);
+              CardSearchBar.sortedIcon);
         });
       });
       group('IndexCards functionalities', () {
