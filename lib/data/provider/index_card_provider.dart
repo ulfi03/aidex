@@ -110,8 +110,9 @@ CREATE TABLE IF NOT EXISTS ${IndexCard.tableIndexCard} (
         IndexCard.columnAnswer,
         IndexCard.columnDeckId
       ],
-      where:
-          '${IndexCard.columnDeckId} = ? AND ${IndexCard.columnQuestion} LIKE ?',
+      where: '''
+          ${IndexCard.columnDeckId} = ? AND ${IndexCard.columnQuestion} LIKE ?
+          ''',
       whereArgs: [deckId, '%$query%'],
     );
     return List.generate(maps.length, (final i) => IndexCard.fromMap(maps[i]));
