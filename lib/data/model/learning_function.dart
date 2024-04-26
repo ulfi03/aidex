@@ -23,16 +23,6 @@ class _LearningFunctionState extends State<LearningFunction> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Opacity(opacity: 0.5, child: Text('Learning Function')),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.close),
-              color: Color(0xFF20EFC0),
-              iconSize: 30.0,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
         ),
         body: Stack(
           children: [
@@ -41,9 +31,12 @@ class _LearningFunctionState extends State<LearningFunction> {
               onTap: () => cardKey.currentState?.toggleCard(),
             ),
             Center(
-                child: widget.cards.isEmpty
-                    ? Text('No cards available')
-                    : FlipCard(
+              child: widget.cards.isEmpty
+                  ? Text('No cards available')
+                  : Padding(
+                      padding: const EdgeInsets.only(
+                          bottom: 90.0), // Adjust the padding as needed
+                      child: FlipCard(
                         key: ValueKey(currentIndex),
                         fill: Fill.fillFront,
                         // The side to initially display.
@@ -61,7 +54,10 @@ class _LearningFunctionState extends State<LearningFunction> {
                               controller: RichTextEditorController(
                                   contentJson:
                                       widget.cards[currentIndex].answer),
-                            ))))),
+                            ))),
+                      ),
+                    ),
+            ),
             Positioned(
               bottom: 10,
               left: 10,

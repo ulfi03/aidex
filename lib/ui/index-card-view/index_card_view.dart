@@ -122,20 +122,23 @@ class IndexCardView extends StatelessWidget {
   }
 
   Widget _getView(final IndexCard card) => Container(
-      constraints: const BoxConstraints.expand(),
-      child: FlipCard(
-          fill: Fill.fillFront,
-          // The side to initially display.
-          front: Card(
-              color: mainTheme.colorScheme.primary.withOpacity(0.5),
-              child: Align(
-                child: Text(card.question),
-              )),
-          back: Card(
-              color: mainTheme.colorScheme.secondary.withOpacity(0.5),
-              child: AbsorbPointer(
-                  child: RichTextEditorWidget(
-                readonly: true,
-                controller: RichTextEditorController(contentJson: card.answer),
-              )))));
+        constraints: const BoxConstraints.expand(),
+        child: FlipCard(
+            key: ValueKey(card),
+            fill: Fill.fillFront,
+            // The side to initially display.
+            front: Card(
+                color: Color(0xFF414141),
+                child: Align(
+                  child: Text(card.question, style: TextStyle(fontSize: 36)),
+                )),
+            back: Card(
+                color: Color(0xFF414141),
+                child: AbsorbPointer(
+                    child: RichTextEditorWidget(
+                  readonly: true,
+                  controller:
+                      RichTextEditorController(contentJson: card.answer),
+                )))),
+      );
 }
