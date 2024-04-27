@@ -2,7 +2,7 @@ import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
-import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
+import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +19,9 @@ class DeckOverviewPage extends StatelessWidget {
   /// The key for the add button.
   static const Key addButtonKey = Key('AddButtonKey');
 
-  /// The key for the create deck snackbar.
-  static const Key createDeckSnackbarKey = Key('CreateDeckSnackbarKey');
+  /// The key for the createDeckModalBottomSheet.
+  static const Key createDeckModalBottomSheetKey =
+      Key('CreateDeckModalBottomSheetKey');
 
   @override
   Widget build(final BuildContext context) => BlocProvider(
@@ -35,31 +36,34 @@ class DeckOverview extends StatelessWidget {
   const DeckOverview({super.key});
 
   @override
-  Widget build(final BuildContext context) => GestureDetector(
-        onTap: () {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        },
-        child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: Text(
-              key: DeckOverviewPage.deckOverviewTitleKey,
-              'All Decks',
-              style: mainTheme.textTheme.titleLarge,
-            ),
-            backgroundColor: mainTheme.colorScheme.surface,
+  Widget build(final BuildContext context) => Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            key: DeckOverviewPage.deckOverviewTitleKey,
+            'All Decks',
+            style: mainTheme.textTheme.titleLarge,
           ),
           backgroundColor: mainTheme.colorScheme.surface,
-          body: BlocBuilder<DeckOverviewBloc, DeckState>(
-            builder: (final context, final state) {
-              if (state is DecksLoading) {
+        ),
+        backgroundColor: mainTheme.colorScheme.surface,
+        body: BlocBuilder<DeckOverviewBloc, DeckState>(
+          builder: (final context, final state) {
+            if (state is DecksLoading) {
+              return Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      mainTheme.colorScheme.primary),
+                ),
+              );
+            } else if (state is DecksLoaded) {
+              if (state.decks.isEmpty) {
                 return Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        mainTheme.colorScheme.primary),
-                  ),
-                );
-              } else if (state is DecksLoaded) {
+                    child: Text(
+                  'No decks found, create one!',
+                  style: mainTheme.textTheme.bodyMedium,
+                ));
+              } else {
                 return SingleChildScrollView(
                     child: Column(
                   children: state.decks
@@ -68,72 +72,43 @@ class DeckOverview extends StatelessWidget {
                           child: DeckItemWidget(deck: deck)))
                       .toList(),
                 ));
-              } else if (state is DecksError) {
-                return ErrorDisplayWidget(errorMessage: state.message);
-              } else {
-                return const ErrorDisplayWidget(
-                    errorMessage: 'Something went wrong!');
               }
-            },
-          ),
-          floatingActionButton:
-              const AddButton(key: DeckOverviewPage.addButtonKey),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.miniEndFloat,
+            } else if (state is DecksError) {
+              return ErrorDisplayWidget(errorMessage: state.message);
+            } else {
+              return const ErrorDisplayWidget(
+                  errorMessage: 'Something went wrong!');
+            }
+          },
         ),
+        floatingActionButton: FloatingActionButton(
+          key: DeckOverviewPage.addButtonKey,
+          onPressed: () => onAddButtonPressed(context),
+          backgroundColor: mainTheme.colorScheme.primary,
+          child: const Icon(Icons.add),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       );
 }
 
-/// This widget is used to display the add button.
-class AddButton extends StatefulWidget {
-  ///
-  const AddButton({super.key});
-
-  @override
-  AddButtonState createState() => AddButtonState();
-}
-
-/// The state of the add button.
-class AddButtonState extends State<AddButton> {
-  bool _isAddButtonVisible = true;
-
-  @override
-  Widget build(final BuildContext context) => Visibility(
-      visible: _isAddButtonVisible,
-      child: FloatingActionButton(
-        onPressed: () => onAddButtonPressed(context),
-        backgroundColor: mainTheme.colorScheme.primary,
-        child: const Icon(Icons.add),
-      ));
-
-  /// Handles the add button pressed event.
-  Future<void> onAddButtonPressed(final BuildContext context) async {
-    setState(() {
-      _isAddButtonVisible = false;
-    });
-    await ScaffoldMessenger.of(context)
-        .showSnackBar(
-          CreateDeckSnackbar(
-            key: DeckOverviewPage.createDeckSnackbarKey,
+/// Handles the add button pressed event.
+Future<void> onAddButtonPressed(final BuildContext deckOverviewContext) async {
+  await showModalBottomSheet(
+      context: deckOverviewContext,
+      backgroundColor: mainTheme.colorScheme.background,
+      builder: (final context) => CreateDeckModalBottomSheet(
+            key: DeckOverviewPage.createDeckModalBottomSheetKey,
             onManual: () async {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              await _showCreateDeckDialog(context);
+              Navigator.pop(context);
+              await _showCreateDeckDialog(deckOverviewContext);
             },
             onAI: () async {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              context.read<DeckOverviewBloc>().add(const RemoveAllDecks());
+              deckOverviewContext
+                  .read<DeckOverviewBloc>()
+                  .add(const RemoveAllDecks());
               // Handle AI deck creation here
             },
-          ),
-        )
-        .closed
-        .then((final value) => {
-              ScaffoldMessenger.of(context).clearSnackBars(),
-              setState(() {
-                _isAddButtonVisible = true;
-              })
-            });
-  }
+          ));
 }
 
 Future<void> _showCreateDeckDialog(final BuildContext context) async {

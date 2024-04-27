@@ -136,7 +136,7 @@ void main() {
         expect(getAddCardButton, findsOneWidget);
 
         /// if deck is empty IndexCardsOverview displays 'Content of [deckName]'
-        expect(find.text('No index cards found!'), findsOneWidget);
+        expect(find.text('No index cards found, create one!'), findsOneWidget);
       });
 
       group('Query functionalities', () {

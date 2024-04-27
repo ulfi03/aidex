@@ -2,7 +2,7 @@ import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/components/custom_buttons.dart';
 import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
-import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
+import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
 import 'package:bloc_test/bloc_test.dart';
@@ -42,6 +42,13 @@ void main() {
       when(() => deckOverviewBloc.state).thenReturn(const DecksLoading());
       await pumpDeckOverview(tester);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('Render no decks found', (final tester) async {
+      when(() => deckOverviewBloc.state)
+          .thenReturn(const DecksLoaded(decks: []));
+      await pumpDeckOverview(tester);
+      expect(find.text('No decks found, create one!'), findsOneWidget);
     });
 
     testWidgets('Render loaded decks', (final tester) async {
@@ -87,36 +94,39 @@ void main() {
     });
   });
 
-  group('CreateDeckSnackbar', () {
+  group('CreateDeckModalBottomSheet', () {
     setUp(() => when(() => deckOverviewBloc.state)
         .thenReturn(const DecksLoaded(decks: [])));
 
-    Future<void> prepareSnackbar(final WidgetTester tester) async {
+    Future<void> prepareModalButtomSheet(final WidgetTester tester) async {
       await pumpDeckOverview(tester);
       await tester.tap(find.byKey(DeckOverviewPage.addButtonKey));
       await tester.pumpAndSettle();
     }
 
-    testWidgets('Show CreateDeckSnackbar', (final tester) async {
-      await prepareSnackbar(tester);
-      expect(find.bySubtype<SnackBar>(), findsOneWidget);
+    testWidgets('Show CreateDeckModalBottomSheet', (final tester) async {
+      await prepareModalButtomSheet(tester);
+      expect(find.bySubtype<CreateDeckModalBottomSheet>(), findsOneWidget);
     });
 
-    testWidgets('Verify displayed content on CreateDeckSnackbar',
+    testWidgets('Verify displayed content on CreateDeckModalBottomSheet',
         (final tester) async {
-      await prepareSnackbar(tester);
-      expect(find.byKey(CreateDeckSnackbar.snackbarTitleKey), findsOneWidget);
+      await prepareModalButtomSheet(tester);
+      expect(find.byKey(CreateDeckModalBottomSheet.modalBottomSheetTitleKey),
+          findsOneWidget);
       expect(find.text('Create Deck'), findsOneWidget);
-      expect(find.byKey(CreateDeckSnackbar.createManuallyButtonKey),
+      expect(find.byKey(CreateDeckModalBottomSheet.createManuallyButtonKey),
           findsOneWidget);
       expect(find.text('Create manually'), findsOneWidget);
-      expect(find.byKey(CreateDeckSnackbar.createAITitleKey), findsOneWidget);
+      expect(find.byKey(CreateDeckModalBottomSheet.createAITitleKey),
+          findsOneWidget);
       expect(find.text('Create with AI'), findsOneWidget);
     });
 
     testWidgets('Open "Create Deck manually" dialog', (final tester) async {
-      await prepareSnackbar(tester);
-      await tester.tap(find.byKey(CreateDeckSnackbar.createManuallyButtonKey));
+      await prepareModalButtomSheet(tester);
+      await tester
+          .tap(find.byKey(CreateDeckModalBottomSheet.createManuallyButtonKey));
       await tester.pumpAndSettle();
       expect(find.byType(CreateDeckDialog), findsOneWidget);
     });
@@ -130,7 +140,8 @@ void main() {
       await pumpDeckOverview(tester);
       await tester.tap(find.byKey(DeckOverviewPage.addButtonKey));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(CreateDeckSnackbar.createManuallyButtonKey));
+      await tester
+          .tap(find.byKey(CreateDeckModalBottomSheet.createManuallyButtonKey));
       await tester.pumpAndSettle();
       expect(find.byType(CreateDeckDialog), findsOneWidget);
     }
@@ -142,7 +153,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(DeckOverview), findsOneWidget);
       expect(find.byType(CreateDeckDialog), findsNothing);
-      expect(find.bySubtype<SnackBar>(), findsNothing);
+      expect(find.bySubtype<CreateDeckModalBottomSheet>(), findsNothing);
     });
 
     testWidgets('Create deck by pressing "OK"', (final tester) async {

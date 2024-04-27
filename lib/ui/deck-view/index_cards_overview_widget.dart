@@ -62,7 +62,9 @@ class IndexCardOverview extends StatelessWidget {
             } else if (state is IndexCardsLoaded) {
               return Expanded(child: () {
                 if (state.indexCards.isEmpty) {
-                  return const Center(child: Text('No index cards found!'));
+                  return Center(
+                      child: Text('No index cards found, create one!',
+                          style: mainTheme.textTheme.bodyMedium));
                 } else {
                   return SingleChildScrollView(
                     child: Wrap(
