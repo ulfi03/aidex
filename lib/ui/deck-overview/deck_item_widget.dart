@@ -21,6 +21,9 @@ class DeckItemWidget extends StatelessWidget {
   /// A key used to identify the deck name widget in tests.
   static const deckNameKey = Key('deck_name');
 
+  /// A key used to identify the cards count widget in tests.
+  static const cardsCountKey = Key('cards_count');
+
   /// The deck to display.
   final Deck deck;
 
@@ -77,6 +80,7 @@ class DeckItemWidget extends StatelessWidget {
                       maxLines: 2,
                     ),
                     RichText(
+                      key: cardsCountKey,
                       text: TextSpan(children: [
                         TextSpan(
                           text: '${deck.cardsCount}',
