@@ -24,132 +24,132 @@ class DeckItemWidget extends StatelessWidget {
   /// A key used to identify the cards count widget in tests.
   static const cardsCountKey = Key('cards_count');
 
+  static const iconSize = 30.0;
+
   /// The deck to display.
   final Deck deck;
 
   @override
-  Widget build(final BuildContext context) {
-    final iconSize = MediaQuery.of(context).size.width / 12;
-    return GestureDetector(
-      onTap: () async {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (final context) =>
-                ItemOnDeckOverviewSelectedRoute(deck: deck),
-          ),
-        ).then((final value) =>
-            context.read<DeckOverviewBloc>().add(const FetchDecks()));
-      },
-      child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: deck.color,
-            border: Border.all(
-              color: mainTheme.colorScheme.onBackground,
+  Widget build(final BuildContext context) => GestureDetector(
+        onTap: () async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (final context) =>
+                  ItemOnDeckOverviewSelectedRoute(deck: deck),
             ),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Container(
-            margin: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: mainTheme.colorScheme.surface,
-                        ),
-                        width: iconSize * 1.25,
-                        height: iconSize * 1.25),
-                    aiDexLogo,
-                  ],
-                ),
-                Expanded(
-                    child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      deck.name,
-                      key: deckNameKey,
-                      textAlign: TextAlign.center,
-                      style: mainTheme.textTheme.bodyMedium
-                          ?.copyWith(color: mainTheme.colorScheme.onBackground),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
-                    RichText(
-                      key: cardsCountKey,
-                      text: TextSpan(children: [
-                        TextSpan(
-                          text: '${deck.cardsCount}',
-                          style: mainTheme.textTheme.bodySmall
-                              ?.copyWith(color: mainTheme.colorScheme.primary),
-                        ),
-                        TextSpan(
-                          text: ' cards',
-                          style: mainTheme.textTheme.bodySmall?.copyWith(
-                              color: mainTheme.colorScheme.onBackground),
-                        ),
-                      ]),
-                    ),
-                  ],
-                )),
-                PopupMenuButton<String>(
-                  padding: EdgeInsets.zero,
-                  onSelected: (final value) async {
-                    final DeckOverviewBloc deckOverviewBloc =
-                        context.read<DeckOverviewBloc>();
-                    if (value == 'delete') {
-                      await showDialog(
-                          context: context,
-                          builder: (final context) => BlocProvider.value(
-                              value: deckOverviewBloc,
-                              child: DeleteDeckDialog(deck: deck)));
-                    } else if (value == 'rename') {
-                      _renameDeck(context, deck, deckOverviewBloc);
-                    }
-                  },
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: mainTheme.colorScheme.onSurface,
+          ).then((final value) =>
+              context.read<DeckOverviewBloc>().add(const FetchDecks()));
+        },
+        child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: deck.color,
+              border: Border.all(
+                color: mainTheme.colorScheme.onBackground,
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Container(
+              margin: const EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular((iconSize * 1.25) / 2),
+                            color: mainTheme.colorScheme.surface,
+                          ),
+                          width: iconSize * 1.25,
+                          height: iconSize * 1.25),
+                      const AIDexLogo(width: iconSize, height: iconSize),
+                    ],
                   ),
-                  itemBuilder: (final context) => <PopupMenuEntry<String>>[
-                    PopupMenuItem<String>(
-                      value: 'delete',
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.delete,
-                          color: mainTheme.colorScheme.primary,
-                        ),
-                        title: Text(
-                          'Delete Deck',
-                          style: mainTheme.textTheme.titleSmall,
+                  Expanded(
+                      child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        deck.name,
+                        key: deckNameKey,
+                        textAlign: TextAlign.center,
+                        style: mainTheme.textTheme.bodyMedium?.copyWith(
+                            color: mainTheme.colorScheme.onBackground),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                      ),
+                      RichText(
+                        key: cardsCountKey,
+                        text: TextSpan(children: [
+                          TextSpan(
+                            text: '${deck.cardsCount}',
+                            style: mainTheme.textTheme.bodySmall?.copyWith(
+                                color: mainTheme.colorScheme.primary),
+                          ),
+                          TextSpan(
+                            text: ' cards',
+                            style: mainTheme.textTheme.bodySmall?.copyWith(
+                                color: mainTheme.colorScheme.onBackground),
+                          ),
+                        ]),
+                      ),
+                    ],
+                  )),
+                  PopupMenuButton<String>(
+                    padding: EdgeInsets.zero,
+                    onSelected: (final value) async {
+                      final DeckOverviewBloc deckOverviewBloc =
+                          context.read<DeckOverviewBloc>();
+                      if (value == 'delete') {
+                        await showDialog(
+                            context: context,
+                            builder: (final context) => BlocProvider.value(
+                                value: deckOverviewBloc,
+                                child: DeleteDeckDialog(deck: deck)));
+                      } else if (value == 'rename') {
+                        _renameDeck(context, deck, deckOverviewBloc);
+                      }
+                    },
+                    icon: Icon(
+                      Icons.more_vert,
+                      color: mainTheme.colorScheme.onSurface,
+                    ),
+                    itemBuilder: (final context) => <PopupMenuEntry<String>>[
+                      PopupMenuItem<String>(
+                        value: 'delete',
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.delete,
+                            color: mainTheme.colorScheme.primary,
+                          ),
+                          title: Text(
+                            'Delete Deck',
+                            style: mainTheme.textTheme.titleSmall,
+                          ),
                         ),
                       ),
-                    ),
-                    PopupMenuItem<String>(
-                      value: 'rename',
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.edit,
-                          color: mainTheme.colorScheme.primary,
-                        ),
-                        title: Text(
-                          'Rename Deck',
-                          style: mainTheme.textTheme.titleSmall,
+                      PopupMenuItem<String>(
+                        value: 'rename',
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.edit,
+                            color: mainTheme.colorScheme.primary,
+                          ),
+                          title: Text(
+                            'Rename Deck',
+                            style: mainTheme.textTheme.titleSmall,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                  color: mainTheme.colorScheme.background,
-                ),
-              ],
-            ),
-          )),
-    );
-  }
+                    ],
+                    color: mainTheme.colorScheme.background,
+                  ),
+                ],
+              ),
+            )),
+      );
 
   void _renameDeck(final BuildContext context, final Deck deck,
       final DeckOverviewBloc deckOverviewBloc) {
