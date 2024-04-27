@@ -24,6 +24,7 @@ class DeckItemWidget extends StatelessWidget {
   /// A key used to identify the cards count widget in tests.
   static const cardsCountKey = Key('cards_count');
 
+  /// The size of the icon.
   static const iconSize = 30.0;
 
   /// The deck to display.
