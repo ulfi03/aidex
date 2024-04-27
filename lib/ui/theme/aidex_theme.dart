@@ -20,7 +20,7 @@ final ThemeData mainTheme = ThemeData(
     displaySmall: TextStyle(color: Colors.white),
     bodyLarge: TextStyle(color: Colors.white),
     bodyMedium: TextStyle(color: Colors.white, fontSize: 16),
-    bodySmall: TextStyle(color: Colors.white, fontSize: 15),
+    bodySmall: TextStyle(color: Colors.white, fontSize: 12),
     labelLarge: TextStyle(color: Colors.white),
     labelMedium: TextStyle(color: Colors.white),
     labelSmall: TextStyle(color: Colors.white),
