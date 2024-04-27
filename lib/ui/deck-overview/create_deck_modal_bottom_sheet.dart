@@ -1,42 +1,9 @@
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 
-/// A widget used to display the Snackbar for creating a deck.
-///
-/// This widget is used to display the Snackbar for creating a deck.
-///
-/// It displays two buttons for the user to create a deck manually or with AI.
-///
-/// The [CreateDeckSnackbarWidget] requires a [onManual] and [onAI] callback
-/// to be provided.
-///
-/// The [onManual] callback is called when the user presses the button to create
-/// a deck manually.
-///
-/// The [onAI] callback is called when the user presses the button to create
-/// a deck with AI.
-///
-/// This snippet can be used in the `DeckOverviewWidget` to display the
-/// Snackbar for creating a deck.
-///
-/// ```dart
-/// ScaffoldMessenger.of(context).showSnackBar(
-///   SnackBar(
-///     content: CreateDeckSnackbarWidget(
-///       onManual: () {
-///         // Create deck manually
-///       },
-///       onAI: () {
-///         // Create deck with AI
-///       },
-///     ),
-///   ),
-/// );
-/// ```
-///
-/// {@category Widget}
-class CreateDeckSnackbarWidget extends StatelessWidget {
-  /// Constructor for the [CreateDeckSnackbarWidget].
+/// This widget is used to display the create deck modal bottom sheet.
+class CreateDeckModalBottomSheet extends StatelessWidget {
+  /// Constructor for the [CreateDeckModalBottomSheet].
   ///
   /// The [key] is used to identify the widget in the widget tree.
   ///
@@ -45,11 +12,12 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
   ///
   /// The [onAI] callback is called when the user presses the button to create
   /// a deck with AI.
-  const CreateDeckSnackbarWidget(
+  const CreateDeckModalBottomSheet(
       {required this.onManual, required this.onAI, super.key});
 
-  /// The key for the Snackbar title
-  static const snackbarTitleKey = Key('create_deck_snackbar_title');
+  /// The key for the create deck modal bottom sheet title
+  static const modalBottomSheetTitleKey =
+      Key('create_deck_modal_bottom_sheet_title');
 
   /// The key for the create manually title
   static const createManuallyTitleKey = Key('create_manually_title');
@@ -78,7 +46,7 @@ class CreateDeckSnackbarWidget extends StatelessWidget {
           children: [
             Center(
               child: Text(
-                  key: snackbarTitleKey,
+                  key: modalBottomSheetTitleKey,
                   'Create Deck',
                   style: mainTheme.textTheme.titleLarge),
             ),

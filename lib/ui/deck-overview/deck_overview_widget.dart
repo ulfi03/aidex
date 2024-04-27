@@ -2,7 +2,7 @@ import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
-import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
+import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +19,9 @@ class DeckOverviewPage extends StatelessWidget {
   /// The key for the add button.
   static const Key addButtonKey = Key('AddButtonKey');
 
-  /// The key for the create deck snackbar.
-  static const Key createDeckSnackbarKey = Key('CreateDeckSnackbarKey');
+  /// The key for the createDeckModalBottomSheet.
+  static const Key createDeckModalBottomSheetKey =
+      Key('CreateDeckModalBottomSheetKey');
 
   @override
   Widget build(final BuildContext context) => BlocProvider(
@@ -56,14 +57,22 @@ class DeckOverview extends StatelessWidget {
                 ),
               );
             } else if (state is DecksLoaded) {
-              return SingleChildScrollView(
-                  child: Column(
-                children: state.decks
-                    .map((final deck) => Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: DeckItemWidget(deck: deck)))
-                    .toList(),
-              ));
+              if (state.decks.isEmpty) {
+                return Center(
+                    child: Text(
+                  'No decks found, create one!',
+                  style: mainTheme.textTheme.bodyMedium,
+                ));
+              } else {
+                return SingleChildScrollView(
+                    child: Column(
+                  children: state.decks
+                      .map((final deck) => Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: DeckItemWidget(deck: deck)))
+                      .toList(),
+                ));
+              }
             } else if (state is DecksError) {
               return ErrorDisplayWidget(errorMessage: state.message);
             } else {
@@ -87,7 +96,8 @@ Future<void> onAddButtonPressed(final BuildContext deckOverviewContext) async {
   await showModalBottomSheet(
       context: deckOverviewContext,
       backgroundColor: mainTheme.colorScheme.background,
-      builder: (final context) => CreateDeckSnackbarWidget(
+      builder: (final context) => CreateDeckModalBottomSheet(
+            key: DeckOverviewPage.createDeckModalBottomSheetKey,
             onManual: () async {
               Navigator.pop(context);
               await _showCreateDeckDialog(deckOverviewContext);
