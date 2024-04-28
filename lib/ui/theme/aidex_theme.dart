@@ -41,4 +41,10 @@ final ThemeData mainTheme = ThemeData(
           MaterialStateProperty.all<Color>(const Color(0xFF20EFC0)),
     ),
   ),
+  floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    backgroundColor: Color(0xFF20EFC0),
+    foregroundColor: Colors.black,
+    // set size of the floating action button
+    sizeConstraints: BoxConstraints.tightFor(width: 56, height: 56),
+  ),
 );

@@ -105,4 +105,14 @@ create table ${Deck.tableDeck} (
       whereArgs: [deckId],
     );
   }
+
+  /// Change the color of a deck in the database.
+  Future<void> changeDeckColor(final int deckId, final int newColor) async {
+    await _db.update(
+      Deck.tableDeck,
+      {Deck.columnColor: newColor},
+      where: '${Deck.columnDeckId} = ?',
+      whereArgs: [deckId],
+    );
+  }
 }

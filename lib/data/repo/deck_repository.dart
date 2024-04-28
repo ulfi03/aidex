@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/provider/deck_provider.dart';
 
@@ -35,4 +37,8 @@ class DeckRepository {
   /// Throws an [Error] if the deck's id is null.
   Future<void> renameDeck(final Deck deck, final String newName) async =>
       _deckProvider.renameDeck(deck.deckId!, newName);
+
+  /// Change the color of a deck in the database.
+  Future<void> changeDeckColor(final Deck deck, final Color color) async =>
+      _deckProvider.changeDeckColor(deck.deckId!, color.value);
 }
