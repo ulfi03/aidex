@@ -40,43 +40,6 @@ class IndexCardOverview extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: Text(deck.name),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.play_arrow),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (final context) {
-                    final indexCardRepository =
-                        RepositoryProvider.of<IndexCardRepository>(context);
-                    final cardsFuture =
-                        indexCardRepository.fetchIndexCards(deck.deckId!);
-
-                    return FutureBuilder<List<IndexCard>>(
-                      future: cardsFuture,
-                      builder: (final context, final snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            return LearningFunction(
-                              key: const Key('cards'),
-                              cards: snapshot.data!,
-                              deck: deck,
-                            );
-                          }
-                        } else {
-                          return CircularProgressIndicator();
-                        }
-                      },
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -135,6 +98,47 @@ class IndexCardOverview extends StatelessWidget {
             }
           }),
         ],
+      ),
+      bottomNavigationBar: Container(
+        height: 70,
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: FloatingActionButton(
+            child: Icon(Icons.play_arrow),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (final context) {
+                    final indexCardRepository =
+                        RepositoryProvider.of<IndexCardRepository>(context);
+                    final cardsFuture =
+                        indexCardRepository.fetchIndexCards(deck.deckId!);
+
+                    return FutureBuilder<List<IndexCard>>(
+                      future: cardsFuture,
+                      builder: (final context, final snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return LearningFunction(
+                              key: const Key('cards'),
+                              cards: snapshot.data!,
+                              deck: deck,
+                            );
+                          }
+                        } else {
+                          return CircularProgressIndicator();
+                        }
+                      },
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ),
       ));
 }
 
