@@ -1,3 +1,4 @@
+import 'package:aidex/ui/components/custom_buttons.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -52,21 +53,9 @@ abstract class DeleteDialog extends StatelessWidget {
           ),
         ),
         actions: [
-          TextButton(
-            key: dialogDeleteButtonKey,
-            onPressed: () => onDelete(context),
-            child: Text(
-              'Delete',
-              style: TextStyle(
-                color: mainTheme.colorScheme.error,
-                fontSize: 16,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () => onCancel(context),
-            child: Text('Cancel', style: mainTheme.textTheme.bodyMedium),
-          ),
+          DeleteButton(
+              key: dialogDeleteButtonKey, onPressed: () => onDelete(context)),
+          CancelButton(onPressed: () => onCancel(context)),
         ],
         backgroundColor: mainTheme.colorScheme.background,
       );

@@ -2,8 +2,8 @@ import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
-import 'package:aidex/ui/deck-view/card_serach_bar.dart';
 import 'package:aidex/ui/components/delete_dialog.dart';
+import 'package:aidex/ui/deck-view/card_serach_bar.dart';
 import 'package:aidex/ui/deck-view/index_card_item_widget.dart';
 import 'package:aidex/ui/deck-view/index_cards_overview_widget.dart';
 import 'package:aidex/ui/index-card-view/index_card_create_view.dart';
@@ -348,10 +348,11 @@ void main() {
                   .add(any(that: isA<ExitIndexCardSelectionMode>()))).called(1);
             });
           });
+
           /// test the search functionality
           testWidgets('SearchBar', (final tester) async {
             when(() => indexCardOverviewBloc.state)
-                .thenReturn(IndexCardsLoaded(indexCards: [indexCardStub]));
+                .thenReturn(IndexCardsLoaded(indexCards: indexCardsStub));
             await pumpIndexCardOverviewWithRepos(tester);
             await tester.pumpAndSettle();
             // enter search query

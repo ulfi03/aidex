@@ -3,8 +3,8 @@ import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
-import 'package:aidex/ui/deck-view/index_card_delete_dialog.dart';
 import 'package:aidex/ui/deck-view/card_serach_bar.dart';
+import 'package:aidex/ui/deck-view/index_card_delete_dialog.dart';
 import 'package:aidex/ui/deck-view/index_card_item_widget.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
@@ -81,9 +81,10 @@ class IndexCardOverview extends StatelessWidget {
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Expanded(child: CardSearchBar(
-                      indexCardOverviewBloc:
-                          context.read<IndexCardOverviewBloc>())),
+                            Expanded(
+                                child: CardSearchBar(
+                                    indexCardOverviewBloc:
+                                        context.read<IndexCardOverviewBloc>())),
                             AddCardButton(deck: deck)
                           ])),
                 BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
@@ -137,9 +138,9 @@ class IndexCardsContainer extends StatelessWidget {
   @override
   Widget build(final BuildContext context) => Expanded(
       child: (indexCards.isEmpty)
-          ?  Center(
-          child: Text('No index cards found, create one!',
-              style: mainTheme.textTheme.bodyMedium))
+          ? Center(
+              child: Text('No index cards found, create one!',
+                  style: mainTheme.textTheme.bodyMedium))
           : SingleChildScrollView(
               child: Wrap(
                 children: indexCards

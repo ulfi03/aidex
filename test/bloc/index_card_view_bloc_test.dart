@@ -70,7 +70,7 @@ void main() {
                     .fetchIndexCard(indexCardStub.indexCardId!))
                 .thenAnswer((final _) async => indexCardStub);
             when(() => indexCardRepository
-                    .removeIndexCard(indexCardStub.indexCardId!))
+                    .removeIndexCards([indexCardStub.indexCardId!]))
                 .thenAnswer((final _) async => true);
           },
           build: () => IndexCardViewBloc(
@@ -87,7 +87,7 @@ void main() {
                     .fetchIndexCard(indexCardStub.indexCardId!))
                 .thenAnswer((final _) async => indexCardStub);
             when(() => indexCardRepository
-                    .removeIndexCard(indexCardStub.indexCardId!))
+                    .removeIndexCards([indexCardStub.indexCardId!]))
                 .thenAnswer((final _) async => false);
           },
           build: () => IndexCardViewBloc(
