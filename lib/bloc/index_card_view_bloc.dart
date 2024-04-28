@@ -24,7 +24,7 @@ class IndexCardViewBloc extends Bloc<IndexCardViewEvent, IndexCardViewState> {
     });
     on<DeleteIndexCard>((final event, final emit) async {
       final bool success =
-          await _indexCardRepository.removeIndexCard(event.indexCardId);
+          await _indexCardRepository.removeIndexCards([event.indexCardId]);
       if (success) {
         emit(IndexCardDeleted(indexCardId: indexCardId));
       } else {

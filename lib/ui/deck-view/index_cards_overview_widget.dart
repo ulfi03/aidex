@@ -1,8 +1,10 @@
 import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
+import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/deck-view/card_serach_bar.dart';
+import 'package:aidex/ui/deck-view/index_card_delete_dialog.dart';
 import 'package:aidex/ui/deck-view/index_card_item_widget.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
@@ -24,7 +26,9 @@ class DeckViewWidgetPage extends StatelessWidget {
       child: IndexCardOverview(deck: deck));
 }
 
-/// The view of the index cards.
+/// A widget used to display the deck view.
+///
+/// The [IndexCardOverview] requires a [deck] to be provided.
 class IndexCardOverview extends StatelessWidget {
   /// Constructor for the [IndexCardOverview].
   const IndexCardOverview({required this.deck, super.key});
@@ -32,24 +36,63 @@ class IndexCardOverview extends StatelessWidget {
   /// The deck to be displayed.
   final Deck deck;
 
+  /// The key to find the arrow_back button
+  static const arrowBackButtonKey = Key('arrowBackButton');
+
+  /// The key to find the deleteButton
+  static const deleteButtonKey = Key('deleteButton');
+
+  /// The key to find the selectAllButton (unchecked)
+  static const selectAllButtonUncheckedKey = Key('selectAllButton_unchecked');
+
+  /// The key to find the selectAllButton (checked)
+  static const selectAllButtonCheckedKey = Key('selectAllButton_checked');
+
   @override
   Widget build(final BuildContext context) => Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: Text(deck.name),
-      ),
+          leading: BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
+              builder: (final context, final state) => IconButton(
+                    key: arrowBackButtonKey,
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      if (state is IndexCardSelectionMode) {
+                        context
+                            .read<IndexCardOverviewBloc>()
+                            .add(const ExitIndexCardSelectionMode());
+                      } else {
+                        Navigator.pop(context);
+                      }
+                    },
+                  )),
+          centerTitle: true,
+          title: Text(deck.name),
+          actions: _getActions(context)),
       body: Column(
         children: [
-          Padding(
-              padding: const EdgeInsets.all(8),
-              child:
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Expanded(
-                    child: CardSearchBar(
-                        indexCardOverviewBloc:
-                            context.read<IndexCardOverviewBloc>())),
-                AddCardButton(deck: deck)
-              ])),
+          BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
+              buildWhen: (final previous, final current) =>
+                  current is IndexCardInitial ||
+                  current is IndexCardSelectionMode ||
+                  current is IndexCardsLoaded &&
+                      previous is IndexCardSelectionMode,
+              builder: (final context, final state) {
+                if (state is! IndexCardSelectionMode) {
+                  return Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                                child: CardSearchBar(
+                                    indexCardOverviewBloc:
+                                        context.read<IndexCardOverviewBloc>())),
+                            AddCardButton(deck: deck)
+                          ]));
+                } else {
+                  return const SizedBox.shrink();
+                }
+              }),
           BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
               builder: (final context, final state) {
             if (state is IndexCardsLoading) {
@@ -59,38 +102,10 @@ class IndexCardOverview extends StatelessWidget {
                   mainTheme.colorScheme.primary,
                 )),
               );
+            } else if (state is IndexCardSelectionMode) {
+              return IndexCardsContainer(state: state, deckName: deck.name);
             } else if (state is IndexCardsLoaded) {
-              return Expanded(child: () {
-                if (state.indexCards.isEmpty) {
-                  return Center(
-                      child: Text('No index cards found, create one!',
-                          style: mainTheme.textTheme.bodyMedium));
-                } else {
-                  return SingleChildScrollView(
-                    child: Wrap(
-                      children: state.indexCards
-                          .map((final indexCard) => IndexCardItemWidget(
-                                indexCard: indexCard,
-                                onTap: (final context) async {
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (final context) =>
-                                          ItemOnDeckViewWidgetSelectedRoute(
-                                        indexCard: indexCard,
-                                        deckName: deck.name,
-                                      ),
-                                    ),
-                                  ).then((final value) => context
-                                      .read<IndexCardOverviewBloc>()
-                                      .add(const FetchIndexCards()));
-                                },
-                              ))
-                          .toList(),
-                    ),
-                  );
-                }
-              }());
+              return IndexCardsContainer(state: state, deckName: deck.name);
             } else if (state is IndexCardsError) {
               return ErrorDisplayWidget(errorMessage: state.message);
             } else {
@@ -100,6 +115,59 @@ class IndexCardOverview extends StatelessWidget {
           }),
         ],
       ));
+}
+
+/// Contains the index cards of current deck.
+class IndexCardsContainer extends StatelessWidget {
+  /// Constructor for the [IndexCardsContainer].
+  const IndexCardsContainer(
+      {required final IndexCardState state,
+      required final String deckName,
+      super.key})
+      : _state = state,
+        _deckName = deckName;
+
+  /// state to determine indexCards, selectedCards and selectedMode
+  final IndexCardState _state;
+
+  /// The name of the deck for routing.
+  final String _deckName;
+
+  /// Returns the index cards based on the state.
+  List<IndexCard> get indexCards => (_state is IndexCardsLoaded)
+      ? _state.indexCards
+      : (_state as IndexCardSelectionMode).indexCards;
+
+  @override
+  Widget build(final BuildContext context) => Expanded(
+      child: (indexCards.isEmpty)
+          ? Center(
+              child: Text('No index cards found, create one!',
+                  style: mainTheme.textTheme.bodyMedium))
+          : SingleChildScrollView(
+              child: Wrap(
+                children: indexCards
+                    .map((final indexCard) => IndexCardItemWidget(
+                          indexCard: indexCard,
+                          state: _state,
+                          onTap: (final context) async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (final context) =>
+                                    ItemOnDeckViewWidgetSelectedRoute(
+                                  indexCard: indexCard,
+                                  deckName: _deckName,
+                                ),
+                              ),
+                            ).then((final value) => context
+                                .read<IndexCardOverviewBloc>()
+                                .add(const FetchIndexCards()));
+                          },
+                        ))
+                    .toList(),
+              ),
+            ));
 }
 
 /// The state of the AddCardButton.
@@ -128,5 +196,86 @@ class AddCardButton extends StatelessWidget {
         .then((final value) => context.read<IndexCardOverviewBloc>().add(
               const FetchIndexCards(),
             ));
+  }
+}
+
+List<Widget> _getActions(final BuildContext context) => [
+      BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
+          builder: (final context, final state) {
+        bool isSelectAllButtonChecked = state is IndexCardSelectionMode &&
+            state.indexCards.length == state.indexCardIds.length;
+        return Visibility(
+            visible: state is IndexCardSelectionMode,
+            child: StatefulBuilder(
+              builder: (final context, final setState) => IconButton(
+                icon: isSelectAllButtonChecked
+                    ? Icon(
+                        key: IndexCardOverview.selectAllButtonCheckedKey,
+                        Icons.check_circle,
+                        color: mainTheme.colorScheme.primary,
+                      )
+                    : Icon(
+                        key: IndexCardOverview.selectAllButtonUncheckedKey,
+                        Icons.circle_outlined,
+                        color: mainTheme.colorScheme.primary,
+                      ),
+                onPressed: (state is IndexCardSelectionMode)
+                    ? () {
+                        _onSelectAll(context, state, isSelectAllButtonChecked);
+                        setState(() {
+                          isSelectAllButtonChecked = !isSelectAllButtonChecked;
+                        });
+                      }
+                    : () => {},
+              ),
+            ));
+      }),
+      BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
+          builder: (final context, final state) => Visibility(
+              key: IndexCardOverview.deleteButtonKey,
+              visible: state is IndexCardSelectionMode &&
+                  state.indexCardIds.isNotEmpty,
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              child: IconButton(
+                  icon: Icon(
+                    Icons.delete,
+                    color: mainTheme.colorScheme.primary,
+                  ),
+                  onPressed: (state is IndexCardSelectionMode)
+                      ? () => _onRemove(context, state.indexCardIds)
+                      : () => {}))),
+    ];
+
+/// Handle the delete button.
+/// -> initiate a dialog to confirm the deletion of the selected index cards.
+Future<void> _onRemove(
+    final BuildContext context, final List<int> indexCardIds) async {
+  final IndexCardOverviewBloc indexCardOverviewBloc =
+      context.read<IndexCardOverviewBloc>();
+  await showDialog(
+    context: context,
+    builder: (final context) => BlocProvider.value(
+        value: indexCardOverviewBloc,
+        child: DeleteIndexCardsDialog(indexCardIds: indexCardIds)),
+  );
+}
+
+/// Handles the Button to select all index cards or deselect them.
+void _onSelectAll(final BuildContext context,
+    final IndexCardSelectionMode state, final bool selectAllChecked) {
+  if (!selectAllChecked) {
+    final selectedIndexCardIds = state.indexCards
+        .map((final indexCard) => indexCard.indexCardId!)
+        .toList();
+    context
+        .read<IndexCardOverviewBloc>()
+        .add(UpdateSelectedIndexCards(indexCardIds: selectedIndexCardIds));
+  } else {
+    /// get selected card ids before all cards where selected
+    context
+        .read<IndexCardOverviewBloc>()
+        .add(UpdateSelectedIndexCards(indexCardIds: []));
   }
 }

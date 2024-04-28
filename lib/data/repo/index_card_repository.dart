@@ -27,14 +27,10 @@ class IndexCardRepository {
     return count == 1;
   }
 
-  /// Removes all index cards.
-  Future<void> removeAllIndexCards(final int deckId) async =>
-      _indexCardProvider.deleteAll(deckId);
-
-  /// Removes an index card.
-  Future<bool> removeIndexCard(final int indexCardId) async {
-    final rowsAffected = await _indexCardProvider.delete(indexCardId);
-    return rowsAffected == 1;
+  /// Removes a list of index cards.
+  Future<bool> removeIndexCards(final List<int> indexCardIds) async {
+    final rowsAffected = await _indexCardProvider.delete(indexCardIds);
+    return rowsAffected == indexCardIds.length;
   }
 
   /// Searches the index cards.

@@ -39,12 +39,22 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
         emit(IndexCardsError(message: e.toString()));
       }
     });
-    on<RemoveAllIndexCards>((final event, final emit) async {
-      try {
-        await _indexCardRepository.removeAllIndexCards(_deckId);
+    on<UpdateSelectedIndexCards>((final event, final emit) async {
+      emit(IndexCardSelectionMode(
+          indexCardIds: event.indexCardIds, indexCards: _indexCards));
+    });
+    on<ExitIndexCardSelectionMode>((final event, final emit) async {
+      emit(IndexCardsLoaded(indexCards: _indexCards));
+    });
+    on<RemoveIndexCardsById>((final event, final emit) async {
+      final bool success = await _indexCardRepository
+          .removeIndexCards(event.selectedIndexCardsIds);
+      if (success) {
         add(const FetchIndexCards());
-      } on Exception catch (e) {
-        emit(IndexCardsError(message: e.toString()));
+      } else {
+        emit(IndexCardsError(
+            message:
+                'Failed to delete index cards ${event.selectedIndexCardsIds}'));
       }
     });
     on<SearchIndexCards>((final event, final emit) async {
@@ -79,13 +89,13 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
 /// ################################################################# States
 
 /// The index card state.
-abstract class IndexCardState extends Equatable {
+abstract class IndexCardState {
   /// Creates a new index card state.
   const IndexCardState();
 }
 
 /// The index card initial state.
-class IndexCardInitial extends IndexCardState {
+class IndexCardInitial extends IndexCardState with EquatableMixin {
   /// Creates a new index card initial state.
   const IndexCardInitial();
 
@@ -94,7 +104,7 @@ class IndexCardInitial extends IndexCardState {
 }
 
 /// The index card loading state.
-class IndexCardsLoading extends IndexCardState {
+class IndexCardsLoading extends IndexCardState with EquatableMixin {
   /// Creates a new index card loading state.
   const IndexCardsLoading();
 
@@ -103,7 +113,7 @@ class IndexCardsLoading extends IndexCardState {
 }
 
 /// The index cards loaded state.
-class IndexCardsLoaded extends IndexCardState {
+class IndexCardsLoaded extends IndexCardState with EquatableMixin {
   /// Creates a new index cards loaded state.
   const IndexCardsLoaded({required this.indexCards});
 
@@ -114,8 +124,25 @@ class IndexCardsLoaded extends IndexCardState {
   List<Object> get props => [indexCards];
 }
 
+/// The index card is selected
+class IndexCardSelectionMode extends IndexCardState {
+  /// Creates a new index card selected state.
+  const IndexCardSelectionMode(
+      {required this.indexCards, required this.indexCardIds});
+
+  /// The index card ids.
+  final List<int> indexCardIds;
+
+  /// The indexCards in deck
+  final List<IndexCard> indexCards;
+
+  /// Check if the card is selected
+  bool isThisCardSelected(final int indexCardId) =>
+      indexCardIds.contains(indexCardId);
+}
+
 /// The index card error state.
-class IndexCardsError extends IndexCardState {
+class IndexCardsError extends IndexCardState with EquatableMixin {
   /// Creates a new index card error state.
   const IndexCardsError({required this.message});
 
@@ -129,7 +156,7 @@ class IndexCardsError extends IndexCardState {
 /// ################################################################# Events
 
 /// The card event.
-class IndexCardEvent {
+abstract class IndexCardEvent {
   /// Creates a new card event.
   const IndexCardEvent();
 }
@@ -140,10 +167,28 @@ class FetchIndexCards extends IndexCardEvent {
   const FetchIndexCards();
 }
 
-/// The event for removing all cards.
-class RemoveAllIndexCards extends IndexCardEvent {
-  /// Creates a new remove all cards event.
-  const RemoveAllIndexCards();
+///The event for updating the list of selected IndexCards.
+class UpdateSelectedIndexCards extends IndexCardEvent {
+  /// Creates a new update selected index cardIds event.
+  UpdateSelectedIndexCards({required this.indexCardIds});
+
+  /// The index card ids that are selected.
+  List<int> indexCardIds;
+}
+
+///The event to exit CardSelectionMode
+class ExitIndexCardSelectionMode extends IndexCardEvent {
+  ///Creates ExitIndexCardSelectionMode event
+  const ExitIndexCardSelectionMode();
+}
+
+/// The event for removing index cards.
+class RemoveIndexCardsById extends IndexCardEvent {
+  /// Creates a new remove cards by id event.
+  const RemoveIndexCardsById({required this.selectedIndexCardsIds});
+
+  /// The selcted index card ids list.
+  final List<int> selectedIndexCardsIds;
 }
 
 /// The event for adding a card.
