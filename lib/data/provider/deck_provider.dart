@@ -97,12 +97,20 @@ create table ${Deck.tableDeck} (
   /// update the deck's name in the database.
   ///
   /// Throws an [Error] if the update operation fails.
-  Future<void> renameDeck(final int deckId, final String newName) async {
-    await _db.update(
-      Deck.tableDeck,
-      {Deck.columnName: newName},
-      where: '${Deck.columnDeckId} = ?',
-      whereArgs: [deckId],
-    );
-  }
+  Future<int> renameDeck(final int deckId, final String newName) async =>
+      _db.update(
+        Deck.tableDeck,
+        {Deck.columnName: newName},
+        where: '${Deck.columnDeckId} = ?',
+        whereArgs: [deckId],
+      );
+
+  /// Change the color of a deck in the database.
+  Future<int> changeDeckColor(final int deckId, final int newColor) async =>
+      _db.update(
+        Deck.tableDeck,
+        {Deck.columnColor: newColor},
+        where: '${Deck.columnDeckId} = ?',
+        whereArgs: [deckId],
+      );
 }

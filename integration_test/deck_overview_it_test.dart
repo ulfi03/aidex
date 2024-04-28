@@ -1,6 +1,7 @@
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/ui/components/custom_buttons.dart';
+import 'package:aidex/ui/components/custom_color_picker.dart';
 import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
 import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
@@ -101,7 +102,7 @@ void main() {
 
       // select color
       final openColorPickerButton =
-          find.byKey(CreateDeckDialog.colorPickerButtonKey);
+          find.byKey(CustomColorPicker.colorPickerButtonKey);
       expect(openColorPickerButton, findsOneWidget);
       await tester.tap(openColorPickerButton);
       await tester.pumpAndSettle();
@@ -128,7 +129,7 @@ void main() {
 
       // press color picker 'Select' button
       final selectColorButton =
-          find.byKey(CreateDeckDialog.colorPickerSelectButtonKey);
+          find.byKey(CustomColorPicker.colorPickerSelectButtonKey);
       expect(selectColorButton, findsOneWidget);
       await tester.tap(selectColorButton);
       await tester.pumpAndSettle();

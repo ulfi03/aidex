@@ -65,13 +65,17 @@ class DeckOverview extends StatelessWidget {
                 ));
               } else {
                 return SingleChildScrollView(
+                    padding: EdgeInsets.only(
+                        bottom: mainTheme.floatingActionButtonTheme
+                                .sizeConstraints!.maxHeight *
+                            2),
                     child: Column(
-                  children: state.decks
-                      .map((final deck) => Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: DeckItemWidget(deck: deck)))
-                      .toList(),
-                ));
+                      children: state.decks
+                          .map((final deck) => Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: DeckItemWidget(deck: deck)))
+                          .toList(),
+                    ));
               }
             } else if (state is DecksError) {
               return ErrorDisplayWidget(errorMessage: state.message);

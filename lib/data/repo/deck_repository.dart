@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/provider/deck_provider.dart';
 
@@ -33,6 +35,21 @@ class DeckRepository {
   /// and the new name.
   ///
   /// Throws an [Error] if the deck's id is null.
-  Future<void> renameDeck(final Deck deck, final String newName) async =>
-      _deckProvider.renameDeck(deck.deckId!, newName);
+  /// Throws an [Exception] if the update operation fails.
+  Future<void> renameDeck(final Deck deck, final String newName) async {
+    final int affected = await _deckProvider.renameDeck(deck.deckId!, newName);
+    if (affected != 1) {
+      throw Exception('Failed to rename deck');
+    }
+  }
+
+  /// Change the color of a deck in the database.
+  /// throws an [Exception] if the update operation fails.
+  Future<void> changeDeckColor(final Deck deck, final Color color) async {
+    final int affected =
+        await _deckProvider.changeDeckColor(deck.deckId!, color.value);
+    if (affected != 1) {
+      throw Exception('Failed to change deck color');
+    }
+  }
 }
