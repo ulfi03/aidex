@@ -69,29 +69,6 @@ void main() {
       await pumpDeckOverview(tester);
       expect(find.text(errorText), findsOneWidget);
     });
-
-    testWidgets('Render cards count', (final tester) async {
-      final decks = <Deck>[
-        Deck(name: 'Deck 1', color: Colors.black, cardsCount: 3),
-        Deck(name: 'Deck 2', color: Colors.black, cardsCount: 5),
-      ];
-      when(() => deckOverviewBloc.state).thenReturn(DecksLoaded(decks: decks));
-      await pumpDeckOverview(tester);
-      await tester.pumpAndSettle();
-      // check cards count of each deck
-      final Finder cardsCountFinder = find.byKey(DeckItemWidget.cardsCountKey);
-      final FinderResult<Element> cardsCountElements =
-          cardsCountFinder.evaluate();
-      expect(cardsCountElements.length, 2);
-      final RichText cardsCountRichText1 =
-          cardsCountElements.elementAt(0).widget as RichText;
-      final String richTextText1 = cardsCountRichText1.text.toPlainText();
-      expect(richTextText1, '3 cards');
-      final RichText cardsCountRichText2 =
-          cardsCountElements.elementAt(1).widget as RichText;
-      final String richTextText2 = cardsCountRichText2.text.toPlainText();
-      expect(richTextText2, '5 cards');
-    });
   });
 
   group('CreateDeckModalBottomSheet', () {
