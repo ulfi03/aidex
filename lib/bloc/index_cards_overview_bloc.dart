@@ -14,19 +14,22 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
 
   final int _deckId;
 
+  String _query = '';
+
   final List<IndexCard> _indexCards = List.empty(growable: true);
 
   final IndexCardRepository _indexCardRepository;
 
   void _initEventHandlers() {
     on<FetchIndexCards>((final event, final emit) async {
-      emit(const IndexCardsLoading());
+      _query = '';
+      emit(IndexCardsLoading(query: _query));
       try {
         _indexCards.clear();
         // Fetch index cards and add elements to _indexCards
         (await _indexCardRepository.fetchIndexCards(_deckId))
             .forEach(_indexCards.add);
-        emit(IndexCardsLoaded(indexCards: _indexCards));
+        emit(IndexCardsLoaded(indexCards: _indexCards, query: _query));
       } on Exception catch (e) {
         emit(IndexCardsError(message: e.toString()));
       }
@@ -44,7 +47,7 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
           indexCardIds: event.indexCardIds, indexCards: _indexCards));
     });
     on<ExitIndexCardSelectionMode>((final event, final emit) async {
-      emit(IndexCardsLoaded(indexCards: _indexCards));
+      emit(IndexCardsLoaded(indexCards: _indexCards, query: _query));
     });
     on<RemoveIndexCardsById>((final event, final emit) async {
       final bool success = await _indexCardRepository
@@ -58,19 +61,20 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
       }
     });
     on<SearchIndexCards>((final event, final emit) async {
-      emit(const IndexCardsLoading());
+      emit(IndexCardsLoading(query: event.query));
       try {
+        _query = event.query;
         _indexCards.clear();
         (await _indexCardRepository.searchIndexCards(_deckId, event.query))
             .forEach(_indexCards.add);
-        emit(IndexCardsLoaded(indexCards: _indexCards));
+        emit(IndexCardsLoaded(indexCards: _indexCards, query: event.query));
       } on Exception catch (e) {
         emit(IndexCardsError(message: e.toString()));
       }
     });
     on<SortIndexCards>((final event, final emit) async {
       try {
-        emit(const IndexCardsLoading());
+        emit(IndexCardsLoading(query: _query));
         _indexCards.sort((final a, final b) {
           if (event.sortAsc) {
             return a.question.compareTo(b.question);
@@ -78,7 +82,7 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
             return b.question.compareTo(a.question);
           }
         });
-        emit(IndexCardsLoaded(indexCards: _indexCards));
+        emit(IndexCardsLoaded(indexCards: _indexCards, query: _query));
       } on Exception catch (e) {
         emit(IndexCardsError(message: e.toString()));
       }
@@ -106,7 +110,10 @@ class IndexCardInitial extends IndexCardState with EquatableMixin {
 /// The index card loading state.
 class IndexCardsLoading extends IndexCardState with EquatableMixin {
   /// Creates a new index card loading state.
-  const IndexCardsLoading();
+  IndexCardsLoading({required this.query});
+
+  /// The query used to filter the index cards.
+  final String query;
 
   @override
   List<Object> get props => [];
@@ -115,10 +122,13 @@ class IndexCardsLoading extends IndexCardState with EquatableMixin {
 /// The index cards loaded state.
 class IndexCardsLoaded extends IndexCardState with EquatableMixin {
   /// Creates a new index cards loaded state.
-  const IndexCardsLoaded({required this.indexCards});
+  const IndexCardsLoaded({required this.indexCards, required this.query});
 
   /// The index card list.
   final List<IndexCard> indexCards;
+
+  /// The query used to filter the index cards.
+  final String query;
 
   @override
   List<Object> get props => [indexCards];

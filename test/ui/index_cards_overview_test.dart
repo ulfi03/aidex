@@ -93,7 +93,7 @@ void main() {
     testWidgets('Render progress indicator when IndexCards are loading',
         (final tester) async {
       when(() => indexCardOverviewBloc.state)
-          .thenReturn(const IndexCardsLoading());
+          .thenReturn(IndexCardsLoading(query: ''));
       await pumpIndexCardOverview(tester);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
@@ -110,7 +110,7 @@ void main() {
             deckId: deckStub.deckId!)
       ];
       when(() => indexCardOverviewBloc.state)
-          .thenReturn(IndexCardsLoaded(indexCards: indexCards));
+          .thenReturn(IndexCardsLoaded(indexCards: indexCards, query: ''));
       await pumpIndexCardOverview(tester);
       expect(find.byType(IndexCardItemWidget), findsNWidgets(2));
     });
@@ -126,7 +126,7 @@ void main() {
 
     group('IndexCardOverview Elements', () {
       setUp(() => when(() => indexCardOverviewBloc.state)
-          .thenReturn(const IndexCardsLoaded(indexCards: [])));
+          .thenReturn(const IndexCardsLoaded(indexCards: [], query: '')));
 
       final getSearchbar = find.byType(CardSearchBar);
       final getAddCardButton = find.byType(AddCardButton);
@@ -144,8 +144,8 @@ void main() {
 
       group('Query functionalities', () {
         /// Initialize Widget with IndexCards to sort them
-        setUp(() => when(() => indexCardOverviewBloc.state)
-            .thenReturn(IndexCardsLoaded(indexCards: indexCardsStub)));
+        setUp(() => when(() => indexCardOverviewBloc.state).thenReturn(
+            IndexCardsLoaded(indexCards: indexCardsStub, query: '')));
         //testWidgets('SearchBar', (final tester) async {});
         testWidgets('SortButton', (final tester) async {
           await pumpIndexCardOverview(tester);
@@ -215,8 +215,8 @@ void main() {
                     indexCardsStub[selectedCardIndex].indexCardId!))
                 .thenAnswer(
                     (final _) async => indexCardsStub[selectedCardIndex]);
-            when(() => indexCardOverviewBloc.state)
-                .thenReturn(IndexCardsLoaded(indexCards: indexCardsStub));
+            when(() => indexCardOverviewBloc.state).thenReturn(
+                IndexCardsLoaded(indexCards: indexCardsStub, query: ''));
 
             await pumpIndexCardOverviewWithRepos(tester);
             await tester.pumpAndSettle();
@@ -241,8 +241,8 @@ void main() {
             testWidgets(
                 'LongPress on selectedCardIndex -> UpdateSelectedIndexCards',
                 (final tester) async {
-              when(() => indexCardOverviewBloc.state)
-                  .thenReturn(IndexCardsLoaded(indexCards: indexCardsStub));
+              when(() => indexCardOverviewBloc.state).thenReturn(
+                  IndexCardsLoaded(indexCards: indexCardsStub, query: ''));
               await pumpIndexCardOverviewWithRepos(tester);
               await tester.pumpAndSettle();
               await tester
@@ -351,12 +351,13 @@ void main() {
 
           /// test the search functionality
           testWidgets('SearchBar', (final tester) async {
-            when(() => indexCardOverviewBloc.state)
-                .thenReturn(IndexCardsLoaded(indexCards: indexCardsStub));
+            const String queryStub = 'question-1';
+            when(() => indexCardOverviewBloc.state).thenReturn(
+                IndexCardsLoaded(indexCards: indexCardsStub, query: queryStub));
             await pumpIndexCardOverviewWithRepos(tester);
             await tester.pumpAndSettle();
             // enter search query
-            await tester.enterText(getSearchbar, 'question-1');
+            await tester.enterText(getSearchbar, queryStub);
             await tester.pumpAndSettle();
             verify(() => indexCardOverviewBloc.add(any<SearchIndexCards>()))
                 .called(2);

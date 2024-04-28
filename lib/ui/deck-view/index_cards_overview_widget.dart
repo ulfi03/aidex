@@ -86,7 +86,8 @@ class IndexCardOverview extends StatelessWidget {
                             Expanded(
                                 child: CardSearchBar(
                                     indexCardOverviewBloc:
-                                        context.read<IndexCardOverviewBloc>())),
+                                        context.read<IndexCardOverviewBloc>(),
+                                    query: getQuery(state))),
                             AddCardButton(deck: deck)
                           ]));
                 } else {
@@ -162,12 +163,24 @@ class IndexCardsContainer extends StatelessWidget {
                               ),
                             ).then((final value) => context
                                 .read<IndexCardOverviewBloc>()
-                                .add(const FetchIndexCards()));
+                                .add(
+                                    SearchIndexCards(query: getQuery(_state))));
                           },
                         ))
                     .toList(),
               ),
             ));
+}
+
+/// Returns the query based on the state.
+String getQuery(final IndexCardState state) {
+  if (state is IndexCardsLoading) {
+    return state.query;
+  } else if (state is IndexCardsLoaded) {
+    return state.query;
+  } else {
+    return '';
+  }
 }
 
 /// The state of the AddCardButton.

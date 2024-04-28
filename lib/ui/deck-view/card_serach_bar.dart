@@ -5,9 +5,13 @@ import 'package:flutter/material.dart';
 class CardSearchBar extends StatelessWidget {
   /// Constructor for the [CardSearchBar].
   CardSearchBar(
-      {required final IndexCardOverviewBloc indexCardOverviewBloc, super.key})
+      {required final IndexCardOverviewBloc indexCardOverviewBloc,
+      required final String query,
+      super.key})
       : _indexCardOverviewBloc = indexCardOverviewBloc {
-    searchController.addListener(_search);
+    searchController
+      ..addListener(_search)
+      ..text = query;
   }
 
   ///Key to identify the sort button (for testing).
