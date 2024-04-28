@@ -3,7 +3,7 @@ import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// The business logic component of the IndexCardView feature.
-class IndexCardViewBloc extends Bloc<IndexCardEvent, IndexCardViewState> {
+class IndexCardViewBloc extends Bloc<IndexCardViewEvent, IndexCardViewState> {
   /// Constructor for the [IndexCardViewBloc].
   IndexCardViewBloc(
       {required final int indexCardId,
@@ -93,10 +93,10 @@ class IndexCardDeleted extends IndexCardViewState {
 // ################################################################# Events
 
 /// The events that can be processed by the IndexCardViewBloc.
-abstract class IndexCardEvent {}
+abstract class IndexCardViewEvent {}
 
 /// The event to load the index card.
-class FetchIndexCard extends IndexCardEvent {
+class FetchIndexCard extends IndexCardViewEvent {
   /// Constructor for the [FetchIndexCard].
   FetchIndexCard({required this.indexCardId});
 
@@ -105,7 +105,7 @@ class FetchIndexCard extends IndexCardEvent {
 }
 
 /// the event to delete an index card.
-class DeleteIndexCard extends IndexCardEvent {
+class DeleteIndexCard extends IndexCardViewEvent {
   /// Constructor for the [DeleteIndexCard].
   DeleteIndexCard({required this.indexCardId});
 

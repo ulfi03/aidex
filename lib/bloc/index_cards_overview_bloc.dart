@@ -14,8 +14,7 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
 
   final int _deckId;
 
-  /// The index cards of the deck.
-  List<IndexCard>? indexCards;
+  final List<IndexCard> _indexCards = List.empty(growable: true);
 
   final IndexCardRepository _indexCardRepository;
 
@@ -23,8 +22,11 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
     on<FetchIndexCards>((final event, final emit) async {
       emit(const IndexCardsLoading());
       try {
-        indexCards = await _indexCardRepository.fetchIndexCards(_deckId);
-        emit(IndexCardsLoaded(indexCards: indexCards!));
+        _indexCards.clear();
+        // Fetch index cards and add elements to _indexCards
+        (await _indexCardRepository.fetchIndexCards(_deckId))
+            .forEach(_indexCards.add);
+        emit(IndexCardsLoaded(indexCards: _indexCards));
       } on Exception catch (e) {
         emit(IndexCardsError(message: e.toString()));
       }
@@ -39,10 +41,10 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
     });
     on<UpdateSelectedIndexCards>((final event, final emit) async {
       emit(IndexCardSelectionMode(
-          indexCardIds: event.indexCardIds, indexCards: indexCards!));
+          indexCardIds: event.indexCardIds, indexCards: _indexCards));
     });
     on<ExitIndexCardSelectionMode>((final event, final emit) async {
-      emit(IndexCardsLoaded(indexCards: indexCards!));
+      emit(IndexCardsLoaded(indexCards: _indexCards));
     });
     on<RemoveIndexCardsById>((final event, final emit) async {
       final bool success = await _indexCardRepository
@@ -53,6 +55,32 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
         emit(IndexCardsError(
             message:
                 'Failed to delete index cards ${event.selectedIndexCardsIds}'));
+      }
+    });
+    on<SearchIndexCards>((final event, final emit) async {
+      emit(const IndexCardsLoading());
+      try {
+        _indexCards.clear();
+        (await _indexCardRepository.searchIndexCards(_deckId, event.query))
+            .forEach(_indexCards.add);
+        emit(IndexCardsLoaded(indexCards: _indexCards));
+      } on Exception catch (e) {
+        emit(IndexCardsError(message: e.toString()));
+      }
+    });
+    on<SortIndexCards>((final event, final emit) async {
+      try {
+        emit(const IndexCardsLoading());
+        _indexCards.sort((final a, final b) {
+          if (event.sortAsc) {
+            return a.question.compareTo(b.question);
+          } else {
+            return b.question.compareTo(a.question);
+          }
+        });
+        emit(IndexCardsLoaded(indexCards: _indexCards));
+      } on Exception catch (e) {
+        emit(IndexCardsError(message: e.toString()));
       }
     });
   }
@@ -170,4 +198,22 @@ class AddIndexCard extends IndexCardEvent {
 
   /// The IndexCard to add.
   final IndexCard indexCard;
+}
+
+/// Query for searching index cards.
+class SearchIndexCards extends IndexCardEvent {
+  /// Creates a new search index cards event.
+  const SearchIndexCards({required this.query});
+
+  /// The query to search for.
+  final String query;
+}
+
+/// The event for sorting index cards.
+class SortIndexCards extends IndexCardEvent {
+  /// Creates a new sort index cards event.
+  const SortIndexCards({required this.sortAsc});
+
+  /// Whether to sort ascending.
+  final bool sortAsc;
 }

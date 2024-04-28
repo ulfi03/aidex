@@ -4,6 +4,7 @@ import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/deck-view/index_card_delete_dialog.dart';
+import 'package:aidex/ui/deck-view/card_serach_bar.dart';
 import 'package:aidex/ui/deck-view/index_card_item_widget.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
@@ -80,7 +81,9 @@ class IndexCardOverview extends StatelessWidget {
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Expanded(child: CardSearchBar()),
+                            Expanded(child: CardSearchBar(
+                      indexCardOverviewBloc:
+                          context.read<IndexCardOverviewBloc>())),
                             AddCardButton(deck: deck)
                           ])),
                 BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
@@ -134,7 +137,9 @@ class IndexCardsContainer extends StatelessWidget {
   @override
   Widget build(final BuildContext context) => Expanded(
       child: (indexCards.isEmpty)
-          ? const Center(child: Text('No index cards found!'))
+          ?  Center(
+          child: Text('No index cards found, create one!',
+              style: mainTheme.textTheme.bodyMedium))
           : SingleChildScrollView(
               child: Wrap(
                 children: indexCards
@@ -159,73 +164,6 @@ class IndexCardsContainer extends StatelessWidget {
                     .toList(),
               ),
             ));
-}
-
-/// This widget is used to display the search bar.
-class CardSearchBar extends StatefulWidget {
-  /// Constructor for the [SearchBar].
-  const CardSearchBar({super.key});
-
-  @override
-  SearchBarState createState() => SearchBarState();
-}
-
-/// The state of the [SearchBar].
-class SearchBarState extends State<CardSearchBar> {
-  /// Whether to search by label.
-  bool sort = false;
-
-  ///Key to identify the sort button (for testing).
-  static const Key sortButtonKey = Key('sortButton');
-
-  ///Icon for IconButton when indexCards are unsorted.
-  static const Icon unsortedIcon = Icon(Icons.type_specimen_outlined);
-
-  ///Icon for IconButton when indexCards are sorted.
-  static const Icon sortedIcon = Icon(Icons.type_specimen);
-
-  @override
-  Widget build(final BuildContext context) => SearchAnchor(
-      isFullScreen: false,
-      viewConstraints: const BoxConstraints(minHeight: 100, maxHeight: 230),
-      builder: (final context, final controller) => SearchBar(
-            controller: controller,
-            padding: const MaterialStatePropertyAll<EdgeInsets>(
-                EdgeInsets.symmetric(horizontal: 16)),
-            onTap: controller.openView,
-            onChanged: (final _) {
-              controller.openView();
-            },
-            leading: const Icon(Icons.search),
-            trailing: <Widget>[
-              Tooltip(
-                message: 'Toggle Sort',
-                child: IconButton(
-                  key: sortButtonKey,
-                  isSelected: sort,
-                  onPressed: () {
-                    setState(() {
-                      sort = !sort;
-                    });
-                  },
-                  icon: unsortedIcon,
-                  selectedIcon: sortedIcon,
-                ),
-              )
-            ],
-          ),
-      suggestionsBuilder: (final context, final controller) =>
-          List<ListTile>.generate(50, (final index) {
-            final String item = 'Card $index';
-            return ListTile(
-              title: Text(item),
-              onTap: () {
-                setState(() {
-                  controller.closeView(item);
-                });
-              },
-            );
-          }));
 }
 
 /// The state of the AddCardButton.

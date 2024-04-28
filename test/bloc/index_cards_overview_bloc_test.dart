@@ -155,5 +155,33 @@ void main() {
           // skip the first two states [IndexCardsLoading, IndexCardsLoaded]
           expect: () => [isA<IndexCardsError>()]);
     });
+
+    group('On SearchIndexCards', () {
+      blocTest('Search indexCards',
+          setUp: () {
+            when(() => indexCardRepository.fetchIndexCards(deckId))
+                .thenAnswer((final _) async => []);
+            when(() => indexCardRepository.searchIndexCards(deckId, 'query'))
+                .thenAnswer((final _) async => []);
+          },
+          build: () => IndexCardOverviewBloc(indexCardRepository, deckId),
+          act: (final bloc) => bloc.add(const SearchIndexCards(query: 'query')),
+          skip: 2,
+          // skip the first two states [IndexCardsLoading, IndexCardsLoaded]
+          expect: () => [isA<IndexCardsLoading>(), isA<IndexCardsLoaded>()]);
+
+      blocTest('Emit IndexCardError when an exception occurs',
+          setUp: () {
+            when(() => indexCardRepository.fetchIndexCards(deckId))
+                .thenAnswer((final _) async => []);
+            when(() => indexCardRepository.searchIndexCards(deckId, 'query'))
+                .thenThrow(Exception());
+          },
+          build: () => IndexCardOverviewBloc(indexCardRepository, deckId),
+          act: (final bloc) => bloc.add(const SearchIndexCards(query: 'query')),
+          skip: 2,
+          // skip the first two states [IndexCardsLoading, IndexCardsLoaded]
+          expect: () => [isA<IndexCardsLoading>(), isA<IndexCardsError>()]);
+    });
   });
 }

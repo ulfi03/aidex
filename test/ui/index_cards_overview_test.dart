@@ -2,6 +2,7 @@ import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
+import 'package:aidex/ui/deck-view/card_serach_bar.dart';
 import 'package:aidex/ui/components/delete_dialog.dart';
 import 'package:aidex/ui/deck-view/index_card_item_widget.dart';
 import 'package:aidex/ui/deck-view/index_cards_overview_widget.dart';
@@ -18,6 +19,14 @@ class MockIndexCardRepository extends Mock implements IndexCardRepository {}
 
 class MockIndexCardOverviewBloc extends MockBloc<IndexCardEvent, IndexCardState>
     implements IndexCardOverviewBloc {}
+
+class SortIndexCardsFake extends SortIndexCards implements Fake {
+  SortIndexCardsFake() : super(sortAsc: true);
+}
+
+class SearchIndexCardsFake extends SearchIndexCards implements Fake {
+  SearchIndexCardsFake() : super(query: 'query');
+}
 
 class IndexCardEventFake extends IndexCardEvent implements Fake {}
 
@@ -52,6 +61,8 @@ void main() {
     indexCardRepositoryMock = MockIndexCardRepository();
     indexCardOverviewBloc = MockIndexCardOverviewBloc();
     registerFallbackValue(IndexCardEventFake());
+    registerFallbackValue(SortIndexCardsFake());
+    registerFallbackValue(SearchIndexCardsFake());
   });
 
   Future<void> pumpIndexCardOverview(final WidgetTester tester) async {
@@ -119,7 +130,7 @@ void main() {
 
       final getSearchbar = find.byType(CardSearchBar);
       final getAddCardButton = find.byType(AddCardButton);
-      final getSortButton = find.byKey(SearchBarState.sortButtonKey);
+      final getSortButton = find.byKey(CardSearchBar.sortButtonKey);
 
       testWidgets('All Elements loaded', (final tester) async {
         await pumpIndexCardOverview(tester);
@@ -128,7 +139,7 @@ void main() {
         expect(getAddCardButton, findsOneWidget);
 
         /// if deck is empty IndexCardsOverview displays 'Content of [deckName]'
-        expect(find.text('No index cards found!'), findsOneWidget);
+        expect(find.text('No index cards found, create one!'), findsOneWidget);
       });
 
       group('Query functionalities', () {
@@ -139,11 +150,13 @@ void main() {
         testWidgets('SortButton', (final tester) async {
           await pumpIndexCardOverview(tester);
           expect((tester.widget(getSortButton) as IconButton).icon,
-              SearchBarState.unsortedIcon);
+              CardSearchBar.unsortedIcon);
           await tester.tap(getSortButton);
           await tester.pumpAndSettle();
+          verify(() => indexCardOverviewBloc.add(any<SortIndexCards>()))
+              .called(1);
           expect((tester.widget(getSortButton) as IconButton).selectedIcon,
-              SearchBarState.sortedIcon);
+              CardSearchBar.sortedIcon);
         });
       });
       group('IndexCards functionalities', () {
@@ -334,6 +347,18 @@ void main() {
               verify(() => indexCardOverviewBloc
                   .add(any(that: isA<ExitIndexCardSelectionMode>()))).called(1);
             });
+          });
+          /// test the search functionality
+          testWidgets('SearchBar', (final tester) async {
+            when(() => indexCardOverviewBloc.state)
+                .thenReturn(IndexCardsLoaded(indexCards: [indexCardStub]));
+            await pumpIndexCardOverviewWithRepos(tester);
+            await tester.pumpAndSettle();
+            // enter search query
+            await tester.enterText(getSearchbar, 'question-1');
+            await tester.pumpAndSettle();
+            verify(() => indexCardOverviewBloc.add(any<SearchIndexCards>()))
+                .called(2);
           });
         });
       });

@@ -6,7 +6,6 @@ class Deck {
   ///
   /// [name] is the name of the deck.
   /// [color] the color of the deck.
-  /// [cardsCount] the number of cards within this deck.
   /// [deckId] the id of the deck.
   Deck(
       {required this.name,
@@ -16,10 +15,10 @@ class Deck {
 
   /// Creates a deck from a map.
   Deck.fromMap(final Map<String, dynamic> map) {
-    deckId =  map[columnDeckId];
+    deckId = map[columnDeckId];
     name = map[columnName];
     color = Color(map[columnColor]);
-    cardsCount = map[columnCardsCount];
+    cardsCount = map[cardsCountAlias];
   }
 
   /// The name of the deck table.
@@ -34,8 +33,8 @@ class Deck {
   /// The name of the color column.
   static const String columnColor = 'color';
 
-  /// The name of the cards count column.
-  static const String columnCardsCount = 'cards_count';
+  /// The name of the card count alias.
+  static const String cardsCountAlias = 'cardCount';
 
   /// The id of the deck.
   int? deckId;
@@ -54,7 +53,6 @@ class Deck {
     final map = <String, Object?>{
       columnName: name,
       columnColor: color.value,
-      columnCardsCount: cardsCount
     };
     if (deckId != null) {
       map[columnDeckId] = deckId;

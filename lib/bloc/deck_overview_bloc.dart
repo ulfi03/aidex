@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:equatable/equatable.dart';
@@ -42,6 +44,22 @@ class DeckOverviewBloc extends Bloc<DeckEvent, DeckState> {
     on<RemoveAllDecks>((final event, final emit) async {
       try {
         await _deckRepository.removeAllDecks();
+        add(const FetchDecks());
+      } on Exception catch (e) {
+        emit(DecksError(message: e.toString()));
+      }
+    });
+    on<RenameDeck>((final event, final emit) async {
+      try {
+        await _deckRepository.renameDeck(event.deck, event.newName);
+        add(const FetchDecks());
+      } on Exception catch (e) {
+        emit(DecksError(message: e.toString()));
+      }
+    });
+    on<ChangeDeckColor>((final event, final emit) async {
+      try {
+        await _deckRepository.changeDeckColor(event.deck, event.color);
         add(const FetchDecks());
       } on Exception catch (e) {
         emit(DecksError(message: e.toString()));
@@ -136,4 +154,33 @@ class DeleteDeck extends DeckEvent {
 
   /// The deck to delete.
   final Deck deck;
+}
+
+/// [RenameDeck] is an event triggered when a deck needs to be renamed.
+///
+/// It requires a [Deck] object that needs to be renamed and a [String]
+/// representing the new name.
+class RenameDeck extends DeckEvent {
+  /// Creates a [RenameDeck] event.
+  ///
+  /// Requires the [Deck] to be renamed and the new name as a [String].
+  const RenameDeck({required this.deck, required this.newName});
+
+  /// The [Deck] that needs to be renamed.
+  final Deck deck;
+
+  /// The new name for the deck.
+  final String newName;
+}
+
+/// [ChangeDeckColor] is an event triggered when a deck's color needs to be
+class ChangeDeckColor extends DeckEvent {
+  /// Creates a [ChangeDeckColor] event.
+  const ChangeDeckColor({required this.deck, required this.color});
+
+  /// The deck to change the color of.
+  final Deck deck;
+
+  /// The new color for the deck.
+  final Color color;
 }
