@@ -34,12 +34,18 @@ class IndexCardItemWidget extends StatelessWidget {
   /// The function to be called when the widget is tapped.
   final Function(BuildContext context) onTap;
 
-  /// onLongPress function manages the selection of the index card.
+  /// The key to access the widgets container
+  static const containerKey = Key('index_card_item_container');
+
+  /// The key to access the widgets check icon
+  static const checkIconKey = Key('index_card_item_check_icon');
+
+  /// updateSelection function manages the selection of the index card.
   /// > adds an index card to the selected index cards list if it isn't selected
   /// > removes index card from the selected index cards list if it was selected
   /// -> after one of these operations on the selected index cards list
   /// > update the selected index cards list in the bloc
-  void onSelected(final BuildContext context) {
+  void updateSelection(final BuildContext context) {
     final List<int> selectedIndexCardIds =
         (_state is IndexCardSelectionMode) ? _state.indexCardIds : [];
     if (!selectedIndexCardIds.contains(indexCard.indexCardId)) {
@@ -57,15 +63,14 @@ class IndexCardItemWidget extends StatelessWidget {
     final iconSize = MediaQuery.of(context).size.width / 4;
 
     return GestureDetector(
-      onTap: () {
-        if (_state is IndexCardSelectionMode) {
-          onSelected(context);
-        } else {
-          onTap(context);
-        }
-      },
-      onLongPress: () => onSelected(context),
+      onTap: (_state is IndexCardSelectionMode)
+          ? () => updateSelection(context)
+          : () => onTap(context),
+      onLongPress: (_state is IndexCardSelectionMode)
+          ? () => {}
+          : () => updateSelection(context),
       child: Container(
+        key: containerKey,
         margin: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width / 32,
           vertical: MediaQuery.of(context).size.width / 64,
@@ -93,6 +98,7 @@ class IndexCardItemWidget extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 8),
                 child: Icon(
+                  key: checkIconKey,
                   (_state.isThisCardSelected(indexCard.indexCardId!))
                       ? Icons.check_circle_outline
                       : Icons.circle_outlined,

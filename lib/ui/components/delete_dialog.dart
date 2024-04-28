@@ -27,6 +27,9 @@ abstract class DeleteDialog extends StatelessWidget {
   ///What specific item is going to be deleted
   final String deleteSubject;
 
+  /// The key to find the dialogs delete button
+  static const dialogDeleteButtonKey = Key('dialog_delete_button');
+
   @override
   Widget build(final BuildContext context) => AlertDialog(
         title: Text(
@@ -50,6 +53,7 @@ abstract class DeleteDialog extends StatelessWidget {
         ),
         actions: [
           TextButton(
+            key: dialogDeleteButtonKey,
             onPressed: () => onDelete(context),
             child: Text(
               'Delete',

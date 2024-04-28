@@ -11,7 +11,10 @@ void main() {
   late IndexCardRepository indexCardRepository;
   const int deckId = 0;
   final IndexCard indexCardStub = IndexCard(
-      question: 'question-fallback', answer: 'answer-fallback', deckId: deckId);
+      indexCardId: 0,
+      question: 'question-fallback',
+      answer: 'answer-fallback',
+      deckId: deckId);
 
   setUp(() {
     indexCardRepository = IndexCardRepositoryMock();
@@ -93,11 +96,35 @@ void main() {
           expect: () => [isA<IndexCardsError>()]);
     });
 
-    group('On RemoveIndexCard', () {
+    group('On UpdateSelectedIndexCards', () {
+      blocTest('Update SelectedIndexCards -> trigger IndexCardSelectionMode',
+          setUp: () {
+            when(() => indexCardRepository.fetchIndexCards(deckId))
+                .thenAnswer((final _) async => []);
+          },
+          build: () => IndexCardOverviewBloc(indexCardRepository, deckId),
+          act: (final bloc) => bloc.add(UpdateSelectedIndexCards(
+              indexCardIds: [indexCardStub.indexCardId!])),
+          skip: 2,
+          // skip the first two states [IndexCardsLoading, IndexCardsLoaded]
+          expect: () => [isA<IndexCardSelectionMode>()]);
+    });
+
+    group('On ExitIndexCardSelectionMode', () {
+      blocTest('ExitIndexCardSelectionMode -> trigger IndexCardsLoaded',
+          setUp: () {
+            when(() => indexCardRepository.fetchIndexCards(deckId))
+                .thenAnswer((final _) async => []);
+          },
+          build: () => IndexCardOverviewBloc(indexCardRepository, deckId),
+          act: (final bloc) => bloc.add(const ExitIndexCardSelectionMode()),
+          expect: () => [isA<IndexCardsLoading>(), isA<IndexCardsLoaded>()]);
+    });
+
+    group('On RemoveIndexCardsById', () {
       blocTest('Remove an indexCard and reload indexCards',
           setUp: () {
-            when(() => indexCardRepository
-                    .removeIndexCards([indexCardStub.indexCardId!]))
+            when(() => indexCardRepository.removeIndexCards(any()))
                 .thenAnswer((final _) async => true);
             when(() => indexCardRepository.fetchIndexCards(deckId))
                 .thenAnswer((final _) async => []);
@@ -116,9 +143,10 @@ void main() {
 
       blocTest('Emit IndexCardError when deletion unsuccessful',
           setUp: () {
-            when(() => indexCardRepository
-                    .removeIndexCards([indexCardStub.indexCardId!]))
+            when(() => indexCardRepository.removeIndexCards(any()))
                 .thenAnswer((final _) async => false);
+            when(() => indexCardRepository.fetchIndexCards(deckId))
+                .thenAnswer((final _) async => [indexCardStub]);
           },
           build: () => IndexCardOverviewBloc(indexCardRepository, deckId),
           act: (final bloc) => bloc.add(RemoveIndexCardsById(

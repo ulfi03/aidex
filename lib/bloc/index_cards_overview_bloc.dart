@@ -38,12 +38,8 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
       }
     });
     on<UpdateSelectedIndexCards>((final event, final emit) async {
-      event.pushToHistory;
       emit(IndexCardSelectionMode(
-          indexCardIds: event.indexCardIds,
-          indexCards: indexCards!,
-          selectedCardsHistory:
-              UpdateSelectedIndexCards.selectedCardIdsHistory));
+          indexCardIds: event.indexCardIds, indexCards: indexCards!));
     });
     on<ExitIndexCardSelectionMode>((final event, final emit) async {
       emit(IndexCardsLoaded(indexCards: indexCards!));
@@ -104,18 +100,13 @@ class IndexCardsLoaded extends IndexCardState with EquatableMixin {
 class IndexCardSelectionMode extends IndexCardState {
   /// Creates a new index card selected state.
   const IndexCardSelectionMode(
-      {required this.indexCards,
-      required this.indexCardIds,
-      required this.selectedCardsHistory});
+      {required this.indexCards, required this.indexCardIds});
 
   /// The index card ids.
   final List<int> indexCardIds;
 
   /// The indexCards in deck
   final List<IndexCard> indexCards;
-
-  /// The selected cards history (2 Items max)
-  final List<List<int>> selectedCardsHistory;
 
   /// Check if the card is selected
   bool isThisCardSelected(final int indexCardId) =>
@@ -137,7 +128,7 @@ class IndexCardsError extends IndexCardState with EquatableMixin {
 /// ################################################################# Events
 
 /// The card event.
-class IndexCardEvent {
+abstract class IndexCardEvent {
   /// Creates a new card event.
   const IndexCardEvent();
 }
@@ -155,17 +146,6 @@ class UpdateSelectedIndexCards extends IndexCardEvent {
 
   /// The index card ids that are selected.
   List<int> indexCardIds;
-
-  /// The history of selected index cards
-  static final List<List<int>> selectedCardIdsHistory = [];
-
-  /// Push the selected index card ids to history (store only last 2 selections)
-  void get pushToHistory {
-    if (selectedCardIdsHistory.length == 2) {
-      selectedCardIdsHistory.removeAt(0);
-    }
-    selectedCardIdsHistory.add(indexCardIds);
-  }
 }
 
 ///The event to exit CardSelectionMode

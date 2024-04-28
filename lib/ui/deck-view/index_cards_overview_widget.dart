@@ -35,6 +35,18 @@ class IndexCardOverview extends StatelessWidget {
   /// The deck to be displayed.
   final Deck deck;
 
+  /// The key to find the arrow_back button
+  static const arrowBackButtonKey = Key('arrowBackButton');
+
+  /// The key to find the deleteButton
+  static const deleteButtonKey = Key('deleteButton');
+
+  /// The key to find the selectAllButton (unchecked)
+  static const selectAllButtonUncheckedKey = Key('selectAllButton_unchecked');
+
+  /// The key to find the selectAllButton (checked)
+  static const selectAllButtonCheckedKey = Key('selectAllButton_checked');
+
   @override
   Widget build(final BuildContext context) =>
       BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
@@ -45,6 +57,7 @@ class IndexCardOverview extends StatelessWidget {
         builder: (final context, final state) => Scaffold(
             appBar: AppBar(
                 leading: IconButton(
+                  key: arrowBackButtonKey,
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () {
                     if (state is IndexCardSelectionMode) {
@@ -261,24 +274,31 @@ List<Widget> _getActions(
         builder: (final context, final value, final child) => IconButton(
           icon: toggleSelectAll.value
               ? Icon(
+                  key: IndexCardOverview.selectAllButtonCheckedKey,
                   Icons.check_circle,
                   color: mainTheme.colorScheme.primary,
                 )
               : Icon(
+                  key: IndexCardOverview.selectAllButtonUncheckedKey,
                   Icons.circle_outlined,
                   color: mainTheme.colorScheme.primary,
                 ),
           onPressed: () => _onSelectAll(context, state, toggleSelectAll),
         ),
       ),
-      if (state.indexCardIds.isNotEmpty)
-        IconButton(
-          icon: Icon(
-            Icons.delete,
-            color: mainTheme.colorScheme.primary,
-          ),
-          onPressed: () => _onRemove(context, state.indexCardIds),
-        )
+      Visibility(
+          key: IndexCardOverview.deleteButtonKey,
+          visible: state.indexCardIds.isNotEmpty,
+          maintainSize: true,
+          maintainAnimation: true,
+          maintainState: true,
+          child: IconButton(
+            icon: Icon(
+              Icons.delete,
+              color: mainTheme.colorScheme.primary,
+            ),
+            onPressed: () => _onRemove(context, state.indexCardIds),
+          ))
     ];
   } else {
     return [];
@@ -311,18 +331,9 @@ void _onSelectAll(final BuildContext context,
         .add(UpdateSelectedIndexCards(indexCardIds: selectedIndexCardIds));
   } else {
     /// get selected card ids before all cards where selected
-    List<int> lastSelectedCardIds = state.selectedCardsHistory[0];
-
-    ///if all cards where selected (previously) then deselect all
-    if (state.selectedCardsHistory[0].length == state.indexCards.length &&
-        state.selectedCardsHistory[1].length == state.indexCards.length) {
-      lastSelectedCardIds = [];
-    }
-
-    /// get selected card ids before all cards where selected
     context
         .read<IndexCardOverviewBloc>()
-        .add(UpdateSelectedIndexCards(indexCardIds: lastSelectedCardIds));
+        .add(UpdateSelectedIndexCards(indexCardIds: []));
   }
 
   ///toggle Button Icon
