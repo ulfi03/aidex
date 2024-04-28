@@ -120,8 +120,7 @@ class IndexCardItemWidget extends StatelessWidget {
                 child: Text(
                   indexCard.question,
                   textAlign: TextAlign.start,
-                  style: TextStyle(
-                      fontSize: 16, color: mainTheme.colorScheme.onSurface),
+                  style: mainTheme.textTheme.bodyMedium,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                 ),

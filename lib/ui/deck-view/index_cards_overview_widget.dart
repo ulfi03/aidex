@@ -49,34 +49,36 @@ class IndexCardOverview extends StatelessWidget {
   static const selectAllButtonCheckedKey = Key('selectAllButton_checked');
 
   @override
-  Widget build(final BuildContext context) =>
-      BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
-        buildWhen: (final previous, final current) =>
-            current is IndexCardInitial ||
-            current is IndexCardsLoaded ||
-            current is IndexCardSelectionMode,
-        builder: (final context, final state) => Scaffold(
-            appBar: AppBar(
-                leading: IconButton(
-                  key: arrowBackButtonKey,
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    if (state is IndexCardSelectionMode) {
-                      context
-                          .read<IndexCardOverviewBloc>()
-                          .add(const ExitIndexCardSelectionMode());
-                    } else {
-                      Navigator.pop(context);
-                    }
-                  },
-                ),
-                centerTitle: true,
-                title: Text(deck.name),
-                actions: _getActions(context, state)),
-            body: Column(
-              children: [
-                if (state is! IndexCardSelectionMode)
-                  Padding(
+  Widget build(final BuildContext context) => Scaffold(
+      appBar: AppBar(
+          leading: BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
+              builder: (final context, final state) => IconButton(
+                    key: arrowBackButtonKey,
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      if (state is IndexCardSelectionMode) {
+                        context
+                            .read<IndexCardOverviewBloc>()
+                            .add(const ExitIndexCardSelectionMode());
+                      } else {
+                        Navigator.pop(context);
+                      }
+                    },
+                  )),
+          centerTitle: true,
+          title: Text(deck.name),
+          actions: _getActions(context)),
+      body: Column(
+        children: [
+          BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
+              buildWhen: (final previous, final current) =>
+                  current is IndexCardInitial ||
+                  current is IndexCardSelectionMode ||
+                  current is IndexCardsLoaded &&
+                      previous is IndexCardSelectionMode,
+              builder: (final context, final state) {
+                if (state is! IndexCardSelectionMode) {
+                  return Padding(
                       padding: const EdgeInsets.all(8),
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -86,32 +88,33 @@ class IndexCardOverview extends StatelessWidget {
                                     indexCardOverviewBloc:
                                         context.read<IndexCardOverviewBloc>())),
                             AddCardButton(deck: deck)
-                          ])),
-                BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
-                    builder: (final context, final state) {
-                  if (state is IndexCardsLoading) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                        mainTheme.colorScheme.primary,
-                      )),
-                    );
-                  } else if (state is IndexCardSelectionMode) {
-                    return IndexCardsContainer(
-                        state: state, deckName: deck.name);
-                  } else if (state is IndexCardsLoaded) {
-                    return IndexCardsContainer(
-                        state: state, deckName: deck.name);
-                  } else if (state is IndexCardsError) {
-                    return ErrorDisplayWidget(errorMessage: state.message);
-                  } else {
-                    return const ErrorDisplayWidget(
-                        errorMessage: 'Something went wrong!');
-                  }
-                }),
-              ],
-            )),
-      );
+                          ]));
+                } else {
+                  return const SizedBox.shrink();
+                }
+              }),
+          BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
+              builder: (final context, final state) {
+            if (state is IndexCardsLoading) {
+              return Center(
+                child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                  mainTheme.colorScheme.primary,
+                )),
+              );
+            } else if (state is IndexCardSelectionMode) {
+              return IndexCardsContainer(state: state, deckName: deck.name);
+            } else if (state is IndexCardsLoaded) {
+              return IndexCardsContainer(state: state, deckName: deck.name);
+            } else if (state is IndexCardsError) {
+              return ErrorDisplayWidget(errorMessage: state.message);
+            } else {
+              return const ErrorDisplayWidget(
+                  errorMessage: 'Something went wrong!');
+            }
+          }),
+        ],
+      ));
 }
 
 /// Contains the index cards of current deck.
@@ -196,53 +199,54 @@ class AddCardButton extends StatelessWidget {
   }
 }
 
-///toggleSelectAll is used to toggle the select all Iconbutton.
-final ValueNotifier<bool> toggleSelectAll = ValueNotifier<bool>(false);
-
-List<Widget> _getActions(
-    final BuildContext context, final IndexCardState state) {
-  if (state is IndexCardSelectionMode) {
-    if (state.indexCards.length == state.indexCardIds.length) {
-      toggleSelectAll.value = true;
-    } else {
-      toggleSelectAll.value = false;
-    }
-    return [
-      ValueListenableBuilder<bool>(
-        valueListenable: toggleSelectAll,
-        builder: (final context, final value, final child) => IconButton(
-          icon: toggleSelectAll.value
-              ? Icon(
-                  key: IndexCardOverview.selectAllButtonCheckedKey,
-                  Icons.check_circle,
-                  color: mainTheme.colorScheme.primary,
-                )
-              : Icon(
-                  key: IndexCardOverview.selectAllButtonUncheckedKey,
-                  Icons.circle_outlined,
-                  color: mainTheme.colorScheme.primary,
-                ),
-          onPressed: () => _onSelectAll(context, state, toggleSelectAll),
-        ),
-      ),
-      Visibility(
-          key: IndexCardOverview.deleteButtonKey,
-          visible: state.indexCardIds.isNotEmpty,
-          maintainSize: true,
-          maintainAnimation: true,
-          maintainState: true,
-          child: IconButton(
-            icon: Icon(
-              Icons.delete,
-              color: mainTheme.colorScheme.primary,
-            ),
-            onPressed: () => _onRemove(context, state.indexCardIds),
-          ))
+List<Widget> _getActions(final BuildContext context) => [
+      BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
+          builder: (final context, final state) {
+        bool isSelectAllButtonChecked = state is IndexCardSelectionMode &&
+            state.indexCards.length == state.indexCardIds.length;
+        return Visibility(
+            visible: state is IndexCardSelectionMode,
+            child: StatefulBuilder(
+              builder: (final context, final setState) => IconButton(
+                icon: isSelectAllButtonChecked
+                    ? Icon(
+                        key: IndexCardOverview.selectAllButtonCheckedKey,
+                        Icons.check_circle,
+                        color: mainTheme.colorScheme.primary,
+                      )
+                    : Icon(
+                        key: IndexCardOverview.selectAllButtonUncheckedKey,
+                        Icons.circle_outlined,
+                        color: mainTheme.colorScheme.primary,
+                      ),
+                onPressed: (state is IndexCardSelectionMode)
+                    ? () {
+                        _onSelectAll(context, state, isSelectAllButtonChecked);
+                        setState(() {
+                          isSelectAllButtonChecked = !isSelectAllButtonChecked;
+                        });
+                      }
+                    : () => {},
+              ),
+            ));
+      }),
+      BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
+          builder: (final context, final state) => Visibility(
+              key: IndexCardOverview.deleteButtonKey,
+              visible: state is IndexCardSelectionMode &&
+                  state.indexCardIds.isNotEmpty,
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              child: IconButton(
+                  icon: Icon(
+                    Icons.delete,
+                    color: mainTheme.colorScheme.primary,
+                  ),
+                  onPressed: (state is IndexCardSelectionMode)
+                      ? () => _onRemove(context, state.indexCardIds)
+                      : () => {}))),
     ];
-  } else {
-    return [];
-  }
-}
 
 /// Handle the delete button.
 /// -> initiate a dialog to confirm the deletion of the selected index cards.
@@ -260,8 +264,8 @@ Future<void> _onRemove(
 
 /// Handles the Button to select all index cards or deselect them.
 void _onSelectAll(final BuildContext context,
-    final IndexCardSelectionMode state, final ValueNotifier<bool> selectAll) {
-  if (!selectAll.value) {
+    final IndexCardSelectionMode state, final bool selectAllChecked) {
+  if (!selectAllChecked) {
     final selectedIndexCardIds = state.indexCards
         .map((final indexCard) => indexCard.indexCardId!)
         .toList();
@@ -274,7 +278,4 @@ void _onSelectAll(final BuildContext context,
         .read<IndexCardOverviewBloc>()
         .add(UpdateSelectedIndexCards(indexCardIds: []));
   }
-
-  ///toggle Button Icon
-  selectAll.value = !selectAll.value;
 }
