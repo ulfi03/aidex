@@ -37,109 +37,115 @@ class IndexCardOverview extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) => Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(deck.name),
-      ),
-      body: Column(
-        children: [
-          Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Expanded(child: CardSearchBar()),
-                    AddCardButton(deck: deck)
-                  ])),
-          BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
-              builder: (final context, final state) {
-            if (state is IndexCardsLoading) {
-              return Center(
-                child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                  mainTheme.colorScheme.primary,
-                )),
-              );
-            } else if (state is IndexCardsLoaded) {
-              return Expanded(child: () {
-                if (state.indexCards.isEmpty) {
-                  return const Center(child: Text('No index cards found!'));
-                } else {
-                  return SingleChildScrollView(
-                    child: Wrap(
-                      children: state.indexCards
-                          .map((final indexCard) => IndexCardItemWidget(
-                                indexCard: indexCard,
-                                onTap: (final context) async {
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (final context) =>
-                                          ItemOnDeckViewWidgetSelectedRoute(
-                                        indexCard: indexCard,
-                                        deckName: deck.name,
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(deck.name),
+        ),
+        body: Column(
+          children: [
+            Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Expanded(child: CardSearchBar()),
+                      AddCardButton(deck: deck)
+                    ])),
+            BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
+                builder: (final context, final state) {
+              if (state is IndexCardsLoading) {
+                return Center(
+                  child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                    mainTheme.colorScheme.primary,
+                  )),
+                );
+              } else if (state is IndexCardsLoaded) {
+                return Expanded(child: () {
+                  if (state.indexCards.isEmpty) {
+                    return const Center(child: Text('No index cards found!'));
+                  } else {
+                    return SingleChildScrollView(
+                      child: Wrap(
+                        children: state.indexCards
+                            .map((final indexCard) => IndexCardItemWidget(
+                                  indexCard: indexCard,
+                                  onTap: (final context) async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (final context) =>
+                                            ItemOnDeckViewWidgetSelectedRoute(
+                                          indexCard: indexCard,
+                                          deckName: deck.name,
+                                        ),
                                       ),
-                                    ),
-                                  ).then((final value) => context
-                                      .read<IndexCardOverviewBloc>()
-                                      .add(const FetchIndexCards()));
-                                },
-                              ))
-                          .toList(),
+                                    ).then((final value) => context
+                                        .read<IndexCardOverviewBloc>()
+                                        .add(const FetchIndexCards()));
+                                  },
+                                ))
+                            .toList(),
+                      ),
+                    );
+                  }
+                }());
+              } else if (state is IndexCardsError) {
+                return ErrorDisplayWidget(errorMessage: state.message);
+              } else {
+                return const ErrorDisplayWidget(
+                    errorMessage: 'Something went wrong!');
+              }
+            }),
+          ],
+        ),
+        bottomNavigationBar: Container(
+          height: 70,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: EdgeInsets.only(right: 10),
+              child: FloatingActionButton(
+                backgroundColor: Color(0xFF20EFC0),
+                child: Icon(Icons.play_arrow),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (final context) {
+                        final indexCardRepository =
+                            RepositoryProvider.of<IndexCardRepository>(context);
+                        final cardsFuture =
+                            indexCardRepository.fetchIndexCards(deck.deckId!);
+
+                        return FutureBuilder<List<IndexCard>>(
+                          future: cardsFuture,
+                          builder: (final context, final snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                return LearningFunction(
+                                  key: const Key('cards'),
+                                  cards: snapshot.data!,
+                                  deck: deck,
+                                );
+                              }
+                            } else {
+                              return CircularProgressIndicator();
+                            }
+                          },
+                        );
+                      },
                     ),
                   );
-                }
-              }());
-            } else if (state is IndexCardsError) {
-              return ErrorDisplayWidget(errorMessage: state.message);
-            } else {
-              return const ErrorDisplayWidget(
-                  errorMessage: 'Something went wrong!');
-            }
-          }),
-        ],
-      ),
-      bottomNavigationBar: Container(
-        height: 70,
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: FloatingActionButton(
-            child: Icon(Icons.play_arrow),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (final context) {
-                    final indexCardRepository =
-                        RepositoryProvider.of<IndexCardRepository>(context);
-                    final cardsFuture =
-                        indexCardRepository.fetchIndexCards(deck.deckId!);
-
-                    return FutureBuilder<List<IndexCard>>(
-                      future: cardsFuture,
-                      builder: (final context, final snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            return LearningFunction(
-                              key: const Key('cards'),
-                              cards: snapshot.data!,
-                              deck: deck,
-                            );
-                          }
-                        } else {
-                          return CircularProgressIndicator();
-                        }
-                      },
-                    );
-                  },
-                ),
-              );
-            },
+                },
+              ),
+            ),
           ),
         ),
-      ));
+      );
 }
 
 /// This widget is used to display the search bar.
