@@ -10,10 +10,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 
 /// The business logic component of the CreateDeckDialogOnAi feature.
-class CreateDeckDialogOnAiBloc
+class CreateDeckDialogWithAiBloc
     extends Bloc<CreateDeckDialogOnAiEvent, CreateDeckDialogOnAiState> {
-  /// Constructor for the [CreateDeckDialogOnAiBloc].
-  CreateDeckDialogOnAiBloc(
+  /// Constructor for the [CreateDeckDialogWithAiBloc].
+  CreateDeckDialogWithAiBloc(
       {required final DeckRepository deckRepository,
       required final IndexCardRepository indexCardRepository})
       : _deckRepository = deckRepository,

@@ -9,9 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// This widget is used to display the create deck dialog.
-class CreateDeckDialogOnManual extends StatelessWidget {
-  /// Constructor for the [CreateDeckDialogOnManual].
-  const CreateDeckDialogOnManual({super.key});
+class CreateDeckDialogManually extends StatelessWidget {
+  /// Constructor for the [CreateDeckDialogManually].
+  const CreateDeckDialogManually({super.key});
 
   /// The key for the dialogMethods Widget title.
   static const Key showCreateDeckDialogTitleKey = Key('DeckDialogTitleKey');

@@ -1,7 +1,10 @@
+import 'package:aidex/bloc/create_deck_dialog_with_ai_bloc.dart';
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
+import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
-import 'package:aidex/ui/deck-overview/create_deck_dialog_on_manual.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog_with_ai.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog_manually.dart';
 import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
@@ -21,13 +24,14 @@ class DeckOverviewPage extends StatelessWidget {
 
   /// The key for the createDeckModalBottomSheet.
   static const Key createDeckModalBottomSheetKey =
-      Key('CreateDeckModalBottomSheetKey');
+  Key('CreateDeckModalBottomSheetKey');
 
   @override
-  Widget build(final BuildContext context) => BlocProvider(
-      create: (final context) =>
-          DeckOverviewBloc(context.read<DeckRepository>()),
-      child: const DeckOverview());
+  Widget build(final BuildContext context) =>
+      BlocProvider(
+          create: (final context) =>
+              DeckOverviewBloc(context.read<DeckRepository>()),
+          child: const DeckOverview());
 }
 
 /// This widget is used to display the deck overview.
@@ -36,7 +40,8 @@ class DeckOverview extends StatelessWidget {
   const DeckOverview({super.key});
 
   @override
-  Widget build(final BuildContext context) => Scaffold(
+  Widget build(final BuildContext context) =>
+      Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: Text(
@@ -60,18 +65,19 @@ class DeckOverview extends StatelessWidget {
               if (state.decks.isEmpty) {
                 return Center(
                     child: Text(
-                  'No decks found, create one!',
-                  style: mainTheme.textTheme.bodyMedium,
-                ));
+                      'No decks found, create one!',
+                      style: mainTheme.textTheme.bodyMedium,
+                    ));
               } else {
                 return SingleChildScrollView(
                     padding: EdgeInsets.only(
                         bottom: mainTheme.floatingActionButtonTheme
-                                .sizeConstraints!.maxHeight *
+                            .sizeConstraints!.maxHeight *
                             2),
                     child: Column(
                       children: state.decks
-                          .map((final deck) => Padding(
+                          .map((final deck) =>
+                          Padding(
                               padding: const EdgeInsets.all(5),
                               child: DeckItemWidget(deck: deck)))
                           .toList(),
@@ -100,17 +106,16 @@ Future<void> onAddButtonPressed(final BuildContext deckOverviewContext) async {
   await showModalBottomSheet(
       context: deckOverviewContext,
       backgroundColor: mainTheme.colorScheme.background,
-      builder: (final context) => CreateDeckModalBottomSheet(
+      builder: (final context) =>
+          CreateDeckModalBottomSheet(
             key: DeckOverviewPage.createDeckModalBottomSheetKey,
             onManual: () async {
               Navigator.pop(context);
               await _showCreateDeckDialog(deckOverviewContext);
             },
             onAI: () async {
-              deckOverviewContext
-                  .read<DeckOverviewBloc>()
-                  .add(const RemoveAllDecks());
-              // Handle AI deck creation here
+              Navigator.pop(context);
+              await _showCreateDeckDialogWithAi(deckOverviewContext);
             },
           ));
 }
@@ -119,9 +124,24 @@ Future<void> _showCreateDeckDialog(final BuildContext context) async {
   final deckOverviewBloc = context.read<DeckOverviewBloc>();
   await showDialog(
     context: context,
-    builder: (final context) => BlocProvider.value(
-      value: deckOverviewBloc,
-      child: const CreateDeckDialogOnManual(),
-    ),
+    builder: (final context) =>
+        BlocProvider.value(
+          value: deckOverviewBloc,
+          child: const CreateDeckDialogManually(),
+        ),
+  );
+}
+
+Future<void> _showCreateDeckDialogWithAi(final BuildContext context) async {
+  await showDialog(
+    context: context,
+    builder: (final context) =>
+        BlocProvider(
+          create: (final context) =>
+              CreateDeckDialogWithAiBloc(
+                  deckRepository: context.read<DeckRepository>(),
+                  indexCardRepository: context.read<IndexCardRepository>()),
+          child: const CreateDeckDialogWithAi(),
+        ),
   );
 }
