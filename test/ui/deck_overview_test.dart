@@ -1,7 +1,7 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/components/custom_buttons.dart';
-import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog_on_manual.dart';
 import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
@@ -131,7 +131,7 @@ void main() {
       await tester.tap(find.byKey(CancelButton.cancelButtonKey));
       await tester.pumpAndSettle();
       expect(find.byType(DeckOverview), findsOneWidget);
-      expect(find.byType(CreateDeckDialog), findsNothing);
+      expect(find.byType(CreateDeckDialogOnManual), findsNothing);
       expect(find.bySubtype<CreateDeckModalBottomSheet>(), findsNothing);
     });
 

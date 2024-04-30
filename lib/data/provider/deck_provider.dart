@@ -53,7 +53,20 @@ create table ${Deck.tableDeck} (
     }
     return null;
   }
-
+  /// Get the last inserted deck's ID.
+  Future<int> getLastDeckID() async {
+    final List<Map<String, dynamic>> maps = await _db.rawQuery('''
+      SELECT ${Deck.columnDeckId} 
+      FROM ${Deck.tableDeck} 
+      ORDER BY ${Deck.columnDeckId} DESC 
+      LIMIT 1
+    ''');
+    if (maps.isNotEmpty) {
+      return maps.first[Deck.columnDeckId] as int;
+    }else{
+      return -1;
+    }
+  }
   /// get deck with cardcount
   Future<List<Deck>> getDecks() async {
     final List<Map<String, dynamic>> maps = await _db.rawQuery('''

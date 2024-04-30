@@ -11,7 +11,7 @@ class DeckRepository {
 
   final DeckProvider _deckProvider;
   /// Returns the id of the last deck.
-  Future<int> getLastDeckId() async => _deckProvider.getLastDeckId();
+  Future<int> getLastDeckId() async => _deckProvider.getLastDeckID();
   /// Fetches the decks.
   Future<List<Deck>> fetchDecks() async => _deckProvider.getDecks();
   /// Fetches a deck by its id.
