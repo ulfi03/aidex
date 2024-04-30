@@ -19,7 +19,7 @@ class DeckRepository {
       _deckProvider.getDeck(deckId);
 
   /// Adds a deck.
-  Future<void> addDeck(final Deck deck) async => _deckProvider.insert(deck);
+  Future<Deck> addDeck(final Deck deck) async => _deckProvider.insert(deck);
 
   /// Deletes a deck.
   Future<void> deleteDeck(final Deck deck) async =>

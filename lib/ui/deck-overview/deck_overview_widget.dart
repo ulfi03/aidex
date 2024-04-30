@@ -1,7 +1,7 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
-import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog_on_manual.dart';
 import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
@@ -121,7 +121,7 @@ Future<void> _showCreateDeckDialog(final BuildContext context) async {
     context: context,
     builder: (final context) => BlocProvider.value(
       value: deckOverviewBloc,
-      child: const CreateDeckDialog(),
+      child: const CreateDeckDialogOnManual(),
     ),
   );
 }

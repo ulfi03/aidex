@@ -1,7 +1,7 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/components/custom_buttons.dart';
-import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog_on_manual.dart';
 import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
@@ -105,7 +105,7 @@ void main() {
       await tester
           .tap(find.byKey(CreateDeckModalBottomSheet.createManuallyButtonKey));
       await tester.pumpAndSettle();
-      expect(find.byType(CreateDeckDialog), findsOneWidget);
+      expect(find.byType(CreateDeckDialogOnManual), findsOneWidget);
     });
   });
 
@@ -120,7 +120,7 @@ void main() {
       await tester
           .tap(find.byKey(CreateDeckModalBottomSheet.createManuallyButtonKey));
       await tester.pumpAndSettle();
-      expect(find.byType(CreateDeckDialog), findsOneWidget);
+      expect(find.byType(CreateDeckDialogOnManual), findsOneWidget);
     }
 
     testWidgets('Return to DeckOverview by pressing "Cancel")',
@@ -129,14 +129,14 @@ void main() {
       await tester.tap(find.byKey(CancelButton.cancelButtonKey));
       await tester.pumpAndSettle();
       expect(find.byType(DeckOverview), findsOneWidget);
-      expect(find.byType(CreateDeckDialog), findsNothing);
+      expect(find.byType(CreateDeckDialogOnManual), findsNothing);
       expect(find.bySubtype<CreateDeckModalBottomSheet>(), findsNothing);
     });
 
     testWidgets('Create deck by pressing "OK"', (final tester) async {
       await prepareCreateDeckDialog(tester);
       await tester.enterText(
-          find.byKey(CreateDeckDialog.deckNameTextFieldKey), 'Deck 1');
+          find.byKey(CreateDeckDialogOnManual.deckNameTextFieldKey), 'Deck 1');
       await tester.tap(find.byKey(OkButton.okButtonKey));
       await tester.pumpAndSettle();
       expect(find.byType(DeckOverview), findsOneWidget);
