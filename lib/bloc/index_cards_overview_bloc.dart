@@ -14,14 +14,22 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
 
   final int _deckId;
 
+  String _query = '';
+
+  final List<IndexCard> _indexCards = List.empty(growable: true);
+
   final IndexCardRepository _indexCardRepository;
 
   void _initEventHandlers() {
     on<FetchIndexCards>((final event, final emit) async {
-      emit(const IndexCardsLoading());
+      _query = '';
+      emit(IndexCardsLoading(query: _query));
       try {
-        final indexCards = await _indexCardRepository.fetchIndexCards(_deckId);
-        emit(IndexCardsLoaded(indexCards: indexCards));
+        _indexCards.clear();
+        // Fetch index cards and add elements to _indexCards
+        (await _indexCardRepository.fetchIndexCards(_deckId))
+            .forEach(_indexCards.add);
+        emit(IndexCardsLoaded(indexCards: _indexCards, query: _query));
       } on Exception catch (e) {
         emit(IndexCardsError(message: e.toString()));
       }
@@ -34,10 +42,47 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
         emit(IndexCardsError(message: e.toString()));
       }
     });
-    on<RemoveAllIndexCards>((final event, final emit) async {
-      try {
-        await _indexCardRepository.removeAllIndexCards(_deckId);
+    on<UpdateSelectedIndexCards>((final event, final emit) async {
+      emit(IndexCardSelectionMode(
+          indexCardIds: event.indexCardIds, indexCards: _indexCards));
+    });
+    on<ExitIndexCardSelectionMode>((final event, final emit) async {
+      emit(IndexCardsLoaded(indexCards: _indexCards, query: _query));
+    });
+    on<RemoveIndexCardsById>((final event, final emit) async {
+      final bool success = await _indexCardRepository
+          .removeIndexCards(event.selectedIndexCardsIds);
+      if (success) {
         add(const FetchIndexCards());
+      } else {
+        emit(IndexCardsError(
+            message:
+                'Failed to delete index cards ${event.selectedIndexCardsIds}'));
+      }
+    });
+    on<SearchIndexCards>((final event, final emit) async {
+      emit(IndexCardsLoading(query: event.query));
+      try {
+        _query = event.query;
+        _indexCards.clear();
+        (await _indexCardRepository.searchIndexCards(_deckId, event.query))
+            .forEach(_indexCards.add);
+        emit(IndexCardsLoaded(indexCards: _indexCards, query: event.query));
+      } on Exception catch (e) {
+        emit(IndexCardsError(message: e.toString()));
+      }
+    });
+    on<SortIndexCards>((final event, final emit) async {
+      try {
+        emit(IndexCardsLoading(query: _query));
+        _indexCards.sort((final a, final b) {
+          if (event.sortAsc) {
+            return a.question.compareTo(b.question);
+          } else {
+            return b.question.compareTo(a.question);
+          }
+        });
+        emit(IndexCardsLoaded(indexCards: _indexCards, query: _query));
       } on Exception catch (e) {
         emit(IndexCardsError(message: e.toString()));
       }
@@ -48,13 +93,13 @@ class IndexCardOverviewBloc extends Bloc<IndexCardEvent, IndexCardState> {
 /// ################################################################# States
 
 /// The index card state.
-abstract class IndexCardState extends Equatable {
+abstract class IndexCardState {
   /// Creates a new index card state.
   const IndexCardState();
 }
 
 /// The index card initial state.
-class IndexCardInitial extends IndexCardState {
+class IndexCardInitial extends IndexCardState with EquatableMixin {
   /// Creates a new index card initial state.
   const IndexCardInitial();
 
@@ -63,28 +108,51 @@ class IndexCardInitial extends IndexCardState {
 }
 
 /// The index card loading state.
-class IndexCardsLoading extends IndexCardState {
+class IndexCardsLoading extends IndexCardState with EquatableMixin {
   /// Creates a new index card loading state.
-  const IndexCardsLoading();
+  IndexCardsLoading({required this.query});
+
+  /// The query used to filter the index cards.
+  final String query;
 
   @override
   List<Object> get props => [];
 }
 
 /// The index cards loaded state.
-class IndexCardsLoaded extends IndexCardState {
+class IndexCardsLoaded extends IndexCardState with EquatableMixin {
   /// Creates a new index cards loaded state.
-  const IndexCardsLoaded({required this.indexCards});
+  const IndexCardsLoaded({required this.indexCards, required this.query});
 
   /// The index card list.
   final List<IndexCard> indexCards;
+
+  /// The query used to filter the index cards.
+  final String query;
 
   @override
   List<Object> get props => [indexCards];
 }
 
+/// The index card is selected
+class IndexCardSelectionMode extends IndexCardState {
+  /// Creates a new index card selected state.
+  const IndexCardSelectionMode(
+      {required this.indexCards, required this.indexCardIds});
+
+  /// The index card ids.
+  final List<int> indexCardIds;
+
+  /// The indexCards in deck
+  final List<IndexCard> indexCards;
+
+  /// Check if the card is selected
+  bool isThisCardSelected(final int indexCardId) =>
+      indexCardIds.contains(indexCardId);
+}
+
 /// The index card error state.
-class IndexCardsError extends IndexCardState {
+class IndexCardsError extends IndexCardState with EquatableMixin {
   /// Creates a new index card error state.
   const IndexCardsError({required this.message});
 
@@ -98,7 +166,7 @@ class IndexCardsError extends IndexCardState {
 /// ################################################################# Events
 
 /// The card event.
-class IndexCardEvent {
+abstract class IndexCardEvent {
   /// Creates a new card event.
   const IndexCardEvent();
 }
@@ -109,10 +177,28 @@ class FetchIndexCards extends IndexCardEvent {
   const FetchIndexCards();
 }
 
-/// The event for removing all cards.
-class RemoveAllIndexCards extends IndexCardEvent {
-  /// Creates a new remove all cards event.
-  const RemoveAllIndexCards();
+///The event for updating the list of selected IndexCards.
+class UpdateSelectedIndexCards extends IndexCardEvent {
+  /// Creates a new update selected index cardIds event.
+  UpdateSelectedIndexCards({required this.indexCardIds});
+
+  /// The index card ids that are selected.
+  List<int> indexCardIds;
+}
+
+///The event to exit CardSelectionMode
+class ExitIndexCardSelectionMode extends IndexCardEvent {
+  ///Creates ExitIndexCardSelectionMode event
+  const ExitIndexCardSelectionMode();
+}
+
+/// The event for removing index cards.
+class RemoveIndexCardsById extends IndexCardEvent {
+  /// Creates a new remove cards by id event.
+  const RemoveIndexCardsById({required this.selectedIndexCardsIds});
+
+  /// The selcted index card ids list.
+  final List<int> selectedIndexCardsIds;
 }
 
 /// The event for adding a card.
@@ -122,4 +208,22 @@ class AddIndexCard extends IndexCardEvent {
 
   /// The IndexCard to add.
   final IndexCard indexCard;
+}
+
+/// Query for searching index cards.
+class SearchIndexCards extends IndexCardEvent {
+  /// Creates a new search index cards event.
+  const SearchIndexCards({required this.query});
+
+  /// The query to search for.
+  final String query;
+}
+
+/// The event for sorting index cards.
+class SortIndexCards extends IndexCardEvent {
+  /// Creates a new sort index cards event.
+  const SortIndexCards({required this.sortAsc});
+
+  /// Whether to sort ascending.
+  final bool sortAsc;
 }

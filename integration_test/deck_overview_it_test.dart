@@ -1,8 +1,9 @@
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/ui/components/custom_buttons.dart';
-import 'package:aidex/ui/deck-overview/create_deck_dialog_on_manual.dart';
-import 'package:aidex/ui/deck-overview/create_deck_snackbar_widget.dart';
+import 'package:aidex/ui/components/custom_color_picker.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
+import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
 import 'package:flutter/material.dart';
@@ -82,11 +83,11 @@ void main() {
       await tester.tap(addDeckButton);
       await tester.pumpAndSettle();
 
-      final createDeckSnackbar =
-          find.byKey(DeckOverviewPage.createDeckSnackbarKey);
-      expect(createDeckSnackbar, findsOneWidget);
+      final createDeckModalBottomSheet =
+          find.byKey(DeckOverviewPage.createDeckModalBottomSheetKey);
+      expect(createDeckModalBottomSheet, findsOneWidget);
       final manualCreateButton =
-          find.byKey(CreateDeckSnackbar.createManuallyButtonKey);
+          find.byKey(CreateDeckModalBottomSheet.createManuallyButtonKey);
       expect(manualCreateButton, findsOneWidget);
       await tester.tap(manualCreateButton);
       await tester.pumpAndSettle();
@@ -102,7 +103,7 @@ void main() {
 
       // select color
       final openColorPickerButton =
-          find.byKey(CreateDeckDialogOnManual.colorPickerButtonKey);
+          find.byKey(CustomColorPicker.colorPickerButtonKey);
       expect(openColorPickerButton, findsOneWidget);
       await tester.tap(openColorPickerButton);
       await tester.pumpAndSettle();
@@ -129,7 +130,7 @@ void main() {
 
       // press color picker 'Select' button
       final selectColorButton =
-          find.byKey(CreateDeckDialogOnManual.colorPickerSelectButtonKey);
+          find.byKey(CustomColorPicker.colorPickerSelectButtonKey);
       expect(selectColorButton, findsOneWidget);
       await tester.tap(selectColorButton);
       await tester.pumpAndSettle();

@@ -81,14 +81,15 @@ CREATE TABLE IF NOT EXISTS ${IndexCard.tableIndexCard} (
     return indexCard;
   }
 
-  /// delete one IndexCard from the database.
-  Future<int> delete(final int id) async => _db.delete(IndexCard.tableIndexCard,
-      where: '${IndexCard.columnIndexCardId} = ?', whereArgs: [id]);
+  /// delete IndexCards by id list from the database.
+  Future<int> delete(final List<int> indexCardIds) async {
+    ///Convert indexCardIds to Query-String
+    final String ids = '(${indexCardIds.join(', ')})';
 
-  /// delete all IndexCards from the database.
-  Future<int> deleteAll(final int deckId) async =>
-      _db.delete(IndexCard.tableIndexCard,
-          where: '${IndexCard.columnDeckId} = ?', whereArgs: [deckId]);
+    ///Delete IndexCards sqflite statement
+    return _db.delete(IndexCard.tableIndexCard,
+        where: '${IndexCard.columnIndexCardId} IN $ids');
+  }
 
   /// update one IndexCard from the database.
   Future<int> update(final IndexCard indexCard) async =>
@@ -98,4 +99,23 @@ CREATE TABLE IF NOT EXISTS ${IndexCard.tableIndexCard} (
 
   /// Closes the database.
   Future close() async => _db.close();
+
+  /// Searches the index cards.
+  Future<List<IndexCard>> searchIndexCards(
+      final int deckId, final String query) async {
+    final List<Map<String, dynamic>> maps = await _db.query(
+      IndexCard.tableIndexCard,
+      columns: [
+        IndexCard.columnIndexCardId,
+        IndexCard.columnQuestion,
+        IndexCard.columnAnswer,
+        IndexCard.columnDeckId
+      ],
+      where: '''
+          ${IndexCard.columnDeckId} = ? AND ${IndexCard.columnQuestion} LIKE ?
+          ''',
+      whereArgs: [deckId, '%$query%'],
+    );
+    return List.generate(maps.length, (final i) => IndexCard.fromMap(maps[i]));
+  }
 }
