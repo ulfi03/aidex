@@ -46,10 +46,9 @@ class CreateDeckDialogWithAiBloc
             emit(CreateDeckDialogOnAiFailure(
                 message: 'Failed to save new index cards!'));
           }
-        } on Exception catch (e) {
+        } on Exception catch (_) {
           emit(CreateDeckDialogOnAiFailure(
               message: 'Failed to request index cards from server!'));
-          print(e);
         }
       }
     });
