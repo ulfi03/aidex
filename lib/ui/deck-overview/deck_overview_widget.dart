@@ -5,6 +5,7 @@ import 'package:aidex/ui/deck-overview/create_deck_dialog_on_ai.dart';
 import 'package:aidex/ui/deck-overview/create_deck_dialog_on_manual.dart';
 import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
+import 'package:aidex/ui/deck-overview/delete_all_decks_dialog.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,11 +41,22 @@ class DeckOverview extends StatelessWidget {
         appBar: AppBar(
           centerTitle: true,
           title: Text(
-            key: DeckOverviewPage.deckOverviewTitleKey,
             'All Decks',
             style: mainTheme.textTheme.titleLarge,
           ),
           backgroundColor: mainTheme.colorScheme.surface,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.delete_sweep,
+              color: mainTheme.colorScheme.primary),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (final context) => const DeleteAllDecksDialog(),
+                );
+              },
+            ),
+          ],
         ),
         backgroundColor: mainTheme.colorScheme.surface,
         body: BlocBuilder<DeckOverviewBloc, DeckState>(

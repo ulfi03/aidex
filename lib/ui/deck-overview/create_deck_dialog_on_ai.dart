@@ -275,11 +275,6 @@ class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
                       );
                       return;
                     }
-                    // disabling the button to prevent multiple clicks
-                    setState(() {
-                      isButtonDisabled = true;
-                      isLoading = true;
-                    });
                     // add the deck like normal
                     context.read<DeckOverviewBloc>().add(
                       AddDeck(
@@ -289,7 +284,6 @@ class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
                         ),
                       ),
                     );
-
                     // get the deck id from the deck we just created
                     final int deckId =
                         await context.read<DeckRepository>().getLastDeckId();
@@ -305,6 +299,12 @@ class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
                       );
                       return;
                     }
+                    // disabling the button to prevent multiple clicks
+                    setState(() {
+                      isButtonDisabled = true;
+                      isLoading = true;
+                    });
+
                     // initialising the arrays
                     final List<String> questions = <String>[];
                     final List<String> answers = <String>[];
