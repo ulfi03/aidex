@@ -30,6 +30,8 @@
 - Start improving communication within the team.
 - Start conducting regular retrospectives to reflect on the team's performance.
 - Start sticking to the BloC architecture.
+- Start discussing and merging completed branches quickly.
+- Start distributing work evenly.
 
 ---
 
@@ -42,6 +44,7 @@
 - Stop avoiding difficult conversations.
 - Stop relying on a single team member for critical tasks.
 - Stop skipping documentation.
+- Stop working unevenly.
 
 ---
 
@@ -53,6 +56,8 @@
 - Continue pair programming on challenging tasks.
 - Continue conducting regular code reviews.
 - Continue using the current testing framework.
+- Continue our overall good teamwork
+- Continue having a lively discussion (and not a presentation from the facilitator)
 
 ## Action Items for Improvement
 
@@ -65,11 +70,17 @@
 
 ## Other Topics
 
+- Keep a close eye on the given timeframe
+- Complete the most important features & functionalities before doing anything else (bug fixing, easter eggs, etc.)
 [Any additional topics or open discussions that came up during the retrospective]
 
 ---
 
+
 ## Feedback and Suggestions
+
+- Plan more time for a deeper discussion
+- Prepare yourself in advance
 
 [Gather feedback about the retrospective itself. Ask attendees for suggestions on improving future retrospectives.]
 
