@@ -1,21 +1,14 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:aidex/bloc/create_deck_dialog_on_ai_bloc.dart';
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
-import 'package:aidex/data/model/index_card.dart';
-import 'package:aidex/data/repo/deck_repository.dart';
-import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/components/basic_error_dialog.dart';
 import 'package:aidex/ui/components/custom_buttons.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
+import 'package:aidex/ui/utilities.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:http/http.dart' as http;
 
 /// This widget is used to display the create deck dialog.
 class CreateDeckDialogOnAI extends StatefulWidget {
@@ -195,36 +188,37 @@ class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    result = await FilePicker.platform.pickFiles(
+                    await FilePicker.platform.pickFiles(
                       type: FileType.custom,
                       allowedExtensions: ['pdf', 'txt', 'docx'],
-                    );
-                    if (result != null) {
-                      final selectedFileName = result?.files.first.name;
-                      // Set the selected file name to the text field
-                      fileNameController.text = selectedFileName!;
-                    } else {
-                      unawaited(showDialog(
-                        context: context,
-                        builder: (final context) => AlertDialog(
-                          title: const Text('Alert'),
-                          content: Text(
-                            'No file selected',
-                            style: TextStyle(
-                              color: mainTheme.colorScheme.error,
+                    ).then((final result) async {
+                      if (result != null) {
+                        final selectedFileName = result.files.first.name;
+                        // Set the selected file name to the text field
+                        fileNameController.text = selectedFileName;
+                      } else {
+                        await showDialog(
+                          context: context,
+                          builder: (final context) => AlertDialog(
+                            title: const Text('Alert'),
+                            content: Text(
+                              'No file selected',
+                              style: TextStyle(
+                                color: mainTheme.colorScheme.error,
+                              ),
                             ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
                           ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                      ));
-                    }
+                        );
+                      }
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
@@ -256,54 +250,57 @@ class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
                         onPressed: () => Navigator.pop(context),
                       ),
                     ),
-                    BlocBuilder<CreateDeckDialogOnAiBloc,
-                        CreateDeckDialogOnAIState>(
-                      builder: (context, state) {
-                        return ElevatedButton(
-                          key: okButtonKey,
-                          onPressed:
-                            if (state is CreateDeckDialogInitial)
-                              return () async {
-  // validate
-                                  //############################ create with ai
-                                  // add the deck like normal
-
-
-
-
-                                  //closing the menu, once everything is done
-                                  Navigator.pop(context);
-                                  await showDialog(
-                                    context: context,
-                                    builder: (final context) => AlertDialog(
-                                      title: const Text('Success'),
-                                      content: const Text(
-                                          'Deck created successfully'),
-                                      actions: [
-                                        OkButton(onPressed: () {
-                                          Navigator.pop(context);
-                                        }),
-                                      ],
-                                    ),
-                                  );
-                                },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: mainTheme.colorScheme.primary,
+                    BlocListener<CreateDeckDialogOnAiBloc,
+                            CreateDeckDialogOnAiState>(
+                        listener: (final context, final state) async {
+                          if (state is CreateDeckDialogOnAiSuccess) {
+                            Navigator.pop(context);
+                            context
+                                .read<DeckOverviewBloc>()
+                                .add(const FetchDecks());
+                            await showDialog(
+                              context: context,
+                              builder: (final context) => AlertDialog(
+                                title: const Text('Success'),
+                                content:
+                                    const Text('Deck created successfully'),
+                                actions: [
+                                  OkButton(onPressed: () {
+                                    Navigator.pop(context);
+                                  }),
+                                ],
+                              ),
+                            );
+                          } else if (state is CreateDeckDialogOnAiFailure) {
+                            await showBasicErrorDialog(
+                              context,
+                              'There was an error in the server while creating the'
+                              ' index cards. \nError: ${state.message}',
+                            );
+                          }
+                        },
+                        child: BlocBuilder<CreateDeckDialogOnAiBloc,
+                            CreateDeckDialogOnAiState>(
+                          builder: (final context, final state) =>
+                              ElevatedButton(
+                            key: okButtonKey,
+                            onPressed: _getOnPressed(state),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: mainTheme.colorScheme.primary,
+                            ),
+                            child: isLoading
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(),
+                                  ) // Display loading animation with fixed size
+                                : Text(
+                                    'Create',
+                                    key: okButtonTextKey,
+                                    style: mainTheme.textTheme.bodySmall,
+                                  ),
                           ),
-                          child: isLoading
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(),
-                                ) // Display loading animation with fixed size
-                              : Text(
-                                  'Create',
-                                  key: okButtonTextKey,
-                                  style: mainTheme.textTheme.bodySmall,
-                                ),
-                        );
-                      },
-                    ),
+                        )),
                   ],
                 ),
               ],
@@ -316,11 +313,14 @@ class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
             ),
         ],
       );
-  ValidationResult validateDeck() {
+
+  /// Validates the deck.
+  ValidationResult _validateDeck() {
     // verifying that all parameters have been set
     if (result == null) {
       if (deckNameController.text == '') {
-        return ValidationResult.error('Please enter a deck name\nNo file selected');
+        return ValidationResult.error(
+            'Please enter a deck name\nNo file selected');
       } else {
         return ValidationResult.error('No file selected');
       }
@@ -330,50 +330,45 @@ class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
     }
     return ValidationResult.success();
   }
-  Future<void Function()?> getOnPressed(CreateDeckDialogOnAiState state) async {
-    if(state is CreateDeckDialogOnAiInitial) {
-        final ValidationResult validationResult = validateDeck();
 
-        if (!validationResult.isValid) {
-          await showBasicErrorDialog(
-            context,
-            validationResult.message,
-          );
-          return null;
-        } else {
-          context.read<CreateDeckDialogOnAiBloc>().add(
-            CreateDeckWithAi(
-              deck: Deck(
-                name: deckNameController.text,
-                color: pickerColor,
-              ),
-              filepath: result!.files.first.path!,
-            ),
-          );
-        }
-    } else if(state is CreateDeckDialogOnAiLoading) {
-
-    } else if(state is CreateDeckDialogOnAiSuccess) {
-
+  /// Handles the onPressed event of the create deck button.
+  void Function()? _getOnPressed(final CreateDeckDialogOnAiState state) {
+    if (state is CreateDeckDialogOnAiInitial) {
+      final ValidationResult validationResult = _validateDeck();
+      if (!validationResult.isValid) {
+        return () async => {
+              await showBasicErrorDialog(
+                context,
+                validationResult.message,
+              )
+            };
+      } else {
+        return () => {
+              context.read<CreateDeckDialogOnAiBloc>().add(
+                    CreateDeckWithAi(
+                      deck: Deck(
+                        name: deckNameController.text,
+                        color: pickerColor,
+                      ),
+                      filepath: result!.files.first.path!,
+                    ),
+                  )
+            };
+      }
+    } else if (state is CreateDeckDialogOnAiLoading) {
+      return null;
+    } else if (state is CreateDeckDialogOnAiSuccess) {
+      return null;
     } else if (state is CreateDeckDialogOnAiFailure) {
+      return () async {
         await showBasicErrorDialog(
-        context,
-        'There was an error in the server while creating the'
-            ' index cards. \nError: ${state.message}',
+          context,
+          'There was an error in the server while creating the'
+          ' index cards. \nError: ${state.message}',
         );
+      };
     } else {
       return null;
     }
   }
 }
-
-class ValidationResult {
-  final bool isValid;
-  final String message;
-
-  ValidationResult.error(this.message) : isValid = false;
-
-  ValidationResult.success() : isValid = true, message = '';
-}
-
-
