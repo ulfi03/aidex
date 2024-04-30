@@ -2,6 +2,7 @@ import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/deck-overview/create_deck_dialog_on_ai.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog_on_manual.dart';
 import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
@@ -103,18 +104,26 @@ Future<void> onAddButtonPressed(final BuildContext deckOverviewContext) async {
             key: DeckOverviewPage.createDeckModalBottomSheetKey,
             onManual: () async {
               Navigator.pop(context);
-              await _showCreateDeckDialog(deckOverviewContext);
+              await _showCreateDeckDialogOnManual(deckOverviewContext);
             },
             onAI: () async {
-              deckOverviewContext
-                  .read<DeckOverviewBloc>()
-                  .add(const RemoveAllDecks());
-              // Handle AI deck creation here
+               Navigator.pop(context);
+              await _showCreateDeckDialogOnAI(deckOverviewContext);
             },
           ));
 }
 
-Future<void> _showCreateDeckDialog(final BuildContext context) async {
+Future<void> _showCreateDeckDialogOnManual(final BuildContext context) async {
+  final deckOverviewBloc = context.read<DeckOverviewBloc>();
+  await showDialog(
+    context: context,
+    builder: (final context) => BlocProvider.value(
+      value: deckOverviewBloc,
+      child: const CreateDeckDialogOnManual(),      
+    ),
+  );
+}
+Future<void> _showCreateDeckDialogOnAI(final BuildContext context) async {
   final deckOverviewBloc = context.read<DeckOverviewBloc>();
   await showDialog(
     context: context,

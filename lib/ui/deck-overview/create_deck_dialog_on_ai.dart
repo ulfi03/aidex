@@ -296,7 +296,15 @@ class CreateDeckDialogOnAIState extends State<CreateDeckDialogOnAI> {
                     if (kDebugMode) {
                       print('Last Deck ID: $deckId');
                     }
-
+                    //check if the deck id is -1
+                    if (deckId == -1) {
+                      await showBasicErrorDialog(
+                        context,
+                        'There was an error while creating the deck.'
+                        ' Please try again.Error: Deck ID is -1',
+                      );
+                      return;
+                    }
                     // initialising the arrays
                     final List<String> questions = <String>[];
                     final List<String> answers = <String>[];
