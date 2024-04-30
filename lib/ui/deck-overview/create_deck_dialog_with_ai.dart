@@ -55,7 +55,7 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
   final fileNameController = TextEditingController();
 
   /// Variable to store the color selected by the user.
-  Color pickerColor = Colors.transparent; // Initial color
+  Color pickerColor = mainTheme.colorScheme.surface;  // Initial color
 
   /// Variable to store the file picker result.
   FilePickerResult? result;
@@ -171,11 +171,13 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: pickerColor,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8),
                       ),
+                      // make as big as the button below
+                      minimumSize: const Size(120, 35), 
                     ),
                     child: Text(
-                      'Color (optional)',
+                      'Color',
                       key: selectColorTextKey,
                       style: mainTheme.textTheme.bodySmall,
                     ),
@@ -217,7 +219,7 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
+                    backgroundColor: mainTheme.colorScheme.surface
                   ),
                   child: Text(
                     'Choose a file',

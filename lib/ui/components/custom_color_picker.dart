@@ -6,7 +6,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 /// Custom color picker widget.
 class CustomColorPicker extends StatefulWidget {
   /// Constructor for the [CustomColorPicker].
-  const CustomColorPicker({
+  CustomColorPicker({
     required final initialPickerColor,
     required this.onColorChanged,
     required this.label,
@@ -26,7 +26,7 @@ class CustomColorPicker extends StatefulWidget {
   static const Key selectColorTextKey = Key('SelectColorText');
 
   /// The initial color of the color picker.
-  final Color pickerColor;
+  Color pickerColor = mainTheme.colorScheme.surface; 
 
   /// The callback that is called when the color is changed.
   final void Function(Color) onColorChanged;
