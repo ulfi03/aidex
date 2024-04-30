@@ -8,6 +8,7 @@ import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 /// The business logic component of the CreateDeckDialogOnAi feature.
 class CreateDeckDialogWithAiBloc
@@ -31,26 +32,43 @@ class CreateDeckDialogWithAiBloc
         if (kDebugMode) {
           print('created deckId: $deckId');
         }
-        final Map<String, dynamic> serverResponse =
-            await requestIndexCardsFromServer(event.filepath);
-        final serverErrorBoolean = serverResponse['error'];
-        if (serverErrorBoolean) {
+        try {
+          final Map<String, dynamic> serverResponse =
+              await requestIndexCardsFromServer(event.filepath);
+          final bool errorOnServer = serverResponse['error'];
+          if (errorOnServer) {
+            emit(CreateDeckDialogOnAiFailure(
+                message: serverResponse['error_message']));
+          } else if (await processIndexCardsFromServer(
+              serverResponse, deckId)) {
+            emit(CreateDeckDialogOnAiSuccess());
+          } else {
+            emit(CreateDeckDialogOnAiFailure(
+                message: 'Failed to save new index cards!'));
+          }
+        } on Exception catch (e) {
           emit(CreateDeckDialogOnAiFailure(
-              message: serverResponse['error_message']));
-        } else if (await processIndexCardsFromServer(serverResponse, deckId)) {
-          emit(CreateDeckDialogOnAiSuccess());
-        } else {
-          emit(CreateDeckDialogOnAiFailure(
-              message: 'Failed to save new index cards!'));
+              message: 'Failed to request index cards from server!'));
+          print(e);
         }
       }
     });
+    on<ResetCreateDeckDialogOnAi>((final event, final emit) async {
+      emit(CreateDeckDialogOnAiInitial());
+    });
   }
+
+  static const String _localServerUrl =
+      'http://10.0.2.2:5000/create_index_cards_from_files';
+
+  static const String _remoteServerUrl =
+      'https://aidex-server.onrender.com/create_index_cards_from_files';
 
   final DeckRepository _deckRepository;
   final IndexCardRepository _indexCardRepository;
 
   /// Request index cards from the server.
+  /// Throws an [ClientException] if the request fails.
   Future<Map<String, dynamic>> requestIndexCardsFromServer(
       final String filepath) async {
     // start of server inquiry
@@ -59,9 +77,9 @@ class CreateDeckDialogWithAiBloc
     }
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse(
-          'https://aidex-server.onrender.com/create_index_cards_from_files'),
+      Uri.parse(_localServerUrl),
     );
+
     request.fields['user_uuid'] = '1234';
     request.fields['openai_api_key'] =
         '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';
@@ -135,6 +153,12 @@ class CreateDeckWithAi extends CreateDeckDialogOnAiEvent {
   /// The filepath of the file containing information used for generation of
   /// index cards.
   final String filepath;
+}
+
+/// An event for resetting the CreateDeckDialogOnAiBloc.
+class ResetCreateDeckDialogOnAi extends CreateDeckDialogOnAiEvent {
+  /// Constructor for the [ResetCreateDeckDialogOnAi].
+  ResetCreateDeckDialogOnAi();
 }
 
 // ################################################################# States

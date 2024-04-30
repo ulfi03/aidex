@@ -260,9 +260,10 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
                       } else if (state is CreateDeckDialogOnAiFailure) {
                         await showBasicErrorDialog(
                           context,
-                          'There was an error in the server while creating the'
-                          ' index cards. \nError: ${state.message}',
-                        );
+                          state.message,
+                        ).then((final _) => context
+                            .read<CreateDeckDialogWithAiBloc>()
+                            .add(ResetCreateDeckDialogOnAi()));
                       }
                     },
                     child: BlocBuilder<CreateDeckDialogWithAiBloc,
@@ -339,32 +340,20 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
         final ValidationResult validationResult = _validateDeck();
         if (!validationResult.isValid) {
           await showBasicErrorDialog(
-              context,
-              validationResult.message,
-            );
+            context,
+            validationResult.message,
+          );
         } else {
-           context.read<CreateDeckDialogWithAiBloc>().add(
-              CreateDeckWithAi(
-                deck: Deck(
-                  name: deckNameController.text,
-                  color: pickerColor,
+          context.read<CreateDeckDialogWithAiBloc>().add(
+                CreateDeckWithAi(
+                  deck: Deck(
+                    name: deckNameController.text,
+                    color: pickerColor,
+                  ),
+                  filepath: result!.files.first.path!,
                 ),
-                filepath: result!.files.first.path!,
-              ),
-            );
+              );
         }
-      };
-    } else if (state is CreateDeckDialogOnAiLoading) {
-      return null;
-    } else if (state is CreateDeckDialogOnAiSuccess) {
-      return null;
-    } else if (state is CreateDeckDialogOnAiFailure) {
-      return () async {
-        await showBasicErrorDialog(
-          context,
-          'There was an error in the server while creating the'
-          ' index cards. \nError: ${state.message}',
-        );
       };
     } else {
       return null;
