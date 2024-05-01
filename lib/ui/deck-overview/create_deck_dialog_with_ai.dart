@@ -3,12 +3,12 @@ import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/components/basic_error_dialog.dart';
 import 'package:aidex/ui/components/custom_buttons.dart';
+import 'package:aidex/ui/components/custom_color_picker.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:aidex/ui/utilities.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 /// This widget is used to display the create deck dialog.
 class CreateDeckDialogWithAi extends StatefulWidget {
@@ -55,7 +55,7 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
   final fileNameController = TextEditingController();
 
   /// Variable to store the color selected by the user.
-  Color pickerColor = mainTheme.colorScheme.surface;  // Initial color
+  Color pickerColor = mainTheme.colorScheme.surface; // Initial color
 
   /// Variable to store the file picker result.
   FilePickerResult? result;
@@ -132,57 +132,10 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
                     ),
                   ],
                 ),
-                StatefulBuilder(
-                  builder: (final context, final setState) => ElevatedButton(
-                    key: colorPickerButtonKey,
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (final context) => AlertDialog(
-                          title: Text(
-                            'Pick a color',
-                            key: pickColorTextKey,
-                            style: mainTheme.textTheme.bodyMedium,
-                          ),
-                          backgroundColor: mainTheme.colorScheme.background,
-                          content: SingleChildScrollView(
-                            child: BlockPicker(
-                              pickerColor: pickerColor,
-                              onColorChanged: (final color) {
-                                setState(() => pickerColor = color);
-                              },
-                            ),
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              key: colorPickerSelectButtonKey,
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(
-                                'Select',
-                                style: mainTheme.textTheme.bodyMedium,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: pickerColor,
-                      shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      ),
-                      // make as big as the button below
-                      minimumSize: const Size(120, 35), 
-                    ),
-                    child: Text(
-                      'Color',
-                      key: selectColorTextKey,
-                      style: mainTheme.textTheme.bodySmall,
-                    ),
-                  ),
-                ),
+                CustomColorPicker(
+                    initialPickerColor: pickerColor,
+                    onColorChanged: (final color) => pickerColor = color,
+                    label: 'Color'),
                 ElevatedButton(
                   onPressed: () async {
                     result = await FilePicker.platform.pickFiles(
@@ -219,8 +172,7 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: mainTheme.colorScheme.surface
-                  ),
+                      backgroundColor: mainTheme.colorScheme.surface),
                   child: Text(
                     'Choose a file',
                     style: mainTheme.textTheme.bodySmall,

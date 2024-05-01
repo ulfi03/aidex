@@ -37,18 +37,18 @@ class CreateDeckDialogWithAiBloc
               await requestIndexCardsFromServer(event.filepath);
           final bool errorOnServer = serverResponse['error'];
           if (errorOnServer) {
-            emit(CreateDeckDialogOnAiFailure(
-                message: serverResponse['error_message']));
+            await _onFailureAfterDeckCreation(
+                emit, createdDeck, serverResponse['error_message']);
           } else if (await processIndexCardsFromServer(
               serverResponse, deckId)) {
             emit(CreateDeckDialogOnAiSuccess());
           } else {
-            emit(CreateDeckDialogOnAiFailure(
-                message: 'Failed to save new index cards!'));
+            await _onFailureAfterDeckCreation(emit, createdDeck,
+                'Failed to process index cards from server!');
           }
         } on Exception catch (_) {
-          emit(CreateDeckDialogOnAiFailure(
-              message: 'Failed to request index cards from server!'));
+          await _onFailureAfterDeckCreation(
+              emit, createdDeck, 'Failed to request index cards from server!');
         }
       }
     });
@@ -57,11 +57,19 @@ class CreateDeckDialogWithAiBloc
     });
   }
 
+  Future<void> _onFailureAfterDeckCreation(
+      final Emitter<CreateDeckDialogOnAiState> emit,
+      final Deck deckToRemove,
+      final String message) async {
+    await _deckRepository.deleteDeck(deckToRemove);
+    emit(CreateDeckDialogOnAiFailure(message: message));
+  }
+
   static const String _localServerUrl =
       'http://10.0.2.2:5000/create_index_cards_from_files';
 
-  static const String _remoteServerUrl =
-      'https://aidex-server.onrender.com/create_index_cards_from_files';
+  //static const String _remoteServerUrl =
+  //    'https://aidex-server.onrender.com/create_index_cards_from_files';
 
   final DeckRepository _deckRepository;
   final IndexCardRepository _indexCardRepository;

@@ -47,9 +47,7 @@ class CreateDeckDialogManually extends StatelessWidget {
           ),
           CustomColorPicker(
             initialPickerColor: pickerColor,
-            onColorChanged: (final color) {
-              pickerColor = color;
-            },
+            onColorChanged: (final color) => pickerColor = color,
             label: 'Color',
           ),
           const SizedBox(height: 8),
