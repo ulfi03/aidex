@@ -53,16 +53,16 @@ void main() {
     });
 
     group('On AddDeck', () {
+      final Deck deckStub = Deck(name: 'Deck 1', color: Colors.black);
       blocTest('Add deck and reload decks',
           setUp: () {
             when(() => deckRepository.addDeck(any()))
-                .thenAnswer((final _) async {});
+                .thenAnswer((final _) async => deckStub);
             when(() => deckRepository.fetchDecks())
                 .thenAnswer((final _) async => []);
           },
           build: () => DeckOverviewBloc(deckRepository),
-          act: (final bloc) => bloc
-              .add(AddDeck(deck: Deck(name: 'Deck 1', color: Colors.black))),
+          act: (final bloc) => bloc.add(AddDeck(deck: deckStub)),
           skip: 2,
           // skip the first two states [DecksLoading, DecksLoaded]
           verify: (final _) {

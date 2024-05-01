@@ -1,7 +1,10 @@
+import 'package:aidex/bloc/create_deck_dialog_with_ai_bloc.dart';
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
+import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
-import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog_manually.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog_with_ai.dart';
 import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
@@ -107,10 +110,8 @@ Future<void> onAddButtonPressed(final BuildContext deckOverviewContext) async {
               await _showCreateDeckDialog(deckOverviewContext);
             },
             onAI: () async {
-              deckOverviewContext
-                  .read<DeckOverviewBloc>()
-                  .add(const RemoveAllDecks());
-              // Handle AI deck creation here
+              Navigator.pop(context);
+              await _showCreateDeckDialogWithAi(deckOverviewContext);
             },
           ));
 }
@@ -121,7 +122,22 @@ Future<void> _showCreateDeckDialog(final BuildContext context) async {
     context: context,
     builder: (final context) => BlocProvider.value(
       value: deckOverviewBloc,
-      child: const CreateDeckDialog(),
+      child: const CreateDeckDialogManually(),
     ),
+  );
+}
+
+Future<void> _showCreateDeckDialogWithAi(final BuildContext context) async {
+  final deckOverviewBloc = context.read<DeckOverviewBloc>();
+  await showDialog(
+    context: context,
+    builder: (final context) => MultiBlocProvider(providers: [
+      BlocProvider.value(value: deckOverviewBloc),
+      BlocProvider(
+        create: (final context) => CreateDeckDialogWithAiBloc(
+            deckRepository: context.read<DeckRepository>(),
+            indexCardRepository: context.read<IndexCardRepository>()),
+      ),
+    ], child: const CreateDeckDialogWithAi()),
   );
 }

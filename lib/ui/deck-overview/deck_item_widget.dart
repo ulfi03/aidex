@@ -231,6 +231,7 @@ class DeckItemWidget extends StatelessWidget {
 
   // Method for changing the color of a deck
   void _changeDeckColor(final BuildContext context, final Deck deck,
+      
       final DeckOverviewBloc deckOverviewBloc) {
     showDialog(
       context: context,
@@ -239,7 +240,8 @@ class DeckItemWidget extends StatelessWidget {
           title:
               Text('Change Deck Color', style: mainTheme.textTheme.titleMedium),
           content: CustomColorPicker(
-            initialPickerColor: deck.color,
+            initialPickerColor: deck.color == const Color(0x00000000) ?
+             mainTheme.colorScheme.surface : deck.color,
             onColorChanged: (final color) {
               setState(() => deck.color = color);
             },
