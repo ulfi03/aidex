@@ -3,7 +3,7 @@
 <img src="assets/icon/aidex-logo.svg" width="100px" alt="Project Banner">
 
 [![Flutter Version](https://img.shields.io/badge/flutter-3.19.3-blue.svg)](https://flutter.dev/)
-[![Dart Version](https://img.shields.io/badge/dart-2.15.0-blue.svg)](https://dart.dev/)
+[![Dart Version](https://img.shields.io/badge/dart-3.3.1-blue.svg)](https://dart.dev/)
 [![BLoC](https://img.shields.io/badge/BLoC-State_Management-blue.svg)](https://bloclibrary.dev/#/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-ChatGPT-blue.svg)](https://openai.com/)
 
