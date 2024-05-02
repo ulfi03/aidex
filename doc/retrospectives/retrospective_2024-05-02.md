@@ -2,7 +2,7 @@
 
 ## Date
 
-- 2024-03-30
+- 2024-05-02
 
 ## Facilitator
 
@@ -66,30 +66,34 @@
 
 [List the concrete action items derived from the discussions above. Assign owners and due dates if needed.]
 
-- Action Item 1: [Description, Assigned to, Due Date]
-- Action Item 2: [Description, Assigned to, Due Date]
+- Action Item 1: [distributing work evenly, Assigned to: ALL, Due Date: 2024-05-06]
+- Action Item 2: [merging completed branches quickly, Assigned to: Niklas, Due Date: 2024-05-06]
 
 ---
 
 ## Other Topics
 
+[Any additional topics or open discussions that came up during the retrospective]
+
 - Keep a close eye on the given timeframe
 - Complete the most important features & functionalities before doing anything else (bug fixing, Easter eggs, etc.)
-  [Any additional topics or open discussions that came up during the retrospective]
 
 ---
 
 ## Feedback and Suggestions
 
+[Gather feedback about the retrospective itself. Ask attendees for suggestions on improving future retrospectives.]
+
 - Plan more time for a deeper discussion
 - Plan to discuss handover for features that are interdependent
 - Prepare yourself in advance
 
-[Gather feedback about the retrospective itself. Ask attendees for suggestions on improving future retrospectives.]
-
 ---
 
 ## Closing Remarks
+
+The retrospective was a valuable opportunity to reflect on our performance and identify areas for improvement. Let's
+focus on implementing the action items and continue to work together effectively.
 
 [Facilitator's closing remarks or summary of the retrospective.]
 
@@ -97,5 +101,5 @@
 
 ## Next Meeting
 
-[Set the date/time for the next retrospective.]
+2024-05-16
 
