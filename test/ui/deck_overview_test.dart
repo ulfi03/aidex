@@ -1,7 +1,7 @@
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/components/custom_buttons.dart';
-import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog_manually.dart';
 import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
@@ -38,11 +38,11 @@ void main() {
     });
 
     testWidgets('Render progress indicator when decks are loading',
-        (final tester) async {
-      when(() => deckOverviewBloc.state).thenReturn(const DecksLoading());
-      await pumpDeckOverview(tester);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    });
+            (final tester) async {
+          when(() => deckOverviewBloc.state).thenReturn(const DecksLoading());
+          await pumpDeckOverview(tester);
+          expect(find.byType(CircularProgressIndicator), findsOneWidget);
+        });
 
     testWidgets('Render no decks found', (final tester) async {
       when(() => deckOverviewBloc.state)
@@ -62,18 +62,19 @@ void main() {
     });
 
     testWidgets('Render error message when decks failed to load',
-        (final tester) async {
-      const errorText = 'error text stub';
-      when(() => deckOverviewBloc.state)
-          .thenReturn(const DecksError(message: errorText));
-      await pumpDeckOverview(tester);
-      expect(find.text(errorText), findsOneWidget);
-    });
+            (final tester) async {
+          const errorText = 'error text stub';
+          when(() => deckOverviewBloc.state)
+              .thenReturn(const DecksError(message: errorText));
+          await pumpDeckOverview(tester);
+          expect(find.text(errorText), findsOneWidget);
+        });
   });
 
   group('CreateDeckModalBottomSheet', () {
-    setUp(() => when(() => deckOverviewBloc.state)
-        .thenReturn(const DecksLoaded(decks: [])));
+    setUp(() =>
+        when(() => deckOverviewBloc.state)
+            .thenReturn(const DecksLoaded(decks: [])));
 
     Future<void> prepareModalButtomSheet(final WidgetTester tester) async {
       await pumpDeckOverview(tester);
@@ -87,31 +88,33 @@ void main() {
     });
 
     testWidgets('Verify displayed content on CreateDeckModalBottomSheet',
-        (final tester) async {
-      await prepareModalButtomSheet(tester);
-      expect(find.byKey(CreateDeckModalBottomSheet.modalBottomSheetTitleKey),
-          findsOneWidget);
-      expect(find.text('Create Deck'), findsOneWidget);
-      expect(find.byKey(CreateDeckModalBottomSheet.createManuallyButtonKey),
-          findsOneWidget);
-      expect(find.text('Create manually'), findsOneWidget);
-      expect(find.byKey(CreateDeckModalBottomSheet.createAITitleKey),
-          findsOneWidget);
-      expect(find.text('Create with AI'), findsOneWidget);
-    });
+            (final tester) async {
+          await prepareModalButtomSheet(tester);
+          expect(
+              find.byKey(CreateDeckModalBottomSheet.modalBottomSheetTitleKey),
+              findsOneWidget);
+          expect(find.text('Create Deck'), findsOneWidget);
+          expect(find.byKey(CreateDeckModalBottomSheet.createManuallyButtonKey),
+              findsOneWidget);
+          expect(find.text('Create manually'), findsOneWidget);
+          expect(find.byKey(CreateDeckModalBottomSheet.createAITitleKey),
+              findsOneWidget);
+          expect(find.text('Create with AI'), findsOneWidget);
+        });
 
     testWidgets('Open "Create Deck manually" dialog', (final tester) async {
       await prepareModalButtomSheet(tester);
       await tester
           .tap(find.byKey(CreateDeckModalBottomSheet.createManuallyButtonKey));
       await tester.pumpAndSettle();
-      expect(find.byType(CreateDeckDialog), findsOneWidget);
+      expect(find.byType(CreateDeckDialogManually), findsOneWidget);
     });
   });
 
   group('CreateDeckDialog', () {
-    setUp(() => when(() => deckOverviewBloc.state)
-        .thenReturn(const DecksLoaded(decks: [])));
+    setUp(() =>
+        when(() => deckOverviewBloc.state)
+            .thenReturn(const DecksLoaded(decks: [])));
 
     Future<void> prepareCreateDeckDialog(final WidgetTester tester) async {
       await pumpDeckOverview(tester);
@@ -120,29 +123,30 @@ void main() {
       await tester
           .tap(find.byKey(CreateDeckModalBottomSheet.createManuallyButtonKey));
       await tester.pumpAndSettle();
-      expect(find.byType(CreateDeckDialog), findsOneWidget);
+      expect(find.byType(CreateDeckDialogManually), findsOneWidget);
     }
 
     testWidgets('Return to DeckOverview by pressing "Cancel")',
-        (final tester) async {
-      await prepareCreateDeckDialog(tester);
-      await tester.tap(find.byKey(CancelButton.cancelButtonKey));
-      await tester.pumpAndSettle();
-      expect(find.byType(DeckOverview), findsOneWidget);
-      expect(find.byType(CreateDeckDialog), findsNothing);
-      expect(find.bySubtype<CreateDeckModalBottomSheet>(), findsNothing);
-    });
+            (final tester) async {
+          await prepareCreateDeckDialog(tester);
+          await tester.tap(find.byKey(CancelButton.cancelButtonKey));
+          await tester.pumpAndSettle();
+          expect(find.byType(DeckOverview), findsOneWidget);
+          expect(find.byType(CreateDeckDialogManually), findsNothing);
+          expect(find.bySubtype<CreateDeckModalBottomSheet>(), findsNothing);
+        });
 
     testWidgets('Create deck by pressing "OK"', (final tester) async {
       await prepareCreateDeckDialog(tester);
       await tester.enterText(
-          find.byKey(CreateDeckDialog.deckNameTextFieldKey), 'Deck 1');
+          find.byKey(CreateDeckDialogManually.deckNameTextFieldKey), 'Deck 1');
       await tester.tap(find.byKey(OkButton.okButtonKey));
       await tester.pumpAndSettle();
       expect(find.byType(DeckOverview), findsOneWidget);
-      verify(() => deckOverviewBloc.add(any(
-          that: isA<AddDeck>().having((final addDeck) => addDeck.deck.name,
-              'deck.name', equals('Deck 1'))))).called(1);
+      verify(() =>
+          deckOverviewBloc.add(any(
+              that: isA<AddDeck>().having((final addDeck) => addDeck.deck.name,
+                  'deck.name', equals('Deck 1'))))).called(1);
     });
   });
 }

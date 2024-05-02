@@ -2,7 +2,7 @@ import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/ui/components/custom_buttons.dart';
 import 'package:aidex/ui/components/custom_color_picker.dart';
-import 'package:aidex/ui/deck-overview/create_deck_dialog.dart';
+import 'package:aidex/ui/deck-overview/create_deck_dialog_manually.dart';
 import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
@@ -65,12 +65,13 @@ void main() {
         Deck(name: 'Deck 1', color: Colors.black),
         Deck(name: 'Deck 2', color: Colors.black),
       ];
-
+      final deckToAdd = Deck(name: 'Deck 3', color: Colors.black);
       // Stub the fetchDecks method to return a list of decks
       when(() => deckRepository.fetchDecks())
           .thenAnswer((final _) async => decks);
       when(() => deckRepository.addDeck(any())).thenAnswer((final _) async {
-        decks.add(Deck(name: 'Deck 3', color: Colors.black));
+        decks.add(deckToAdd);
+        return deckToAdd;
       });
 
       await tester.pumpWidget(RepositoryProvider.value(
@@ -92,10 +93,11 @@ void main() {
       await tester.tap(manualCreateButton);
       await tester.pumpAndSettle();
 
-      final createDeckDialog = find.byType(CreateDeckDialog);
+      final createDeckDialog = find.byType(CreateDeckDialogManually);
       expect(createDeckDialog, findsOneWidget);
       // enter deck name
-      final deckNameField = find.byKey(CreateDeckDialog.deckNameTextFieldKey);
+      final deckNameField =
+          find.byKey(CreateDeckDialogManually.deckNameTextFieldKey);
       expect(deckNameField, findsOneWidget);
       await tester.enterText(deckNameField, 'Deck 3');
       await tester.pumpAndSettle();

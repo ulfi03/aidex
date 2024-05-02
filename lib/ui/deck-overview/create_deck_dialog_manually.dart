@@ -9,9 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// This widget is used to display the create deck dialog.
-class CreateDeckDialog extends StatelessWidget {
-  /// Constructor for the [CreateDeckDialog].
-  const CreateDeckDialog({super.key});
+class CreateDeckDialogManually extends StatelessWidget {
+  /// Constructor for the [CreateDeckDialogManually].
+  const CreateDeckDialogManually({super.key});
 
   /// The key for the dialogMethods Widget title.
   static const Key showCreateDeckDialogTitleKey = Key('DeckDialogTitleKey');
@@ -47,9 +47,7 @@ class CreateDeckDialog extends StatelessWidget {
           ),
           CustomColorPicker(
             initialPickerColor: pickerColor,
-            onColorChanged: (final color) {
-              pickerColor = color;
-            },
+            onColorChanged: (final color) => pickerColor = color,
             label: 'Color',
           ),
           const SizedBox(height: 8),

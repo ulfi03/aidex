@@ -8,3 +8,20 @@ Color getColorFromBackground(final Color backgroundColor) {
     return Colors.white;
   }
 }
+
+/// The result of a validation.
+class ValidationResult {
+  /// Constructor for the [ValidationResult].
+  ValidationResult.error(this.message) : isValid = false;
+
+  /// Constructor for the [ValidationResult].
+  ValidationResult.success()
+      : isValid = true,
+        message = '';
+
+  ///  Whether the validation is valid.
+  final bool isValid;
+
+  /// The message of the validation.
+  final String message;
+}
