@@ -74,7 +74,7 @@
 ## Other Topics
 
 - Keep a close eye on the given timeframe
-- Complete the most important features & functionalities before doing anything else (bug fixing, easter eggs, etc.)
+- Complete the most important features & functionalities before doing anything else (bug fixing, Easter eggs, etc.)
   [Any additional topics or open discussions that came up during the retrospective]
 
 ---
