@@ -1,8 +1,10 @@
 # AIDex
 
-<img src="assets/icon/aidex-logo.svg" width="100" alt="Project Banner">
+<img src="assets/icon/aidex-logo.svg" width="100px" alt="Project Banner">
 
 [![Flutter Version](https://img.shields.io/badge/flutter-3.19.3-blue.svg)](https://flutter.dev/)
+[![Dart Version](https://img.shields.io/badge/dart-2.15.0-blue.svg)](https://dart.dev/)
+[![BLoC](https://img.shields.io/badge/BLoC-State_Management-blue.svg)](https://bloclibrary.dev/#/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-ChatGPT-blue.svg)](https://openai.com/)
 
 ## Table of Contents
@@ -13,7 +15,6 @@
 4. [Getting Started](#getting-started)
 5. [Project Structure](#project-structure)
 6. [Dependencies](#dependencies)
-7. [Contributing](#contributing)
 8. [License](#license)
 9. [Contact](#contact)
 
@@ -32,9 +33,18 @@ of a quick and efficient way to create and manage index cards.
 ## Screenshots
 
 Include screenshots to showcase the UI and important features.
-
-![Screenshot 1](path/to/screenshot1.png)
-![Screenshot 2](path/to/screenshot2.png)
+<table>
+  <tr>
+    <td><img src="doc/screenshots/deck-overview.jpg" alt="Deck Overview" width="250px"></td>
+    <td><img src="doc/screenshots/create-deck_modal-bottom-sheet.jpg" alt="Create Deck Modal Bottom Sheet" width="250px"></td>
+    <td><img src="doc/screenshots/create-deck_dialog.jpg" alt="Create Deck Dialog" width="250px"></td>
+  </tr>
+  <tr>
+    <td><img src="doc/screenshots/create-deck_dialog_with-ai.jpg" alt="Create Deck Dialog with AI" width="250px"></td>
+    <td><img src="doc/screenshots/index-card-overview.jpg" alt="Index Card Overview" width="250px"></td>
+    <td></td>
+  </tr>
+</table>
 
 ## Getting Started
 
@@ -68,17 +78,28 @@ Include screenshots to showcase the UI and important features.
 
 ## Project Structure
 
-/
-|- lib/
-| |- main.dart # Entry point for the app
-| |- bloc/ # BLoC related files
-| |- models/ # Data models
-| |- views/ # UI related files
-|- assets/
-| |- images/ # Project images
-|- test/ # Unit and widget tests
-|- pubspec.yaml # Flutter project configuration
-|- README.md # This README file
+The project structure is as follows:
+
+```
+aidex/
+│── android/ # Android specific files
+│── assets/
+│ └── icon/ # App icons
+│── doc/ # Documentation files
+│ ├── mockups/ # Mockups for the app
+│ ├── product-vision/ # Product vision documents
+│ ├── retrospectives/ # Retrospective documents
+│ └── screenshots/ # Screenshots of the app
+│── integration_test/ # Integration tests
+│── lib/
+│ ├── bloc/ # BLoC related files
+│ ├── data/ # Data related files
+│ ├── ui/ # UI related files
+│ └── main.dart # Entry point for the app
+│── test/ # Unit and widget tests
+│── pubspec.yaml # Flutter project configuration
+└── README.md # This README file
+```
 
 ## Dependencies
 
@@ -90,33 +111,13 @@ OpenAI - AI services.
 - [BLoC](https://bloclibrary.dev/#/) - State management.
 - [OpenAI](https://openai.com/) - AI services.
 
-## Contributing
-
-Outline the steps for contributing to the project.
-
-1. Fork the repository.
-2. Create a new branch for your feature or bugfix.
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-3. Commit your changes.
-4. Push to your branch.
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-5. Open a pull request and describe your changes.
-
 ## License
 
 This project is currently not licensed.
 
 ## Contact
 
-Provide contact information for further questions or feedback. Include social media links or other contact details.
-
-- Project Owner: [Your Name](https://github.com/yourusername)
-- Email: your.email@example.com
-- Twitter: [@yourusername](https://twitter.com/yourusername)
+- Project Owner: [Marius Ulfers](https://github.com/ulfi03)
 
 ---
 
