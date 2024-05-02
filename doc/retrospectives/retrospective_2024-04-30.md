@@ -32,6 +32,7 @@
 - Start sticking to the BloC architecture.
 - Start discussing and merging completed branches quickly.
 - Start distributing work evenly.
+- Start improving the handover of tasks that are interdependent.
 
 ---
 
@@ -40,6 +41,7 @@
 [List things that the team should stop doing. These can be practices, tools, or processes that are hindering the team's progress.]
 
 - Stop multitasking and focus on one task at a time.
+- Stop overcomplicating code (keep the feature simple)
 - Stop skipping unit tests.
 - Stop avoiding difficult conversations.
 - Stop relying on a single team member for critical tasks.
@@ -53,6 +55,7 @@
 [List things that the team should continue doing. These can be practices, tools, or processes that are working well and should be maintained.]
 
 - Continue using the current project management tool.
+- Continue neatly structuring the code and project (management).
 - Continue pair programming on challenging tasks.
 - Continue conducting regular code reviews.
 - Continue using the current testing framework.
@@ -72,14 +75,14 @@
 
 - Keep a close eye on the given timeframe
 - Complete the most important features & functionalities before doing anything else (bug fixing, easter eggs, etc.)
-[Any additional topics or open discussions that came up during the retrospective]
+  [Any additional topics or open discussions that came up during the retrospective]
 
 ---
-
 
 ## Feedback and Suggestions
 
 - Plan more time for a deeper discussion
+- Plan to discuss handover for features that are interdependent
 - Prepare yourself in advance
 
 [Gather feedback about the retrospective itself. Ask attendees for suggestions on improving future retrospectives.]
