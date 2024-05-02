@@ -52,7 +52,6 @@ class DeckOverviewBloc extends Bloc<DeckEvent, DeckState> {
     on<RenameDeck>((final event, final emit) async {
       try {
         await _deckRepository.renameDeck(event.deck, event.newName);
-        add(const FetchDecks());
       } on Exception catch (e) {
         emit(DecksError(message: e.toString()));
       }
@@ -60,7 +59,6 @@ class DeckOverviewBloc extends Bloc<DeckEvent, DeckState> {
     on<ChangeDeckColor>((final event, final emit) async {
       try {
         await _deckRepository.changeDeckColor(event.deck, event.color);
-        add(const FetchDecks());
       } on Exception catch (e) {
         emit(DecksError(message: e.toString()));
       }

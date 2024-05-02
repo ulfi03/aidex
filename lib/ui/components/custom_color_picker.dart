@@ -13,6 +13,24 @@ class CustomColorPicker extends StatefulWidget {
     super.key,
   }) : _initialPickerColor = initialPickerColor;
 
+  /// The available colors for the color picker.
+  static List<Color> get availableColors => const [
+        Colors.red,
+        Colors.green,
+        Colors.blue,
+        Colors.yellow,
+        Colors.purple,
+        Colors.orange,
+        Colors.pink,
+        Colors.teal,
+        Colors.cyan,
+        Colors.indigo,
+        Colors.brown,
+        Colors.grey,
+        Colors.black,
+        Colors.white,
+      ];
+
   /// The key for the color picker button.
   static const Key colorPickerButtonKey = Key('ColorPickerButton');
 
@@ -62,6 +80,7 @@ class _CustomColorPickerState extends State<CustomColorPicker> {
             content: SingleChildScrollView(
               child: BlockPicker(
                 pickerColor: pickerColor,
+                availableColors: CustomColorPicker.availableColors,
                 onColorChanged: (final color) {
                   setState(() => pickerColor = color);
                   widget.onColorChanged(color);
