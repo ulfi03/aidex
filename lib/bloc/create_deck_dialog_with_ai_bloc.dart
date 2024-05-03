@@ -68,8 +68,8 @@ class CreateDeckDialogWithAiBloc
   static const String _localServerUrl =
       'http://10.0.2.2:5000/create_index_cards_from_files';
 
-  //static const String _remoteServerUrl =
-  //    'https://aidex-server.onrender.com/create_index_cards_from_files';
+  static const String _remoteServerUrl 
+  = 'https://aidex-server.onrender.com/create_index_cards_from_files';
 
   final DeckRepository _deckRepository;
   final IndexCardRepository _indexCardRepository;
@@ -84,7 +84,7 @@ class CreateDeckDialogWithAiBloc
     }
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse(_localServerUrl),
+      Uri.parse(_remoteServerUrl),
     );
 
     request.fields['user_uuid'] = '1234';

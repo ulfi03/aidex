@@ -48,6 +48,16 @@ class DeckOverview extends StatelessWidget {
             style: mainTheme.textTheme.titleLarge,
           ),
           backgroundColor: mainTheme.colorScheme.surface,
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.delete_sweep,
+                color: mainTheme.colorScheme.primary),
+              onPressed: () {
+                context.read<DeckOverviewBloc>().add(const RemoveAllDecks());
+              },
+            ),
+          ],
         ),
         backgroundColor: mainTheme.colorScheme.surface,
         body: BlocBuilder<DeckOverviewBloc, DeckState>(
