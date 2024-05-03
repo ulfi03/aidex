@@ -128,12 +128,13 @@ class IndexCardView extends StatelessWidget {
             fill: Fill.fillFront,
             // The side to initially display.
             front: Card(
-                color: Color(0xFF414141),
+                color: const Color(0xFF414141),
                 child: Align(
-                  child: Text(card.question, style: TextStyle(fontSize: 36)),
+                  child:
+                      Text(card.question, style: const TextStyle(fontSize: 36)),
                 )),
             back: Card(
-                color: Color(0xFF414141),
+                color: const Color(0xFF414141),
                 child: AbsorbPointer(
                     child: RichTextEditorWidget(
                   readonly: true,

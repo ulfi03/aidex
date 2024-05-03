@@ -53,8 +53,8 @@ class IndexCard {
       };
 
   /// Parses the JSON string and sets the answer field.
-  void parseAnswerFromJson(String jsonString) {
-    Map<String, dynamic> jsonObject = jsonDecode(jsonString);
+  void parseAnswerFromJson(final String jsonString) {
+    final Map<String, dynamic> jsonObject = jsonDecode(jsonString);
     answer = jsonObject['insert'].trim();
   }
 }

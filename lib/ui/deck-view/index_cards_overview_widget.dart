@@ -104,10 +104,10 @@ class IndexCardOverview extends StatelessWidget {
           child: Align(
             alignment: Alignment.centerRight,
             child: Padding(
-              padding: EdgeInsets.only(right: 10),
+              padding: const EdgeInsets.only(right: 10),
               child: FloatingActionButton(
-                backgroundColor: Color(0xFF20EFC0),
-                child: Icon(Icons.play_arrow),
+                backgroundColor: const Color(0xFF20EFC0),
+                child: const Icon(Icons.play_arrow),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -130,10 +130,11 @@ class IndexCardOverview extends StatelessWidget {
                                   key: const Key('cards'),
                                   cards: snapshot.data!,
                                   deck: deck,
+                                  indexCardRepository: indexCardRepository,
                                 );
                               }
                             } else {
-                              return CircularProgressIndicator();
+                              return const CircularProgressIndicator();
                             }
                           },
                         );
