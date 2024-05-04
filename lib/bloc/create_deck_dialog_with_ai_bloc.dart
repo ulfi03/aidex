@@ -46,7 +46,10 @@ class CreateDeckDialogWithAiBloc
             await _onFailureAfterDeckCreation(emit, createdDeck,
                 'Failed to process index cards from server!');
           }
-        } on Exception catch (_) {
+        } on Exception catch (e) {
+          if (kDebugMode) {
+            print(e);
+          }
           await _onFailureAfterDeckCreation(
               emit, createdDeck, 'Failed to request index cards from server!');
         }
@@ -65,8 +68,8 @@ class CreateDeckDialogWithAiBloc
     emit(CreateDeckDialogOnAiFailure(message: message));
   }
 
-  static const String _localServerUrl =
-      'http://10.0.2.2:5000/create_index_cards_from_files';
+  //static const String _localServerUrl =
+    //  'http://10.0.2.2:5000/create_index_cards_from_files';
 
   static const String _remoteServerUrl 
   = 'https://aidex-server.onrender.com/create_index_cards_from_files';

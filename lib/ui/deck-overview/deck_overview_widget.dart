@@ -2,6 +2,7 @@ import 'package:aidex/bloc/create_deck_dialog_with_ai_bloc.dart';
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
+import 'package:aidex/ui/components/custom_buttons.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/deck-overview/create_deck_dialog_manually.dart';
 import 'package:aidex/ui/deck-overview/create_deck_dialog_with_ai.dart';
@@ -54,7 +55,41 @@ class DeckOverview extends StatelessWidget {
                 Icons.delete_sweep,
                 color: mainTheme.colorScheme.primary),
               onPressed: () {
-                context.read<DeckOverviewBloc>().add(const RemoveAllDecks());
+                showDialog(
+                  context: context,
+                    builder: (final dialogContext) => AlertDialog(
+                        title: Text('Delete All Decks?',
+                         style: mainTheme.textTheme.titleMedium?.copyWith(
+                          color: mainTheme.colorScheme.error,)),
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Are you sure you want to delete all decks?',
+                              style: mainTheme.textTheme.bodyMedium,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'This action cannot be undone!',
+                              style: mainTheme.textTheme.bodyMedium?.copyWith(
+                                color: mainTheme.colorScheme.error,
+                              ),
+                            ),
+                          ],
+                        ),
+                        actions: [
+                        CancelButton(onPressed: () => Navigator.pop(context)),
+                        DeleteButton(
+                          onPressed: () {
+                          Navigator.pop(context);
+                            context.read<DeckOverviewBloc>()
+                            .add(const RemoveAllDecks());
+                          },
+                        ),
+                      ],
+                    ),
+                );
               },
             ),
           ],
