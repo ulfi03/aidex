@@ -116,8 +116,9 @@ class CreateDeckDialogWithAiBloc
     if (kDebugMode) {
       print('#################################### processIndexCardsFromServer');
     }
-    final indexCards = serverResponse['index-cards'];
-    final ausgabe = jsonDecode(indexCards.toString());
+    final List<dynamic> indexCardStringList = serverResponse['index-cards'];
+    final List<dynamic> indexCardMaps =
+        jsonDecode(indexCardStringList.toString());
     final List<String> questions = <String>[];
     final List<String> answers = <String>[];
     if (kDebugMode) {
@@ -125,14 +126,14 @@ class CreateDeckDialogWithAiBloc
     }
 
     int i = 1;
-    for (final item in ausgabe) {
+    for (final Map<String, dynamic> indexCardMap in indexCardMaps) {
       if (kDebugMode) {
-        print('Decoding index card $i');
+        print('------------------------------------');
+        print('Decoding index card $i ...');
         i++;
       }
-      final Map<String, dynamic> itemMap = item;
-      final String question = itemMap['Question'] as String;
-      final String answer = itemMap['Answer'] as String;
+      final String question = indexCardMap['Question'] as String;
+      final String answer = indexCardMap['Answer'] as String;
 
       questions.add(question);
       answers.add(answer);
