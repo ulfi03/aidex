@@ -13,6 +13,8 @@ class CancelButton extends TextButton {
             backgroundColor: MaterialStateProperty.all<Color>(
               Colors.transparent,
             ),
+            foregroundColor: MaterialStateProperty.all<Color>(
+                mainTheme.colorScheme.onSurface),
           ),
         );
 

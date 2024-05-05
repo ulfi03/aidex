@@ -67,6 +67,13 @@ class IndexCardOverview extends StatelessWidget {
                     )),
             centerTitle: true,
             title: Text(deck.name),
+            bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(1),
+                child: Divider(
+                  thickness: 3,
+                  color: deck.color,
+                  height: 1,
+                )),
             actions: _getActions(context)),
         body: Column(
           children: [
@@ -122,7 +129,7 @@ class IndexCardOverview extends StatelessWidget {
           if (state is IndexCardsLoaded && state.indexCards.isNotEmpty) {
             return FloatingActionButton(
               heroTag: 'playButton',
-              backgroundColor: const Color(0xFF20EFC0),
+              backgroundColor: mainTheme.colorScheme.primary,
               child: const Icon(Icons.play_arrow),
               onPressed: () {
                 Navigator.push(
@@ -138,6 +145,7 @@ class IndexCardOverview extends StatelessWidget {
             return const SizedBox.shrink();
           }
         }),
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       );
 }
 
@@ -174,29 +182,30 @@ class IndexCardsContainer extends StatelessWidget {
                           .maxHeight *
                       2),
               child: Wrap(
-                children: indexCards
-                    .map((final indexCard) => IndexCardItemWidget(
-                          indexCard: indexCard,
-                          state: _state,
-                          onTap: (final context) async {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (final context) =>
-                                    ItemOnDeckViewWidgetSelectedRoute(
-                                  indexCard: indexCard,
-                                  deckName: _deckName,
-                                ),
-                              ),
-                            ).then((final value) => context
-                                .read<IndexCardOverviewBloc>()
-                                .add(
-                                    SearchIndexCards(query: getQuery(_state))));
-                          },
-                        ))
-                    .toList(),
+                children: _getIndexCardItems(context),
               ),
             ));
+
+  List<Widget> _getIndexCardItems(final BuildContext context) => indexCards
+      .map((final indexCard) => IndexCardItemWidget(
+            ordinalNo: indexCards.indexOf(indexCard) + 1,
+            indexCard: indexCard,
+            state: _state,
+            onTap: (final context) async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (final context) => ItemOnDeckViewWidgetSelectedRoute(
+                    indexCard: indexCard,
+                    deckName: _deckName,
+                  ),
+                ),
+              ).then((final value) => context
+                  .read<IndexCardOverviewBloc>()
+                  .add(SearchIndexCards(query: getQuery(_state))));
+            },
+          ))
+      .toList();
 }
 
 /// Returns the query based on the state.

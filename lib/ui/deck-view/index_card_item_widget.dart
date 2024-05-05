@@ -1,5 +1,6 @@
 import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/index_card.dart';
+import 'package:aidex/ui/components/icons.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,8 +23,13 @@ class IndexCardItemWidget extends StatelessWidget {
       {required this.indexCard,
       required final IndexCardState state,
       required this.onTap,
+      required final int ordinalNo,
       super.key})
-      : _state = state;
+      : _ordinalNo = ordinalNo,
+        _state = state;
+
+  /// The ordinal number of the index card.
+  final int _ordinalNo;
 
   /// The index card to be displayed.
   final IndexCard indexCard;
@@ -71,6 +77,8 @@ class IndexCardItemWidget extends StatelessWidget {
           : () => updateSelection(context),
       child: Container(
         key: containerKey,
+        height: 65,
+        padding: const EdgeInsets.all(8),
         margin: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width / 32,
           vertical: MediaQuery.of(context).size.width / 64,
@@ -85,18 +93,13 @@ class IndexCardItemWidget extends StatelessWidget {
               return mainTheme.colorScheme.surface;
             }
           }(),
-          // Set the background color from the deck
-          border: Border.all(
-            color: Colors.white,
-            width: 2,
-          ),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           children: [
             if (_state is IndexCardSelectionMode)
               Padding(
-                padding: const EdgeInsets.only(left: 8),
+                padding: const EdgeInsets.only(right: 8),
                 child: Icon(
                   key: checkIconKey,
                   (_state.isThisCardSelected(indexCard.indexCardId!))
@@ -106,17 +109,23 @@ class IndexCardItemWidget extends StatelessWidget {
                   color: mainTheme.colorScheme.primary,
                 ),
               ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Icon(
-                Icons.library_books_outlined,
-                size: iconSize * 0.4,
-                color: mainTheme.colorScheme.primary,
+            Stack(alignment: Alignment.center, children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: mainTheme.colorScheme.background,
+                  borderRadius: BorderRadius.circular(30),
+                ),
               ),
-            ),
+              const RotationTransition(
+                turns: AlwaysStoppedAnimation(15 / 360),
+                child: IndexCardIcon(size: 30),
+              ),
+            ]),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.only(left: 8),
                 child: Text(
                   indexCard.question,
                   textAlign: TextAlign.start,
