@@ -119,7 +119,7 @@ class IndexCardOverview extends StatelessWidget {
         floatingActionButton:
             BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
                 builder: (final context, final state) {
-          if (state is IndexCardsLoaded) {
+          if (state is IndexCardsLoaded && state.indexCards.isNotEmpty) {
             return FloatingActionButton(
               heroTag: 'playButton',
               backgroundColor: const Color(0xFF20EFC0),
