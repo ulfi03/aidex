@@ -86,7 +86,6 @@ class CreateDeckDialogWithAiBloc
       'POST',
       Uri.parse(_localServerUrl),
     );
-
     request.fields['user_uuid'] = '1234';
     request.fields['openai_api_key'] =
         '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';
@@ -94,38 +93,58 @@ class CreateDeckDialogWithAiBloc
       'file',
       filepath,
     ));
+
     final response = await request.send();
     //server response handling
     final jsonResponse = await response.stream.bytesToString();
     if (kDebugMode) {
+      print('#################################### server response');
       print(jsonResponse);
+      print('#################################### server response end');
+      print('Decoding server response ...');
     }
     final Map<String, dynamic> serverResponse = jsonDecode(jsonResponse);
+    if (kDebugMode) {
+      print('... decoded server response');
+    }
     return serverResponse;
   }
 
   /// Process the index cards from the server.
   Future<bool> processIndexCardsFromServer(
       final Map<String, dynamic> serverResponse, final int deckId) async {
-    final serverAusgabe = serverResponse['ausgabe'];
-    final ausgabe = jsonDecode(serverAusgabe.toString());
-
+    if (kDebugMode) {
+      print('#################################### processIndexCardsFromServer');
+    }
+    final indexCards = serverResponse['index-cards'];
+    final ausgabe = jsonDecode(indexCards.toString());
     final List<String> questions = <String>[];
     final List<String> answers = <String>[];
+    if (kDebugMode) {
+      print('Decoding index cards ...');
+    }
 
+    int i = 1;
     for (final item in ausgabe) {
+      if (kDebugMode) {
+        print('Decoding index card $i');
+        i++;
+      }
       final Map<String, dynamic> itemMap = item;
-      final String frage = itemMap['Frage'] as String;
-      final String antwort = itemMap['Antwort'] as String;
+      final String question = itemMap['Question'] as String;
+      final String answer = itemMap['Answer'] as String;
 
-      questions.add(frage);
-      answers.add(antwort);
+      questions.add(question);
+      answers.add(answer);
       if (kDebugMode) {
-        print('Frage: $frage');
+        print('Question: $question');
       }
       if (kDebugMode) {
-        print('Antwort: $antwort');
+        print('Answer: $answer');
       }
+    }
+    if (kDebugMode) {
+      print('... decoded index cards');
     }
 
     for (int i = 0; i < questions.length; i++) {
