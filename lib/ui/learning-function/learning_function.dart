@@ -5,6 +5,7 @@ import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/components/custom_flip_card.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
+import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -39,7 +40,8 @@ class LearningFunction extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) => Scaffold(
-      appBar: AppBar(title: Text(_deck.name)), body: _buildBody(context));
+      appBar: AppBar(centerTitle: true, title: Text(_deck.name)),
+      body: _buildBody(context));
 
   Widget _buildBody(final BuildContext context) =>
       BlocBuilder<LearningFunctionBloc, LearningFunctionState>(
@@ -80,16 +82,16 @@ class LearningFunction extends StatelessWidget {
                     decoration: BoxDecoration(
                       border: Border.all(
                           color: state.currentIndex > 0
-                              ? const Color(0xFF20EFC0)
-                              : Colors.grey,
+                              ? mainTheme.colorScheme.primary
+                              : mainTheme.colorScheme.surfaceVariant,
                           width: 2),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: TextButton(
                       style: TextButton.styleFrom(
                         foregroundColor: state.currentIndex > 0
-                            ? const Color(0xFF20EFC0)
-                            : Colors.grey,
+                            ? mainTheme.colorScheme.primary
+                            : mainTheme.colorScheme.surfaceVariant,
                         backgroundColor: Colors.transparent,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 30, vertical: 15),
@@ -110,8 +112,8 @@ class LearningFunction extends StatelessWidget {
                     decoration: BoxDecoration(
                       border: Border.all(
                           color: state.currentIndex < state.cardsCount - 1
-                              ? const Color(0xFF20EFC0)
-                              : Colors.grey,
+                              ? mainTheme.colorScheme.primary
+                              : mainTheme.colorScheme.surfaceVariant,
                           width: 2),
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -119,8 +121,8 @@ class LearningFunction extends StatelessWidget {
                       style: TextButton.styleFrom(
                         foregroundColor:
                             state.currentIndex < state.cardsCount - 1
-                                ? const Color(0xFF20EFC0)
-                                : Colors.grey,
+                                ? mainTheme.colorScheme.primary
+                                : mainTheme.colorScheme.surfaceVariant,
                         backgroundColor: Colors.transparent,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 30, vertical: 15),

@@ -169,6 +169,10 @@ class IndexCardsContainer extends StatelessWidget {
               child: Text('No index cards found, create one!',
                   style: mainTheme.textTheme.bodyMedium))
           : SingleChildScrollView(
+              padding: EdgeInsets.only(
+                  bottom: mainTheme.floatingActionButtonTheme.sizeConstraints!
+                          .maxHeight *
+                      2),
               child: Wrap(
                 children: indexCards
                     .map((final indexCard) => IndexCardItemWidget(
