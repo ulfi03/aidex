@@ -1,4 +1,5 @@
 import 'package:aidex/data/model/deck.dart';
+import 'package:aidex/data/model/index_card.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -26,8 +27,7 @@ class DeckProvider {
 create table ${Deck.tableDeck} ( 
   ${Deck.columnDeckId} integer primary key autoincrement, 
   ${Deck.columnName} text not null,
-  ${Deck.columnColor} integer not null,
-  ${Deck.columnCardsCount} integer not null)
+  ${Deck.columnColor} integer not null);
 ''');
     }, onConfigure: (final db) async {
       await db.execute('PRAGMA foreign_keys = ON');
@@ -35,33 +35,38 @@ create table ${Deck.tableDeck} (
     return db;
   }
 
-  /// Returns all decks from the database.
-  Future<List<Deck>> getDecks() async {
-    final List<Map<String, dynamic>> maps = await _db.query(Deck.tableDeck,
-        columns: [
-          Deck.columnDeckId,
-          Deck.columnName,
-          Deck.columnColor,
-          Deck.columnCardsCount
-        ]);
-    return List.generate(maps.length, (final i) => Deck.fromMap(maps[i]));
-  }
-
-  /// Returns a deck from the database.
+  /// get single deck
   Future<Deck?> getDeck(final int id) async {
-    final List<Map<String, dynamic>> maps = await _db.query(Deck.tableDeck,
-        columns: [
-          Deck.columnDeckId,
-          Deck.columnName,
-          Deck.columnColor,
-          Deck.columnCardsCount
-        ],
-        where: '${Deck.columnDeckId} = ?',
-        whereArgs: [id]);
+    final List<Map<String, dynamic>> maps = await _db.rawQuery('''
+      SELECT ${Deck.tableDeck}.${Deck.columnDeckId},
+       ${Deck.tableDeck}.${Deck.columnName},
+       ${Deck.tableDeck}.${Deck.columnColor},
+       COUNT(${IndexCard.tableIndexCard}.${IndexCard.columnIndexCardId}) as ${Deck.cardsCountAlias}
+      FROM ${Deck.tableDeck}
+      LEFT JOIN ${IndexCard.tableIndexCard}
+      ON ${Deck.tableDeck}.${Deck.columnDeckId} = ${IndexCard.tableIndexCard}.${IndexCard.columnDeckId}
+      WHERE ${Deck.tableDeck}.${Deck.columnDeckId} = ?
+      GROUP BY ${Deck.tableDeck}.${Deck.columnDeckId}
+    ''', [id]);
     if (maps.isNotEmpty) {
       return Deck.fromMap(maps.first);
     }
     return null;
+  }
+
+  /// get deck with cardcount
+  Future<List<Deck>> getDecks() async {
+    final List<Map<String, dynamic>> maps = await _db.rawQuery('''
+      SELECT ${Deck.tableDeck}.${Deck.columnDeckId},
+       ${Deck.tableDeck}.${Deck.columnName},
+       ${Deck.tableDeck}.${Deck.columnColor},
+       COUNT(${IndexCard.tableIndexCard}.${IndexCard.columnIndexCardId}) as ${Deck.cardsCountAlias}
+      FROM ${Deck.tableDeck}
+      LEFT JOIN ${IndexCard.tableIndexCard}
+      ON ${Deck.tableDeck}.${Deck.columnDeckId} = ${IndexCard.tableIndexCard}.${IndexCard.columnDeckId}
+      GROUP BY ${Deck.tableDeck}.${Deck.columnDeckId}
+    ''');
+    return List.generate(maps.length, (final i) => Deck.fromMap(maps[i]));
   }
 
   /// Inserts the given [deck] into the database.
@@ -92,12 +97,20 @@ create table ${Deck.tableDeck} (
   /// update the deck's name in the database.
   ///
   /// Throws an [Error] if the update operation fails.
-  Future<void> renameDeck(final int deckId, final String newName) async {
-    await _db.update(
-      Deck.tableDeck,
-      {Deck.columnName: newName},
-      where: '${Deck.columnDeckId} = ?',
-      whereArgs: [deckId],
-    );
-  }
+  Future<int> renameDeck(final int deckId, final String newName) async =>
+      _db.update(
+        Deck.tableDeck,
+        {Deck.columnName: newName},
+        where: '${Deck.columnDeckId} = ?',
+        whereArgs: [deckId],
+      );
+
+  /// Change the color of a deck in the database.
+  Future<int> changeDeckColor(final int deckId, final int newColor) async =>
+      _db.update(
+        Deck.tableDeck,
+        {Deck.columnColor: newColor},
+        where: '${Deck.columnDeckId} = ?',
+        whereArgs: [deckId],
+      );
 }

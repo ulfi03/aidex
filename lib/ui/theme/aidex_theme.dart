@@ -20,7 +20,7 @@ final ThemeData mainTheme = ThemeData(
     displaySmall: TextStyle(color: Colors.white),
     bodyLarge: TextStyle(color: Colors.white),
     bodyMedium: TextStyle(color: Colors.white, fontSize: 16),
-    bodySmall: TextStyle(color: Colors.white, fontSize: 15),
+    bodySmall: TextStyle(color: Colors.white, fontSize: 12),
     labelLarge: TextStyle(color: Colors.white),
     labelMedium: TextStyle(color: Colors.white),
     labelSmall: TextStyle(color: Colors.white),
@@ -40,5 +40,11 @@ final ThemeData mainTheme = ThemeData(
       backgroundColor:
           MaterialStateProperty.all<Color>(const Color(0xFF20EFC0)),
     ),
+  ),
+  floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    backgroundColor: Color(0xFF20EFC0),
+    foregroundColor: Colors.black,
+    // set size of the floating action button
+    sizeConstraints: BoxConstraints.tightFor(width: 56, height: 56),
   ),
 );
