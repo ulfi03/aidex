@@ -1,11 +1,10 @@
 import 'package:aidex/bloc/index_card_view_bloc.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
+import 'package:aidex/ui/components/custom_flip_card.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
-import 'package:aidex/ui/components/rich_text_editor_widget.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
-import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -111,7 +110,7 @@ class IndexCardView extends StatelessWidget {
     if (state is IndexCardInitial || state is IndexCardDeleted) {
       return const SizedBox.shrink();
     } else if (state is IndexCardViewing) {
-      return _getView(state.indexCard);
+      return CustomFlipCard(card: state.indexCard);
     } else if (state is IndexCardLoading) {
       return const Center(child: CircularProgressIndicator());
     } else if (state is IndexCardError) {
@@ -120,22 +119,4 @@ class IndexCardView extends StatelessWidget {
       return const ErrorDisplayWidget(errorMessage: 'Something went wrong!');
     }
   }
-
-  Widget _getView(final IndexCard card) => Container(
-      constraints: const BoxConstraints.expand(),
-      child: FlipCard(
-          fill: Fill.fillFront,
-          // The side to initially display.
-          front: Card(
-              color: mainTheme.colorScheme.primary.withOpacity(0.5),
-              child: Align(
-                child: Text(card.question),
-              )),
-          back: Card(
-              color: mainTheme.colorScheme.secondary.withOpacity(0.5),
-              child: AbsorbPointer(
-                  child: RichTextEditorWidget(
-                readonly: true,
-                controller: RichTextEditorController(contentJson: card.answer),
-              )))));
 }

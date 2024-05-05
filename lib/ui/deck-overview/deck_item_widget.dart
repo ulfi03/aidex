@@ -12,12 +12,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// A widget that represents a deck item.
-class DeckItemWidget extends StatelessWidget {
-  /// Creates a new deck item widget.
-  const DeckItemWidget({
+class DeckItemWidget extends StatefulWidget {
+  /// Creates a deck item widget.
+  DeckItemWidget({
     required this.deck,
-    super.key,
-  });
+  }) : super(key: deckItemWidgetKey(deck.deckId!));
 
   /// A key used to identify the deck name widget in tests.
   static const deckNameKey = Key('deck_name');
@@ -25,11 +24,40 @@ class DeckItemWidget extends StatelessWidget {
   /// A key used to identify the cards count widget in tests.
   static const cardsCountKey = Key('cards_count');
 
-  /// The size of the icon.
-  static const iconSize = 30.0;
+  /// A key used to identify the color indicator widget in tests.
+  static const colorIndicatorKey = Key('color_indicator');
+
+  /// A key used to identify the deck options widget in tests.
+  static const deckOptionsKey = Key('deck_options');
+
+  /// A key used to identify the delete deck menu entry widget in tests.
+  static const deleteDeckMenuEntryKey = Key('delete_deck_menu_entry');
+
+  /// A key used to identify the rename deck menu entry widget in tests.
+  static const renameDeckMenuEntryKey = Key('rename_deck_menu_entry');
+
+  /// A key used to identify the change color deck menu entry widget in tests.
+  static const changeColorDeckMenuEntryKey =
+      Key('change_color_deck_menu_entry');
+
+  /// A key used to identify the change deck name widget in tests.
+  static const changeDeckNameTextFieldKey = Key('change_deck_name');
+
+  /// Returns the key of a deck item widget.
+  static Key deckItemWidgetKey(final int deckId) =>
+      Key('DeckItemWidgetKey$deckId');
 
   /// The deck to display.
   final Deck deck;
+
+  @override
+  State<StatefulWidget> createState() => _DeckItemWidgetState();
+}
+
+/// A widget that represents a deck item.
+class _DeckItemWidgetState extends State<DeckItemWidget> {
+  /// The size of the icon.
+  static const iconSize = 30.0;
 
   @override
   Widget build(final BuildContext context) => GestureDetector(
@@ -38,7 +66,7 @@ class DeckItemWidget extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (final context) =>
-                  ItemOnDeckOverviewSelectedRoute(deck: deck),
+                  ItemOnDeckOverviewSelectedRoute(deck: widget.deck),
             ),
           ).then((final value) =>
               context.read<DeckOverviewBloc>().add(const FetchDecks()));
@@ -52,11 +80,12 @@ class DeckItemWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           child: Container(
+              key: DeckItemWidget.colorIndicatorKey,
               decoration: BoxDecoration(
                 color: mainTheme.colorScheme.background,
                 border: Border(
                   left: BorderSide(
-                    color: deck.color,
+                    color: widget.deck.color,
                     width: 10,
                   ),
                 ),
@@ -84,8 +113,8 @@ class DeckItemWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        deck.name,
-                        key: deckNameKey,
+                        widget.deck.name,
+                        key: DeckItemWidget.deckNameKey,
                         textAlign: TextAlign.center,
                         style: mainTheme.textTheme.bodyMedium
                             ?.copyWith(fontWeight: FontWeight.bold),
@@ -100,10 +129,10 @@ class DeckItemWidget extends StatelessWidget {
                                 mainTheme.colorScheme.surface.withOpacity(0.5),
                             borderRadius: BorderRadius.circular(8)),
                         child: RichText(
-                          key: cardsCountKey,
+                          key: DeckItemWidget.cardsCountKey,
                           text: TextSpan(children: [
                             TextSpan(
-                              text: '${deck.cardsCount}',
+                              text: '${widget.deck.cardsCount}',
                               style: mainTheme.textTheme.bodySmall?.copyWith(
                                   color: mainTheme.colorScheme.primary,
                                   fontWeight: FontWeight.bold),
@@ -117,6 +146,7 @@ class DeckItemWidget extends StatelessWidget {
                     ],
                   )),
                   PopupMenuButton<String>(
+                    key: DeckItemWidget.deckOptionsKey,
                     padding: EdgeInsets.zero,
                     onSelected: (final value) async {
                       final DeckOverviewBloc deckOverviewBloc =
@@ -127,11 +157,12 @@ class DeckItemWidget extends StatelessWidget {
                               context: context,
                               builder: (final context) => BlocProvider.value(
                                   value: deckOverviewBloc,
-                                  child: DeleteDeckDialog(deck: deck)));
+                                  child: DeleteDeckDialog(deck: widget.deck)));
                         case 'rename':
-                          _renameDeck(context, deck, deckOverviewBloc);
+                          _renameDeck(context, widget.deck, deckOverviewBloc);
                         case 'changeColor':
-                          _changeDeckColor(context, deck, deckOverviewBloc);
+                          _changeDeckColor(
+                              context, widget.deck, deckOverviewBloc);
                       }
                     },
                     icon: Icon(
@@ -140,6 +171,7 @@ class DeckItemWidget extends StatelessWidget {
                     ),
                     itemBuilder: (final context) => <PopupMenuEntry<String>>[
                       PopupMenuItem<String>(
+                        key: DeckItemWidget.deleteDeckMenuEntryKey,
                         value: 'delete',
                         child: ListTile(
                           leading: Icon(
@@ -153,6 +185,7 @@ class DeckItemWidget extends StatelessWidget {
                         ),
                       ),
                       PopupMenuItem<String>(
+                        key: DeckItemWidget.renameDeckMenuEntryKey,
                         value: 'rename',
                         child: ListTile(
                           leading: Icon(
@@ -167,6 +200,7 @@ class DeckItemWidget extends StatelessWidget {
                       ),
                       // popupmenu item for changing the color of a deck
                       PopupMenuItem<String>(
+                        key: DeckItemWidget.changeColorDeckMenuEntryKey,
                         value: 'changeColor',
                         child: ListTile(
                           leading: Icon(
@@ -195,74 +229,77 @@ class DeckItemWidget extends StatelessWidget {
 
     showDialog(
       context: context,
-      builder: (final context) => StatefulBuilder(
-        builder: (final context, final setState) => AlertDialog(
-          title: Text('Rename Deck', style: mainTheme.textTheme.titleMedium),
-          content: Form(
-            key: formKey,
-            child: CustomTextFormField(
-              controller: textController,
-              maxLength: 21,
-              hintText: 'New name',
-              validator: deckNameValidator,
-            ),
+      builder: (final context) => AlertDialog(
+        title: Text('Rename Deck', style: mainTheme.textTheme.titleMedium),
+        content: Form(
+          key: formKey,
+          child: CustomTextFormField(
+            key: DeckItemWidget.changeDeckNameTextFieldKey,
+            controller: textController,
+            maxLength: 21,
+            hintText: 'New name',
+            validator: deckNameValidator,
           ),
-          actions: <Widget>[
-            CancelButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            OkButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  final newName = textController.text;
-                  deckOverviewBloc
-                      .add(RenameDeck(deck: deck, newName: newName));
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ],
         ),
+        actions: <Widget>[
+          CancelButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          OkButton(
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                final newName = textController.text;
+                deckOverviewBloc.add(RenameDeck(deck: deck, newName: newName));
+                setState(() => deck.name = newName);
+                Navigator.of(context).pop();
+              }
+            },
+          ),
+        ],
       ),
     );
   }
 
   // Method for changing the color of a deck
   void _changeDeckColor(final BuildContext context, final Deck deck,
-      
       final DeckOverviewBloc deckOverviewBloc) {
     showDialog(
       context: context,
-      builder: (final context) => StatefulBuilder(
-        builder: (final context, final setState) => AlertDialog(
-          title:
-              Text('Change Deck Color', style: mainTheme.textTheme.titleMedium),
-          content: CustomColorPicker(
-            initialPickerColor: deck.color == const Color(0x00000000) ?
-             mainTheme.colorScheme.surface : deck.color,
-            onColorChanged: (final color) {
-              setState(() => deck.color = color);
-            },
-            label: 'Color',
+      builder: (final context) {
+        Color selectedColor = deck.color;
+        return StatefulBuilder(
+          builder: (final context, final setColorPickerState) => AlertDialog(
+            title: Text('Change Deck Color',
+                style: mainTheme.textTheme.titleMedium),
+            content: CustomColorPicker(
+              initialPickerColor: deck.color == const Color(0x00000000)
+                  ? mainTheme.colorScheme.surface
+                  : deck.color,
+              onColorChanged: (final color) {
+                setColorPickerState(() => selectedColor = color);
+              },
+              label: 'Color',
+            ),
+            actions: <Widget>[
+              CancelButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              OkButton(
+                onPressed: () {
+                  deckOverviewBloc
+                      .add(ChangeDeckColor(deck: deck, color: selectedColor));
+                  setState(() => deck.color = selectedColor);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
           ),
-          actions: <Widget>[
-            CancelButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            OkButton(
-              onPressed: () {
-                deckOverviewBloc
-                    .add(ChangeDeckColor(deck: deck, color: deck.color));
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      ),
+        );
+      },
     );
   }
 }

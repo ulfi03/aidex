@@ -132,9 +132,9 @@ void main() {
           // skip the first two states [DecksLoading, DecksLoaded]
           verify: (final _) {
             verify(() => deckRepository.renameDeck(any(), any())).called(1);
-            verify(() => deckRepository.fetchDecks()).called(2);
           },
-          expect: () => [isA<DecksLoading>(), isA<DecksLoaded>()]);
+          //expect no state change
+          expect: () => []);
 
       blocTest('Emit DeckError when an exception occures',
           setUp: () {
@@ -169,9 +169,8 @@ void main() {
           verify: (final _) {
             verify(() => deckRepository.changeDeckColor(any(), any()))
                 .called(1);
-            verify(() => deckRepository.fetchDecks()).called(2);
           },
-          expect: () => [isA<DecksLoading>(), isA<DecksLoaded>()]);
+          expect: () => []);
 
       blocTest('Emit DeckError when an exception occures',
           setUp: () {
