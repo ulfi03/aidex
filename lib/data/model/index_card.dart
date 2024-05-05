@@ -1,4 +1,4 @@
-import 'dart:convert';
+
 
 /// IndexCard model
 class IndexCard {
@@ -51,10 +51,4 @@ class IndexCard {
         columnDeckId: deckId,
         if (indexCardId != null) columnIndexCardId: indexCardId
       };
-
-  /// Parses the JSON string and sets the answer field.
-  void parseAnswerFromJson(final String jsonString) {
-    final Map<String, dynamic> jsonObject = jsonDecode(jsonString);
-    answer = jsonObject['insert'].trim();
-  }
 }

@@ -1,7 +1,6 @@
 import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
-import 'package:aidex/data/model/learning_function.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/deck-view/card_serach_bar.dart';
@@ -117,53 +116,28 @@ class IndexCardOverview extends StatelessWidget {
             }),
           ],
         ),
-        bottomNavigationBar: Container(
-          height: 70,
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: FloatingActionButton(
-                backgroundColor: const Color(0xFF20EFC0),
-                child: const Icon(Icons.play_arrow),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (final context) {
-                        final indexCardRepository =
-                            RepositoryProvider.of<IndexCardRepository>(context);
-                        final cardsFuture =
-                            indexCardRepository.fetchIndexCards(deck.deckId!);
-
-                        return FutureBuilder<List<IndexCard>>(
-                          future: cardsFuture,
-                          builder: (final context, final snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              if (snapshot.hasError) {
-                                return Text('Error: ${snapshot.error}');
-                              } else {
-                                return LearningFunction(
-                                  key: const Key('cards'),
-                                  cards: snapshot.data!,
-                                  deck: deck,
-                                  indexCardRepository: indexCardRepository,
-                                );
-                              }
-                            } else {
-                              return const CircularProgressIndicator();
-                            }
-                          },
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        ),
+        floatingActionButton:
+            BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
+                builder: (final context, final state) {
+          if (state is IndexCardsLoaded) {
+            return FloatingActionButton(
+              heroTag: 'playButton',
+              backgroundColor: const Color(0xFF20EFC0),
+              child: const Icon(Icons.play_arrow),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (final context) =>
+                        LearningFunctionRoute(deck: deck),
+                  ),
+                );
+              },
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        }),
       );
 }
 
@@ -241,6 +215,7 @@ class AddCardButton extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) => FloatingActionButton(
+        heroTag: 'addButton',
         onPressed: () => onAddCardButtonPressed(context),
         backgroundColor: mainTheme.colorScheme.primary,
         child: const Icon(Icons.add),
