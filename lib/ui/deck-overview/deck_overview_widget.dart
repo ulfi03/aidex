@@ -6,6 +6,7 @@ import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/deck-overview/create_deck_dialog_manually.dart';
 import 'package:aidex/ui/deck-overview/create_deck_dialog_with_ai.dart';
 import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
+import 'package:aidex/ui/deck-overview/deck_delete_dialog.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,13 @@ class DeckOverview extends StatelessWidget {
             style: mainTheme.textTheme.titleLarge,
           ),
           backgroundColor: mainTheme.colorScheme.surface,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.delete_sweep,
+                  color: mainTheme.colorScheme.primary),
+              onPressed: () => _showDeleteAllDecksDialog(context),
+            ),
+          ],
         ),
         backgroundColor: mainTheme.colorScheme.surface,
         body: BlocBuilder<DeckOverviewBloc, DeckState>(
@@ -114,6 +122,16 @@ Future<void> onAddButtonPressed(final BuildContext deckOverviewContext) async {
               Navigator.pop(context);
               await _showCreateDeckDialogWithAi(deckOverviewContext);
             },
+          ));
+}
+
+Future<void> _showDeleteAllDecksDialog(final BuildContext context) async {
+  final deckOverviewBloc = context.read<DeckOverviewBloc>();
+  await showDialog(
+      context: context,
+      builder: (final context) => BlocProvider.value(
+            value: deckOverviewBloc,
+            child: const DeleteAllDecksDialog(),
           ));
 }
 
