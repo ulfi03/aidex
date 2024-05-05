@@ -89,6 +89,7 @@ class DeckOverview extends StatelessWidget {
           },
         ),
         floatingActionButton: FloatingActionButton(
+          heroTag: 'addButton',
           key: DeckOverviewPage.addButtonKey,
           onPressed: () => onAddButtonPressed(context),
           backgroundColor: mainTheme.colorScheme.primary,

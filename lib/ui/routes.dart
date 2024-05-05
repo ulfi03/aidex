@@ -4,6 +4,7 @@ import 'package:aidex/ui/deck-view/index_cards_overview_widget.dart';
 import 'package:aidex/ui/index-card-view/index_card_create_view.dart';
 import 'package:aidex/ui/index-card-view/index_card_edit_view.dart';
 import 'package:aidex/ui/index-card-view/index_card_view.dart';
+import 'package:aidex/ui/learning-function/learning_function.dart';
 import 'package:flutter/cupertino.dart';
 
 /// A route used to display the selected deck.
@@ -78,4 +79,16 @@ class IndexCardEditRoute extends StatelessWidget {
         initialIndexCard: _initialIndexCard,
         deckName: _deckName,
       );
+}
+
+/// A route used for the learning function.
+class LearningFunctionRoute extends StatelessWidget {
+  /// Constructor for the [LearningFunctionRoute].
+  const LearningFunctionRoute({required final Deck deck, super.key})
+      : _deck = deck;
+
+  final Deck _deck;
+
+  @override
+  Widget build(final BuildContext context) => LearningFunctionPage(deck: _deck);
 }
