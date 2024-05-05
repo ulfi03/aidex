@@ -2,11 +2,11 @@ import 'package:aidex/bloc/create_deck_dialog_with_ai_bloc.dart';
 import 'package:aidex/bloc/deck_overview_bloc.dart';
 import 'package:aidex/data/repo/deck_repository.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
-import 'package:aidex/ui/components/custom_buttons.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/deck-overview/create_deck_dialog_manually.dart';
 import 'package:aidex/ui/deck-overview/create_deck_dialog_with_ai.dart';
 import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
+import 'package:aidex/ui/deck-overview/deck_delete_dialog.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
@@ -51,46 +51,9 @@ class DeckOverview extends StatelessWidget {
           backgroundColor: mainTheme.colorScheme.surface,
           actions: [
             IconButton(
-              icon: Icon(
-                Icons.delete_sweep,
-                color: mainTheme.colorScheme.primary),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                    builder: (final dialogContext) => AlertDialog(
-                        title: Text('Delete All Decks?',
-                         style: mainTheme.textTheme.titleMedium?.copyWith(
-                          color: mainTheme.colorScheme.error,)),
-                        content: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Are you sure you want to delete all decks?',
-                              style: mainTheme.textTheme.bodyMedium,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'This action cannot be undone!',
-                              style: mainTheme.textTheme.bodyMedium?.copyWith(
-                                color: mainTheme.colorScheme.error,
-                              ),
-                            ),
-                          ],
-                        ),
-                        actions: [
-                        CancelButton(onPressed: () => Navigator.pop(context)),
-                        DeleteButton(
-                          onPressed: () {
-                          Navigator.pop(context);
-                            context.read<DeckOverviewBloc>()
-                            .add(const RemoveAllDecks());
-                          },
-                        ),
-                      ],
-                    ),
-                );
-              },
+              icon: Icon(Icons.delete_sweep,
+                  color: mainTheme.colorScheme.primary),
+              onPressed: () => _showDeleteAllDecksDialog(context),
             ),
           ],
         ),
@@ -159,6 +122,16 @@ Future<void> onAddButtonPressed(final BuildContext deckOverviewContext) async {
               Navigator.pop(context);
               await _showCreateDeckDialogWithAi(deckOverviewContext);
             },
+          ));
+}
+
+Future<void> _showDeleteAllDecksDialog(final BuildContext context) async {
+  final deckOverviewBloc = context.read<DeckOverviewBloc>();
+  await showDialog(
+      context: context,
+      builder: (final context) => BlocProvider.value(
+            value: deckOverviewBloc,
+            child: const DeleteAllDecksDialog(),
           ));
 }
 

@@ -27,3 +27,21 @@ class DeleteDeckDialog extends DeleteDialog {
     Navigator.pop(context);
   }
 }
+
+/// A dialog for deleting all decks.
+class DeleteAllDecksDialog extends DeleteDialog {
+  /// Creates a new delete all decks dialog.
+  const DeleteAllDecksDialog({super.key})
+      : super(
+          objectCategory: 'Decks',
+          deleteMessage: 'Are you sure you want to delete ',
+          deleteSubject: 'all Decks',
+        );
+
+  @override
+  void onDelete(final BuildContext context) {
+    // Use the context passed to access DeckOverviewBloc
+    context.read<DeckOverviewBloc>().add(const RemoveAllDecks());
+    Navigator.pop(context);
+  }
+}
