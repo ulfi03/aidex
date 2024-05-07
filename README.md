@@ -16,6 +16,18 @@
 5. [Project Structure](#project-structure)
 6. [Bloc Architecture - Example](#bloc-architecture-example)
 7. [Code Example](#code-example)
+8. [Aidex Server](#aidex-server)
+    - [Introduction](#introduction)
+    - [Project Structure](#project-structure)
+    - [Endpoints](#endpoints)
+    - [Functions](#functions)
+        - [extract_text](#extract_text)
+        - [schedule_chatgpt_requests](#schedule_chatgpt_requests)
+        - [ClientResponse](#clientresponse)
+        - [validate_response](#validate_response)
+        - [validate_index_card](#validate_index_card)
+        - [ai_create_index_cards_from_plain_text](#ai_create_index_cards_from_plain_text)
+    - [Constants](#constants
 8. [Dependencies](#dependencies)
 9. [License](#license)
 10. [Contact](#contact)
@@ -399,7 +411,7 @@ the [`IndexCardItemWidget`](.\lib\ui\deck-view\index_card_item_widget.dart).
 
 [Beispielcode für das Verständnis der Project-Structure, complexer Funktionalitäten.]
 
-### AIDEX Server
+# AIDEX Server
 
 Overview of the AIDEX server, its functionalities, and key components.
 
