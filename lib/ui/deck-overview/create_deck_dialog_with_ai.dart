@@ -146,27 +146,6 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
                         final selectedFileName = result.files.first.name;
                         // Set the selected file name to the text field
                         fileNameController.text = selectedFileName;
-                      } else {
-                        await showDialog(
-                          context: context,
-                          builder: (final context) => AlertDialog(
-                            title: const Text('Alert'),
-                            content: Text(
-                              'No file selected',
-                              style: TextStyle(
-                                color: mainTheme.colorScheme.error,
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          ),
-                        );
                       }
                       return result;
                     });
@@ -231,12 +210,8 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
                               onPressed: () => Navigator.pop(context),
                             ),
                           ),
-                          ElevatedButton(
-                            key: okButtonKey,
+                          OkButton(
                             onPressed: _getOnPressed(context, state),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: mainTheme.colorScheme.primary,
-                            ),
                             child: state is CreateDeckDialogOnAiLoading
                                 ? const SizedBox(
                                     width: 20,
@@ -292,12 +267,7 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
     if (state is CreateDeckDialogOnAiInitial) {
       return () async {
         final ValidationResult validationResult = _validateDeck();
-        if (!validationResult.isValid) {
-          await showBasicErrorDialog(
-            context,
-            validationResult.message,
-          );
-        } else {
+        if (validationResult.isValid) {
           context.read<CreateDeckDialogWithAiBloc>().add(
                 CreateDeckWithAi(
                   deck: Deck(

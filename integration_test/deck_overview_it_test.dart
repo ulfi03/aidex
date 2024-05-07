@@ -135,6 +135,8 @@ void main() {
       ];
       when(() => deckRepository.fetchDecks())
           .thenAnswer((final _) async => decks);
+      when(() => deckRepository.deleteDeck(any()))
+          .thenAnswer((final _) => Future.value());
       await pumpDeckOverviewWidget(tester);
       await tester.pumpAndSettle();
       // delete the deck

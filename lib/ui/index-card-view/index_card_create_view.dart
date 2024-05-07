@@ -1,6 +1,8 @@
 import 'package:aidex/bloc/index_card_create_bloc.dart';
+import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
+import 'package:aidex/ui/components/app_bar_components.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/components/rich_text_editor_widget.dart';
 import 'package:aidex/ui/index-card-view/index_card_create_edit_body.dart';
@@ -11,33 +13,30 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// A page used to create an index card.
 class IndexCardCreateViewPage extends StatelessWidget {
   /// Constructor for the [IndexCardCreateViewPage].
-  const IndexCardCreateViewPage(
-      {required final int deckId, required final String deckName, super.key})
-      : _deckId = deckId,
-        _deckName = deckName;
+  const IndexCardCreateViewPage({required final Deck deck, super.key})
+      : _deck = deck;
 
-  final int _deckId;
-  final String _deckName;
+  final Deck _deck;
 
   @override
   Widget build(final BuildContext context) => BlocProvider(
       create: (final context) => IndexCardCreateBloc(
           indexCardRepository: context.read<IndexCardRepository>(),
-          deckId: _deckId),
+          deckId: _deck.deckId!),
       child: IndexCardCreateView(
-        deckName: _deckName,
+        deck: _deck,
       ));
 }
 
 /// The view used to create an index card.
 class IndexCardCreateView extends StatelessWidget {
   /// Constructor for the [IndexCardCreateView].
-  IndexCardCreateView({required final String deckName, super.key})
-      : _deckName = deckName,
+  IndexCardCreateView({required final Deck deck, super.key})
+      : _deck = deck,
         _questionController = TextEditingController(),
         _answerController = RichTextEditorController();
 
-  final String _deckName;
+  final Deck _deck;
   final TextEditingController _questionController;
   final RichTextEditorController _answerController;
 
@@ -51,17 +50,14 @@ class IndexCardCreateView extends StatelessWidget {
           builder: (final context, final state) => Scaffold(
               appBar: AppBar(
                 title: Column(children: <Widget>[
-                  Text(_deckName, style: mainTheme.textTheme.titleSmall),
+                  Text(_deck.name, style: mainTheme.textTheme.titleSmall),
                   Text('Create Index Card',
                       style: mainTheme.textTheme.titleMedium)
                 ]),
                 actions: _getActions(context, state),
-                bottom: PreferredSize(
-                    preferredSize: const Size.fromHeight(1),
-                    child: Divider(
-                      color: mainTheme.colorScheme.primary,
-                      height: 1,
-                    )),
+                bottom: AppBarBottomWidget(
+                  color: _deck.color,
+                ),
               ),
               body: _getBody(state)),
         ),
