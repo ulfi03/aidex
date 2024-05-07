@@ -93,7 +93,7 @@ class _CustomColorPickerState extends State<CustomColorPicker> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Select', style: mainTheme.textTheme.bodyMedium),
+                child: const Text('Select'),
               ),
             ],
           ),

@@ -1,4 +1,5 @@
 import 'package:aidex/bloc/index_card_create_bloc.dart';
+import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/index-card-view/index_card_create_view.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,8 @@ class FakeIndexCardCreateEvent extends Fake implements IndexCardCreateEvent {}
 void main() {
   late IndexCardCreateBloc indexCardCreateBloc;
 
-  const int deckIdStub = 1;
-  const String deckNameStub = 'Deck Name Stub';
+  final Deck deckStub =
+      Deck(deckId: 1, name: 'Deck Name Stub', color: Colors.black);
 
   setUp(() {
     indexCardCreateBloc = MockIndexCardCreateBloc();
@@ -27,7 +28,7 @@ void main() {
       {final bool pumpAndSettle = true}) async {
     await tester.pumpWidget(BlocProvider.value(
         value: indexCardCreateBloc,
-        child: MaterialApp(home: IndexCardCreateView(deckName: deckNameStub))));
+        child: MaterialApp(home: IndexCardCreateView(deck: deckStub))));
     if (pumpAndSettle) {
       await tester.pumpAndSettle();
     }
@@ -36,11 +37,11 @@ void main() {
   group('IndexCardCreateViewPage', () {
     testWidgets('Render initial state', (final tester) async {
       when(() => indexCardCreateBloc.state)
-          .thenReturn(IndexCardCreateInitial(deckId: deckIdStub));
+          .thenReturn(IndexCardCreateInitial(deckId: deckStub.deckId!));
       await pumpIndexCardCreateView(tester);
       expect(find.byType(IndexCardCreateView), findsOneWidget);
       // Verify that the deck name is displayed.
-      expect(find.text(deckNameStub), findsOneWidget);
+      expect(find.text(deckStub.name), findsOneWidget);
       // Verify that the create index card title is displayed.
       expect(find.text('Create Index Card'), findsOneWidget);
       // Verify that the create index card button is displayed.
@@ -77,7 +78,7 @@ void main() {
 
     testWidgets('Cancel the creation of an index card', (final tester) async {
       when(() => indexCardCreateBloc.state)
-          .thenReturn(IndexCardCreateInitial(deckId: deckIdStub));
+          .thenReturn(IndexCardCreateInitial(deckId: deckStub.deckId!));
       await pumpIndexCardCreateView(tester);
       // Tap the cancel button.
       await tester.tap(find.byIcon(Icons.cancel));
@@ -91,7 +92,7 @@ void main() {
 
     testWidgets('Create an index card', (final tester) async {
       when(() => indexCardCreateBloc.state)
-          .thenReturn(IndexCardCreateInitial(deckId: deckIdStub));
+          .thenReturn(IndexCardCreateInitial(deckId: deckStub.deckId!));
       await pumpIndexCardCreateView(tester);
       // Tab the save button.
       await tester.tap(find.byIcon(Icons.save));

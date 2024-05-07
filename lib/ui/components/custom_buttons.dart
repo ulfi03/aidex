@@ -13,6 +13,8 @@ class CancelButton extends TextButton {
             backgroundColor: MaterialStateProperty.all<Color>(
               Colors.transparent,
             ),
+            foregroundColor: MaterialStateProperty.all<Color>(
+                mainTheme.colorScheme.onSurface),
           ),
         );
 
@@ -24,10 +26,9 @@ class CancelButton extends TextButton {
 class OkButton extends TextButton {
   /// Creates a new ok button.
   const OkButton(
-      {required final VoidCallback onPressed, super.key = okButtonKey})
+      {required super.onPressed, super.key = okButtonKey, final Widget? child})
       : super(
-          onPressed: onPressed,
-          child: const Text('Ok'),
+          child: (child != null) ? child : const Text('Ok'),
         );
 
   /// The key for the ok button.
@@ -37,10 +38,8 @@ class OkButton extends TextButton {
 /// A custom delete button.
 class DeleteButton extends TextButton {
   /// Creates a new delete button.
-  DeleteButton(
-      {required final VoidCallback onPressed, super.key = deleteButtonKey})
+  DeleteButton({required super.onPressed, super.key = deleteButtonKey})
       : super(
-          onPressed: onPressed,
           child: const Text('Delete'),
           style: mainTheme.textButtonTheme.style?.copyWith(
             backgroundColor: MaterialStateProperty.all<Color>(

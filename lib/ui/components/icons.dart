@@ -21,3 +21,19 @@ class AIDexLogo extends StatelessWidget {
         width: _height,
       );
 }
+
+/// A widget that displays the index card icon.
+class IndexCardIcon extends StatelessWidget {
+  /// Creates a new index card icon widget.
+  const IndexCardIcon({required final double size, super.key}) : _size = size;
+
+  final double _size;
+
+  @override
+  Widget build(final BuildContext context) => SvgPicture.asset(
+        'assets/icon/index-card.svg',
+        semanticsLabel: 'Index Card Icon',
+        height: _size,
+        width: _size,
+      );
+}

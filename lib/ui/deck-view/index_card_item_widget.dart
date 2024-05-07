@@ -1,5 +1,6 @@
 import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/index_card.dart';
+import 'package:aidex/ui/components/icons.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,8 +23,13 @@ class IndexCardItemWidget extends StatelessWidget {
       {required this.indexCard,
       required final IndexCardState state,
       required this.onTap,
+      required final int ordinalNo,
       super.key})
-      : _state = state;
+      : _ordinalNo = ordinalNo,
+        _state = state;
+
+  /// The ordinal number of the index card.
+  final int _ordinalNo;
 
   /// The index card to be displayed.
   final IndexCard indexCard;
@@ -59,21 +65,23 @@ class IndexCardItemWidget extends StatelessWidget {
   }
 
   @override
-  Widget build(final BuildContext context) {
-    final iconSize = MediaQuery.of(context).size.width / 4;
+  Widget build(final BuildContext context) => GestureDetector(
+        onTap: (_state is IndexCardSelectionMode)
+            ? () => updateSelection(context)
+            : () => onTap(context),
+        onLongPress: (_state is IndexCardSelectionMode)
+            ? () => {}
+            : () => updateSelection(context),
+        child: _buildContent(context),
+      );
 
-    return GestureDetector(
-      onTap: (_state is IndexCardSelectionMode)
-          ? () => updateSelection(context)
-          : () => onTap(context),
-      onLongPress: (_state is IndexCardSelectionMode)
-          ? () => {}
-          : () => updateSelection(context),
-      child: Container(
+  Widget _buildContent(final BuildContext context) => Container(
         key: containerKey,
-        margin: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width / 32,
-          vertical: MediaQuery.of(context).size.width / 64,
+        height: 65,
+        padding: const EdgeInsets.all(8),
+        margin: const EdgeInsets.symmetric(
+          horizontal: 5,
+          vertical: 5,
         ),
         decoration: BoxDecoration(
           color: () {
@@ -85,50 +93,60 @@ class IndexCardItemWidget extends StatelessWidget {
               return mainTheme.colorScheme.surface;
             }
           }(),
-          // Set the background color from the deck
-          border: Border.all(
-            color: Colors.white,
-            width: 2,
-          ),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Row(
-          children: [
-            if (_state is IndexCardSelectionMode)
-              Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: Icon(
-                  key: checkIconKey,
-                  (_state.isThisCardSelected(indexCard.indexCardId!))
-                      ? Icons.check_circle_outline
-                      : Icons.circle_outlined,
-                  size: iconSize * 0.25,
-                  color: mainTheme.colorScheme.primary,
+        child: Stack(alignment: Alignment.centerLeft, children: [
+          Row(
+            children: [
+              // insert check icon if the state is IndexCardSelectionMode
+              if (_state is IndexCardSelectionMode) _insertCheckIcon(_state),
+              _buildCardIcon(),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 25),
+                  child: Text(
+                    indexCard.question,
+                    textAlign: TextAlign.start,
+                    style: mainTheme.textTheme.bodyMedium,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
                 ),
               ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Icon(
-                Icons.library_books_outlined,
-                size: iconSize * 0.4,
-                color: mainTheme.colorScheme.primary,
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Text(
-                  indexCard.question,
-                  textAlign: TextAlign.start,
-                  style: mainTheme.textTheme.bodyMedium,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
+          Positioned(
+              right: 0,
+              bottom: 0,
+              child: Text('$_ordinalNo',
+                  style: mainTheme.textTheme.bodySmall!.copyWith(
+                      color: mainTheme.colorScheme.onSurfaceVariant))),
+        ]),
+      );
+
+  Widget _insertCheckIcon(final IndexCardSelectionMode state) => Padding(
+        padding: const EdgeInsets.only(right: 8),
+        child: Icon(
+          key: checkIconKey,
+          (state.isThisCardSelected(indexCard.indexCardId!))
+              ? Icons.check_circle_outline
+              : Icons.circle_outlined,
+          color: mainTheme.colorScheme.primary,
         ),
-      ),
-    );
-  }
+      );
+
+  Widget _buildCardIcon() => Stack(alignment: Alignment.center, children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: mainTheme.colorScheme.background,
+            borderRadius: BorderRadius.circular(30),
+          ),
+        ),
+        const RotationTransition(
+          turns: AlwaysStoppedAnimation(15 / 360),
+          child: IndexCardIcon(size: 30),
+        ),
+      ]);
 }
