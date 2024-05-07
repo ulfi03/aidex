@@ -72,56 +72,38 @@ class IndexCardItemWidget extends StatelessWidget {
         onLongPress: (_state is IndexCardSelectionMode)
             ? () => {}
             : () => updateSelection(context),
-        child: Container(
-          key: containerKey,
-          height: 65,
-          padding: const EdgeInsets.all(8),
-          margin: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width / 32,
-            vertical: MediaQuery.of(context).size.width / 64,
-          ),
-          decoration: BoxDecoration(
-            color: () {
-              if (_state is IndexCardSelectionMode) {
-                return (_state.isThisCardSelected(indexCard.indexCardId!))
-                    ? mainTheme.colorScheme.onSurfaceVariant
-                    : mainTheme.colorScheme.surface;
-              } else {
-                return mainTheme.colorScheme.surface;
-              }
-            }(),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
+        child: _buildContent(context),
+      );
+
+  Widget _buildContent(final BuildContext context) => Container(
+        key: containerKey,
+        height: 65,
+        padding: const EdgeInsets.all(8),
+        margin: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width / 32,
+          vertical: MediaQuery.of(context).size.width / 64,
+        ),
+        decoration: BoxDecoration(
+          color: () {
+            if (_state is IndexCardSelectionMode) {
+              return (_state.isThisCardSelected(indexCard.indexCardId!))
+                  ? mainTheme.colorScheme.onSurfaceVariant
+                  : mainTheme.colorScheme.surface;
+            } else {
+              return mainTheme.colorScheme.surface;
+            }
+          }(),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Stack(alignment: Alignment.centerLeft, children: [
+          Row(
             children: [
-              if (_state is IndexCardSelectionMode)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: Icon(
-                    key: checkIconKey,
-                    (_state.isThisCardSelected(indexCard.indexCardId!))
-                        ? Icons.check_circle_outline
-                        : Icons.circle_outlined,
-                    color: mainTheme.colorScheme.primary,
-                  ),
-                ),
-              Stack(alignment: Alignment.center, children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: mainTheme.colorScheme.background,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                const RotationTransition(
-                  turns: AlwaysStoppedAnimation(15 / 360),
-                  child: IndexCardIcon(size: 30),
-                ),
-              ]),
+              // insert check icon if the state is IndexCardSelectionMode
+              if (_state is IndexCardSelectionMode) _insertCheckIcon(_state),
+              _buildCardIcon(),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 8),
+                  padding: const EdgeInsets.only(left: 8, right: 25),
                   child: Text(
                     indexCard.question,
                     textAlign: TextAlign.start,
@@ -133,6 +115,38 @@ class IndexCardItemWidget extends StatelessWidget {
               ),
             ],
           ),
+          Positioned(
+              right: 0,
+              bottom: 0,
+              child: Text('$_ordinalNo',
+                  style: mainTheme.textTheme.bodySmall!.copyWith(
+                      color: mainTheme.colorScheme.onSurfaceVariant))),
+        ]),
+      );
+
+  Widget _insertCheckIcon(final IndexCardSelectionMode state) => Padding(
+        padding: const EdgeInsets.only(right: 8),
+        child: Icon(
+          key: checkIconKey,
+          (state.isThisCardSelected(indexCard.indexCardId!))
+              ? Icons.check_circle_outline
+              : Icons.circle_outlined,
+          color: mainTheme.colorScheme.primary,
         ),
       );
+
+  Widget _buildCardIcon() => Stack(alignment: Alignment.center, children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: mainTheme.colorScheme.background,
+            borderRadius: BorderRadius.circular(30),
+          ),
+        ),
+        const RotationTransition(
+          turns: AlwaysStoppedAnimation(15 / 360),
+          child: IndexCardIcon(size: 30),
+        ),
+      ]);
 }
