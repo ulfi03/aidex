@@ -68,7 +68,7 @@ class IndexCardOverview extends StatelessWidget {
                     )),
             centerTitle: true,
             title: Text(deck.name),
-            bottom: AppBarBottomWidget(color: deck.color),
+            bottom: DeckColorIndicator(color: deck.color),
             actions: _getActions(context)),
         body: _buildBody(),
         floatingActionButton: _buildFloatingButton(),

@@ -58,7 +58,7 @@ class IndexCardView extends StatelessWidget {
                       ),
                     ]),
                     actions: _getActions(context, state),
-                    bottom: AppBarBottomWidget(color: _deck.color),
+                    bottom: DeckColorIndicator(color: _deck.color),
                   ),
                   body: _getBody(state))));
 

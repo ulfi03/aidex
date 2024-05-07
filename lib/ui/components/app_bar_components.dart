@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 /// The bottom widget of the app bar displaying a colored line
-class AppBarBottomWidget extends PreferredSize {
+class DeckColorIndicator extends PreferredSize {
   /// Constructs the app bar bottom widget
-  AppBarBottomWidget({required final color, super.key})
+  DeckColorIndicator({required final Color color, super.key})
       : super(
             preferredSize: const Size.fromHeight(1),
             child: Divider(

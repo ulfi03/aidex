@@ -3,6 +3,7 @@
 import 'package:aidex/bloc/learning_function_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
+import 'package:aidex/ui/components/app_bar_components.dart';
 import 'package:aidex/ui/components/custom_flip_card.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
@@ -40,7 +41,10 @@ class LearningFunction extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) => Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text(_deck.name)),
+      appBar: AppBar(
+          centerTitle: true,
+          title: Text(_deck.name),
+          bottom: DeckColorIndicator(color: _deck.color)),
       body: _buildBody(context));
 
   Widget _buildBody(final BuildContext context) =>

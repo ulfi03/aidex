@@ -55,7 +55,7 @@ class IndexCardCreateView extends StatelessWidget {
                       style: mainTheme.textTheme.titleMedium)
                 ]),
                 actions: _getActions(context, state),
-                bottom: AppBarBottomWidget(
+                bottom: DeckColorIndicator(
                   color: _deck.color,
                 ),
               ),
