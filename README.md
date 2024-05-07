@@ -287,36 +287,8 @@ emitted.
 
 The following code-block shows how BlocBuilder is implemented in `IndexCardOverview`.
 
-There are 3 BlocBuilder which control different parts of the `IndexCardOverview` widgets UI.
-
-
-<!-- @formatter:off-->
-```dart
-BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
-buildWhen: (final previous, final current) =>
-current is IndexCardInitial ||
-current is IndexCardSelectionMode ||
-current is IndexCardsLoaded &&
-previous is IndexCardSelectionMode,
-builder: (final context, final state) {
-if (state is! IndexCardSelectionMode) {
-return Padding(
-padding: const EdgeInsets.all(8),
-child: Row(
-mainAxisAlignment: MainAxisAlignment.center,
-children: [
-Expanded(
-child: CardSearchBar(
-indexCardOverviewBloc:
-context.read<IndexCardOverviewBloc>(),
-query: getQuery(state))),
-AddCardButton(deck: deck)
-]));
-} else {
-return const SizedBox.shrink();
-}
-}),
-```
+There are many BlocBuilder which control different parts of the `IndexCardOverview` widgets UI. But I will only focus on
+one given that they all work similar.
 
 <!-- @formatter:off-->
 ```dart
@@ -341,9 +313,28 @@ BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
   }
 ),
 ```
-One can see that the UI changes 
-
 <!-- @formatter:on-->
+
+This BlocBuilder manages how the UI part that contains the list of Index cards (red) is displayed
+One can see that the UI changes based on the state and that 4 cases are distinguished.
+
+<table>
+   <tr>
+    <th><p>IndexCardsLoading</p></th>
+    <th><p>IndexCardSelectionMode</p></th>
+    <th><p>IndexCardsLoaded</p></th>
+    <th><p>IndexCardsError</p></th>
+  </tr>
+  <tr>
+    <td><p style="color: red">Circle corresponding part red</p><img src="doc/screenshots/deck-overview.jpg" alt="Deck Overview" width="250px"></td>
+    <td><p style="color: red">Circle corresponding part red</p><img src="doc/screenshots/select-IndexCards.png" alt="Select IndexCards (for deletion)" width="250px"></td>
+    <td><p style="color: red">Circle corresponding part red</p><img src="doc/screenshots/index-card-overview.jpg" alt="Index Card Overview" width="250px"></td>
+    <td><p style="color: red">Circle corresponding part red</p><img src="doc/screenshots/indexCard_delete_dialog.png" alt="Create Deck Dialog with AI" width="250px"></td>
+  </tr>
+</table>
+
+For `IndexCardSelectionMode` and `IndexCardsLoaded` the, state is passed down to `IndexCardsContainer`. This class is
+responsible for displaying the list of indexCards, having access to each `indexCard` -`IndexCardItemWidget` itself.
 
 ## Code Example
 
