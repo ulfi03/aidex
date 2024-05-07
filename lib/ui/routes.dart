@@ -25,39 +25,31 @@ class ItemOnDeckOverviewSelectedRoute extends StatelessWidget {
 ///A route used to display the selected index card.
 class ItemOnDeckViewWidgetSelectedRoute extends StatelessWidget {
   /// Constructor for the [ItemOnDeckViewWidgetSelectedRoute].
-  ///
-  /// The [indexCard] is the index card to be displayed.
-  /// The [key] is used to identify the widget in the widget tree.
   const ItemOnDeckViewWidgetSelectedRoute(
-      {required this.indexCard, required this.deckName, super.key});
+      {required this.indexCard, required this.deck, super.key});
 
   /// The index card to be displayed.
   final IndexCard indexCard;
 
   /// The name of the deck the index card belongs to.
-  final String deckName;
+  final Deck deck;
 
   @override
-  Widget build(final BuildContext context) => IndexCardViewPage(
-      indexCardId: indexCard.indexCardId!, deckName: deckName);
+  Widget build(final BuildContext context) =>
+      IndexCardViewPage(indexCardId: indexCard.indexCardId!, deck: deck);
 }
 
 /// A route used to create an index card.
 class IndexCardCreateRoute extends StatelessWidget {
   /// Constructor for the [IndexCardCreateRoute].
-  const IndexCardCreateRoute(
-      {required this.deckId, required this.deckName, super.key});
-
-  /// The id of the deck the index card belongs to.
-  final int deckId;
+  const IndexCardCreateRoute({required this.deck, super.key});
 
   /// The name of the deck the index card belongs to.
-  final String deckName;
+  final Deck deck;
 
   @override
   Widget build(final BuildContext context) => IndexCardCreateViewPage(
-        deckId: deckId,
-        deckName: deckName,
+        deck: deck,
       );
 }
 
@@ -66,18 +58,18 @@ class IndexCardEditRoute extends StatelessWidget {
   /// Constructor for the [IndexCardEditRoute].
   const IndexCardEditRoute(
       {required final IndexCard initialIndexCard,
-      required final String deckName,
+      required final Deck deck,
       super.key})
       : _initialIndexCard = initialIndexCard,
-        _deckName = deckName;
+        _deck = deck;
 
   final IndexCard _initialIndexCard;
-  final String _deckName;
+  final Deck _deck;
 
   @override
   Widget build(final BuildContext context) => IndexCardEditViewPage(
         initialIndexCard: _initialIndexCard,
-        deckName: _deckName,
+        deck: _deck,
       );
 }
 

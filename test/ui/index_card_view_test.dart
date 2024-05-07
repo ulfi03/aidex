@@ -1,5 +1,6 @@
 import 'package:aidex/bloc/index_card_edit_bloc.dart';
 import 'package:aidex/bloc/index_card_view_bloc.dart';
+import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/ui/index-card-view/index_card_view.dart';
 import 'package:bloc_test/bloc_test.dart';
@@ -18,7 +19,8 @@ void main() {
   late IndexCardViewBloc indexCardViewBloc;
 
   const int indexCardIdStub = 1;
-  const String deckNameStub = 'Deck Name Stub';
+  final Deck deckStub =
+      Deck(deckId: 1, name: 'Deck Name Stub', color: Colors.black);
 
   setUp(() {
     indexCardViewBloc = MockIndexCardViewBloc();
@@ -29,9 +31,9 @@ void main() {
       {final bool pumpAndSettle = true}) async {
     await tester.pumpWidget(BlocProvider.value(
         value: indexCardViewBloc,
-        child: const MaterialApp(
+        child: MaterialApp(
             home: IndexCardView(
-          deckName: deckNameStub,
+          deck: deckStub,
         ))));
     if (pumpAndSettle) {
       await tester.pumpAndSettle();
@@ -45,7 +47,7 @@ void main() {
       await pumpIndexCardView(tester);
       expect(find.byType(IndexCardView), findsOneWidget);
       // Verify that the deck name is displayed.
-      expect(find.text(deckNameStub), findsOneWidget);
+      expect(find.text(deckStub.name), findsOneWidget);
       // Verify that the index card id is displayed.
       expect(find.text('Index Card $indexCardIdStub'), findsOneWidget);
       // Verify that the edit index card button is displayed.

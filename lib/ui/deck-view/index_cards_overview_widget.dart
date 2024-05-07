@@ -2,6 +2,7 @@ import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
+import 'package:aidex/ui/components/app_bar_components.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/deck-view/card_serach_bar.dart';
 import 'package:aidex/ui/deck-view/index_card_delete_dialog.dart';
@@ -67,13 +68,7 @@ class IndexCardOverview extends StatelessWidget {
                     )),
             centerTitle: true,
             title: Text(deck.name),
-            bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(1),
-                child: Divider(
-                  thickness: 3,
-                  color: deck.color,
-                  height: 1,
-                )),
+            bottom: AppBarBottomWidget(color: deck.color),
             actions: _getActions(context)),
         body: Column(
           children: [
@@ -111,9 +106,12 @@ class IndexCardOverview extends StatelessWidget {
                   )),
                 );
               } else if (state is IndexCardSelectionMode) {
-                return IndexCardsContainer(state: state, deckName: deck.name);
+                return IndexCardsContainer(state: state, deck: deck);
               } else if (state is IndexCardsLoaded) {
-                return IndexCardsContainer(state: state, deckName: deck.name);
+                return IndexCardsContainer(
+                  state: state,
+                  deck: deck,
+                );
               } else if (state is IndexCardsError) {
                 return ErrorDisplayWidget(errorMessage: state.message);
               } else {
@@ -154,16 +152,16 @@ class IndexCardsContainer extends StatelessWidget {
   /// Constructor for the [IndexCardsContainer].
   const IndexCardsContainer(
       {required final IndexCardState state,
-      required final String deckName,
+      required final Deck deck,
       super.key})
       : _state = state,
-        _deckName = deckName;
+        _deck = deck;
 
   /// state to determine indexCards, selectedCards and selectedMode
   final IndexCardState _state;
 
   /// The name of the deck for routing.
-  final String _deckName;
+  final Deck _deck;
 
   /// Returns the index cards based on the state.
   List<IndexCard> get indexCards => (_state is IndexCardsLoaded)
@@ -197,7 +195,7 @@ class IndexCardsContainer extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (final context) => ItemOnDeckViewWidgetSelectedRoute(
                     indexCard: indexCard,
-                    deckName: _deckName,
+                    deck: _deck,
                   ),
                 ),
               ).then((final value) => context
@@ -240,8 +238,7 @@ class AddCardButton extends StatelessWidget {
   ) async {
     await Navigator.of(context)
         .push(MaterialPageRoute(
-          builder: (final context) =>
-              IndexCardCreateRoute(deckId: _deck.deckId!, deckName: _deck.name),
+          builder: (final context) => IndexCardCreateRoute(deck: _deck),
         ))
         .then((final value) => context.read<IndexCardOverviewBloc>().add(
               const FetchIndexCards(),

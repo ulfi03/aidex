@@ -1,6 +1,8 @@
 import 'package:aidex/bloc/index_card_view_bloc.dart';
+import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/data/repo/index_card_repository.dart';
+import 'package:aidex/ui/components/app_bar_components.dart';
 import 'package:aidex/ui/components/custom_flip_card.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
 import 'package:aidex/ui/routes.dart';
@@ -12,14 +14,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class IndexCardViewPage extends StatelessWidget {
   /// Constructor for the [IndexCardViewPage].
   const IndexCardViewPage(
-      {required final int indexCardId,
-      required final String deckName,
-      super.key})
+      {required final int indexCardId, required final Deck deck, super.key})
       : _indexCardId = indexCardId,
-        _deckName = deckName;
+        _deck = deck;
 
   final int _indexCardId;
-  final String _deckName;
+  final Deck _deck;
 
   @override
   Widget build(final BuildContext context) => BlocProvider(
@@ -28,7 +28,7 @@ class IndexCardViewPage extends StatelessWidget {
           indexCardRepository: context.read<IndexCardRepository>(),
         ),
         child: IndexCardView(
-          deckName: _deckName,
+          deck: _deck,
         ),
       );
 }
@@ -37,10 +37,9 @@ class IndexCardViewPage extends StatelessWidget {
 /// for an answer. The answer is displayed in a readonly rich text editor.
 class IndexCardView extends StatelessWidget {
   /// Constructor for the [IndexCardView].s
-  const IndexCardView({required final String deckName, super.key})
-      : _deckName = deckName;
+  const IndexCardView({required final Deck deck, super.key}) : _deck = deck;
 
-  final String _deckName;
+  final Deck _deck;
 
   @override
   Widget build(final BuildContext context) =>
@@ -52,13 +51,14 @@ class IndexCardView extends StatelessWidget {
               builder: (final context, final state) => Scaffold(
                   appBar: AppBar(
                     title: Column(children: <Widget>[
-                      Text(_deckName, style: mainTheme.textTheme.titleSmall),
+                      Text(_deck.name, style: mainTheme.textTheme.titleSmall),
                       Text(
                         'Index Card ${state.indexCardId}',
                         style: mainTheme.textTheme.titleMedium,
                       ),
                     ]),
                     actions: _getActions(context, state),
+                    bottom: AppBarBottomWidget(color: _deck.color),
                   ),
                   body: _getBody(state))));
 
@@ -91,8 +91,8 @@ class IndexCardView extends StatelessWidget {
   void _onEdit(final BuildContext context, final IndexCard indexCard) {
     Navigator.of(context)
         .push(MaterialPageRoute(
-            builder: (final context) => IndexCardEditRoute(
-                initialIndexCard: indexCard, deckName: _deckName)))
+            builder: (final context) =>
+                IndexCardEditRoute(initialIndexCard: indexCard, deck: _deck)))
         .then((final value) => context
             .read<IndexCardViewBloc>()
             .add(FetchIndexCard(indexCardId: indexCard.indexCardId!)));
