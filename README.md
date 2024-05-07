@@ -16,6 +16,18 @@
 5. [Project Structure](#project-structure)
 6. [Bloc Architecture - Example](#bloc-architecture-example)
 7. [Code Example](#code-example)
+8. [Aidex Server](#aidex-server)
+    - [Introduction](#introduction)
+    - [Project Structure](#project-structure)
+    - [Endpoints](#endpoints)
+    - [Functions](#functions)
+        - [extract_text](#extract_text)
+        - [schedule_chatgpt_requests](#schedule_chatgpt_requests)
+        - [ClientResponse](#clientresponse)
+        - [validate_response](#validate_response)
+        - [validate_index_card](#validate_index_card)
+        - [ai_create_index_cards_from_plain_text](#ai_create_index_cards_from_plain_text)
+    - [Constants](#constants
 8. [Dependencies](#dependencies)
 9. [License](#license)
 10. [Contact](#contact)
@@ -119,15 +131,44 @@ aidex/
 
 ## BLoC Architecture
 
+BLoC stands for "Business Logic Component" and is a popular architecture pattern in Flutter. It helps you separate
+business logic from the user interface, allowing you to maintain a clean structure in your apps. BLoC relies on the
+concept of streams, where data flows in one direction. You have two primary components: the BLoC itself and the UI (user
+interface). The BLoC is where you handle all the business logic, while the UI listens for updates from the BLoC.
+
+An important addition to the pattern is the data component, which encompasses the source of truth for your application's
+data. This component might include services, repositories, or data storage, and is responsible for fetching, storing,
+and updating data from various sources like APIs, local databases, or files. In the BLoC architecture, the BLoC acts as
+a bridge between the UI and the data component. It receives events from the UI, retrieves or manipulates data via the
+data component, and then streams the resulting states back to the UI.
+
 <img src="doc/screenshots/bLoC-architecture-illustration.png" alt="Illustration of BLoC Architecture functionality" height="150">
 
-### Select IndexCards and delete them
+### Benfits
 
-The `index_card_item_widget.dart` file contains the `IndexCardItemWidget` class, which is a widget used to display an
-index card item in `index_cards_overview_widget.dart`. These widgets use the BLoC  (Business Logic
-Component) Architecture `IndexCardOverviewBloc` to select `indexCards`.
+| Benefit                  | Description                                                                                                             |
+|--------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| Separation of Concerns   | BLoC architecture separates business logic from UI, which makes the codebase cleaner and easier to maintain.            |
+| Testability              | Since the business logic is separated from the UI, it's easier to write unit tests for the business logic.              |
+| Reusability              | BLoC components can be reused across different parts of the app or even across different apps.                          |
+| Predictability           | BLoC architecture follows a predictable data flow, which makes it easier to understand how the state changes over time. |
+| Consistency              | BLoC enforces a consistent way of managing state and handling business logic across the entire app.                     |
+| Scalability              | BLoC architecture is highly scalable. It works equally well for small and large projects.                               |
+| Integration with Flutter | BLoC architecture works seamlessly with Flutter's reactive model.                                                       |
 
-The following table shows all the states, events, and their attributes used in `IndexCardOverviewBloc`:
+### Example
+
+#### Select IndexCards and delete them
+
+The [index_card_item_widget.dart](.\lib\ui\deck-view\index_card_item_widget.dart) file contains
+the [`IndexCardItemWidget`](.\lib\ui\deck-view\index_card_item_widget.dart)
+class, which is a widget used to display an
+index card item in [index_cards_overview_widget.dart](.\lib\ui\deck-view\index_cards_overview_widget.dart). These
+widgets use the BLoC  (Business Logic
+Component) Architecture [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart) to select `indexCards`.
+
+The following table shows all the states, events, and their attributes used
+in [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart):
 
 | Events                     | Attributes                        | Description                                         | States                 | Attributes                                                        | Description                                                    |
 |----------------------------|-----------------------------------|-----------------------------------------------------|------------------------|-------------------------------------------------------------------|----------------------------------------------------------------|
@@ -148,36 +189,48 @@ attributes and the cycle repeats.
 
 For selecting and deleting index cards the cycle is as follows:
 
-The `updateSelection(context)` method triggers the Event `IndexCardSelectionMode`.
+The [`updateSelection(context)`](.\lib\ui\deck-view\index_card_item_widget.dart) method triggers the
+Event [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart).
 
-`updateSelection(context)` itself is triggered given two scenarios:
+[`updateSelection(context)`](.\lib\ui\deck-view\index_card_item_widget.dart) itself is triggered given two scenarios:
 
-1. If the BLoCs state is not in `IndexCardSelectionMode`:  
-   Long-pressing the `IndexCardItemWidget` will trigger the `updateSelection(context)` method handled in
+1. If the BLoCs state is not in [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart):  
+   Long-pressing the [`IndexCardItemWidget`](.\lib\ui\deck-view\index_card_item_widget.dart) will trigger
+   the [`updateSelection(context)`](.\lib\ui\deck-view\index_card_item_widget.dart) method handled in
    the `onLongPress` parameter
-   of `GestureDetector`. This will select the long-pressed `IndexCardItemWidget` in the `IndexCardOverview` as follows.
+   of `GestureDetector`. This will select the
+   long-pressed [`IndexCardItemWidget`](.\lib\ui\deck-view\index_card_item_widget.dart) in
+   the [`IndexCardOverview`](lib/ui/deck-view/index_cards_overview_widget.dart) as
+   follows.
 
 
-2. If the BLoCs state is already in `IndexCardSelectionMode`):  
-   Tapping on `IndexCardItemWidget` will trigger the `updateSelection(context)` method handled in the `onTap` parameter
+2. If the BLoCs state is already in [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart)):  
+   Tapping on [`IndexCardItemWidget`](.\lib\ui\deck-view\index_card_item_widget.dart) will trigger
+   the [`updateSelection(context)`](.\lib\ui\deck-view\index_card_item_widget.dart) method handled in the `onTap`
+   parameter
    of the `GestureDetector` widget.
-   This selects the tapped `IndexCardItemWidget` in the `IndexCardOverview` or deselects if it was already selected.
+   This selects the tapped [`IndexCardItemWidget`](.\lib\ui\deck-view\index_card_item_widget.dart) in
+   the [`IndexCardOverview`](lib/ui/deck-view/index_cards_overview_widget.dart) or deselects if it was already selected.
 
-The `updateSelection(context)` method is a crucial part of the `IndexCardItemWidgets` interaction with the BLoC
+The [`updateSelection(context)`](.\lib\ui\deck-view\index_card_item_widget.dart) method is a crucial part of
+the [`IndexCardItemWidgets`](.\lib\ui\deck-view\index_card_item_widget.dart) interaction with the BLoC
 architecture. This method is responsible for managing the selection of the index card. It adds an index card to the
 selected index cards
 list if it isn't selected, or removes the index card from the selected index cards list if it was selected. After one of
 these operations on the selected index cards list, it updates the selected index cards list in the bloc.
 
-`updateSelection(context)` is called with the current `BuildContext` as an argument. This
-context is used to access the `IndexCardOverviewBloc` and add the `UpdateSelectedIndexCards` event to it with the
+[`updateSelection(context)`](.\lib\ui\deck-view\index_card_item_widget.dart) is called with the current `BuildContext`
+as an argument. This
+context is used to access the [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart) and add
+the [`UpdateSelectedIndexCards`](lib/bloc/index_cards_overview_bloc.dart) event to it with the
 updated list of selected index cards.
 
-This interaction between the `IndexCardItemWidget` and the `IndexCardOverviewBloc` is a typical example of the BLoC
+This interaction between the [`IndexCardItemWidget`](.\lib\ui\deck-view\index_card_item_widget.dart) and
+the [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart) is a typical example of the BLoC
 architecture, where the UI components (widgets) dispatch events to the BLoC, and the BLoC updates the state based on
 these events. The widgets then rebuild based on the new state.
 
-#### IndexCardItemWidget
+##### IndexCardItemWidget
 
 ```dart
 void updateSelection(final BuildContext context) {
@@ -194,12 +247,15 @@ void updateSelection(final BuildContext context) {
 }
 ```
 
-The following line checks if the current state of the BLoC is `IndexCardSelectionMode`. If it is, it assigns the list of
+The following line checks if the current state of the BLoC
+is [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart). If it is, it assigns the list of
 currently selected
 index card IDs (which is the attribute ```List<int> indexCardIds``` which it gets from the
-state `IndexCardSelectionMode`) to `selectedIndexCardIds`. If it's not in `IndexCardSelectionMode`,
-then `IndexCardSelectionMode` is about to be initiated, therefore it assigns an empty list
-to ```selectedIndexCardIds```.
+state [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart)) to `selectedIndexCardIds`. If it's not
+in [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart),
+then [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart) is about to be initiated, therefore it assigns
+an empty list
+to `selectedIndexCardIds`.
 
 <!-- @formatter:off-->
 ```dart
@@ -224,7 +280,8 @@ deselection of index cards are handled.
 ```
 <!-- @formatter:on-->
 
-The following line dispatches an `UpdateSelectedIndexCards` event to the `IndexCardOverviewBloc` with the
+The following line dispatches an [`UpdateSelectedIndexCards`](lib/bloc/index_cards_overview_bloc.dart) event to
+the [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart) with the
 updated list of selected`selectedIndexCardIds` list. This is how the BLoC is notified about the changes in the
 selection of index cards
 
@@ -235,9 +292,9 @@ selection of index cards
 ```
 <!-- @formatter:on-->
 
-#### IndexCardOverviewBloc
+##### IndexCardOverviewBloc
 
-This is how `IndexCardOverviewBloc` catches the dispatched event.
+This is how [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart) catches the dispatched event.
 
 <!-- @formatter:off-->
 ```dart
@@ -247,16 +304,19 @@ on<UpdateSelectedIndexCards>((final event, final emit) async {
 ```
 <!-- @formatter:on-->
 As stated before, the BLoC is able to access the attributes of the dispatched event. In this case, it accesses the
-`indexCardIds` attribute of the `UpdateSelectedIndexCards` event. It then emits a new state with the updated
+`indexCardIds` attribute of the [`UpdateSelectedIndexCards`](lib/bloc/index_cards_overview_bloc.dart) event. It then
+emits a new state with the updated
 list of
 selected index card IDs (`indexCardIds`). IndexCardSelectionMode is further in need of all the `indexCards` in
 the list but those are not
-dependend on the Event, therefore they stay the same.
+dependent on the Event, therefore they stay the same.
 
-#### BlocBuilder (`IndexCardOverview`)
+##### BlocBuilder ([`IndexCardOverview`](lib/ui/deck-view/index_cards_overview_widget.dart))
 
-The `IndexCardOverview` uses the `BlocBuilder` to rebuild the UI based on the state of
-the `IndexCardOverviewBloc`. `BlocBuilder` listens to the state of `IndexCardOverviewBloc` and rebuilds
+The [`IndexCardOverview`](lib/ui/deck-view/index_cards_overview_widget.dart) uses the `BlocBuilder` to rebuild the UI
+based on the state of
+the [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart). `BlocBuilder` listens to the state
+of [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart) and rebuilds
 the UI based on whether the state itself has changed or if any attributes of the current state were changed.
 
 To recognize the change in a states attribute the state itself has to override the props method of the EquatableMixin
@@ -279,13 +339,16 @@ class IndexCardsError extends IndexCardState with EquatableMixin {
 ```
 <!-- @formatter:on-->
 
-`IndexCardSelectionMode` does not override the props method because it is expected to trigger a rebuild everytime the
+[`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart) does not override the props method because it is
+expected to trigger a rebuild everytime the
 state is
 emitted.
 
-The following code-block shows how BlocBuilder is implemented in `IndexCardOverview`.
+The following code-block shows how BlocBuilder is implemented
+in [`IndexCardOverview`](lib/ui/deck-view/index_cards_overview_widget.dart).
 
-There are many BlocBuilder which control different parts of the `IndexCardOverview` widgets UI. But I will only focus on
+There are many BlocBuilder which control different parts of
+the [`IndexCardOverview`](lib/ui/deck-view/index_cards_overview_widget.dart) widgets UI. But I will only focus on
 one given that they all work similar.
 
 <!-- @formatter:off-->
@@ -294,27 +357,31 @@ BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
    builder: (final context, final state) {
       if (state is IndexCardsLoading) {
          return Center(
-         child: CircularProgressIndicator(
-         valueColor: AlwaysStoppedAnimation<Color>(
-         mainTheme.colorScheme.primary,
-      )),
-      );
+            child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(
+            mainTheme.colorScheme.primary,
+            )),
+         );
       } else if (state is IndexCardSelectionMode) {
-        return IndexCardsContainer(state: state, deckName: deck.name);
+        return IndexCardsContainer(state: state, deck: deck);
       } else if (state is IndexCardsLoaded) {
-        return IndexCardsContainer(state: state, deckName: deck.name);
+         return IndexCardsContainer(
+            state: state,
+            deck: deck,
+            );
       } else if (state is IndexCardsError) {
         return ErrorDisplayWidget(errorMessage: state.message);
       } else {
         return const ErrorDisplayWidget(errorMessage: 'Something went wrong!');
       }
-  }
-),
+   }
+);
 ```
 <!-- @formatter:on-->
 
 This BlocBuilder manages how the UI part that contains the list of Index cards (red) is displayed
-One can see that the UI changes based on the current state that BlocBuilder receives from `IndexCardOverviewBloc`  and
+One can see that the UI changes based on the current state that BlocBuilder receives
+from [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart) and
 that 4 cases are distinguished.
 
 <table>
@@ -332,16 +399,19 @@ that 4 cases are distinguished.
   </tr>
 </table>
 
-For `IndexCardSelectionMode` and `IndexCardsLoaded` the, state is passed down to `IndexCardsContainer`. This class is
-responsible for building the list of indexCards, having access to each `indexCard` -`IndexCardItemWidget` itself.
+For [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart)
+and [`IndexCardsLoaded`](lib/bloc/index_cards_overview_bloc.dart) the, state is passed down
+to [`IndexCardsContainer`](lib/ui/deck-view/index_cards_overview_widget.dart). This class is
+responsible for building the list of indexCards, having access to
+each `indexCard` -[`IndexCardItemWidget`](.\lib\ui\deck-view\index_card_item_widget.dart) itself.
 Whether a single IndexCardItemWidget is selected (showing the check-icon + appearing grey) or not is determined inside
-the `IndexCardItemWidget`.
+the [`IndexCardItemWidget`](.\lib\ui\deck-view\index_card_item_widget.dart).
 
 ## Code Example
 
 [Beispielcode für das Verständnis der Project-Structure, complexer Funktionalitäten.]
 
-### AIDEX Server
+# AIDEX Server
 
 Overview of the AIDEX server, its functionalities, and key components.
 
