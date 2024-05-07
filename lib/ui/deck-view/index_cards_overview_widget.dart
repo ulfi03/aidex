@@ -70,81 +70,87 @@ class IndexCardOverview extends StatelessWidget {
             title: Text(deck.name),
             bottom: AppBarBottomWidget(color: deck.color),
             actions: _getActions(context)),
-        body: Column(
-          children: [
-            BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
-                buildWhen: (final previous, final current) =>
-                    current is IndexCardInitial ||
-                    current is IndexCardSelectionMode ||
-                    current is IndexCardsLoaded &&
-                        previous is IndexCardSelectionMode,
-                builder: (final context, final state) {
-                  if (state is! IndexCardSelectionMode) {
-                    return Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                  child: CardSearchBar(
-                                      indexCardOverviewBloc:
-                                          context.read<IndexCardOverviewBloc>(),
-                                      query: getQuery(state))),
-                              AddCardButton(deck: deck)
-                            ]));
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                }),
-            BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
-                builder: (final context, final state) {
-              if (state is IndexCardsLoading) {
-                return Center(
-                  child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                    mainTheme.colorScheme.primary,
-                  )),
-                );
-              } else if (state is IndexCardSelectionMode) {
-                return IndexCardsContainer(state: state, deck: deck);
-              } else if (state is IndexCardsLoaded) {
-                return IndexCardsContainer(
-                  state: state,
-                  deck: deck,
-                );
-              } else if (state is IndexCardsError) {
-                return ErrorDisplayWidget(errorMessage: state.message);
-              } else {
-                return const ErrorDisplayWidget(
-                    errorMessage: 'Something went wrong!');
-              }
-            }),
-          ],
-        ),
-        floatingActionButton:
-            BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
-                builder: (final context, final state) {
-          if (state is IndexCardsLoaded && state.indexCards.isNotEmpty) {
-            return FloatingActionButton(
-              heroTag: 'playButton',
-              backgroundColor: mainTheme.colorScheme.primary,
-              child: const Icon(Icons.play_arrow),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (final context) =>
-                        LearningFunctionRoute(deck: deck),
-                  ),
-                );
-              },
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
-        }),
+        body: _buildBody(),
+        floatingActionButton: _buildFloatingButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       );
+
+  Widget _buildBody() => Column(
+        children: [_buildSearchBarRow(), _buildIndexCardsContainer()],
+      );
+
+  /// Builds the search bar row.
+  Widget _buildSearchBarRow() =>
+      BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
+          buildWhen: (final previous, final current) =>
+              current is IndexCardInitial ||
+              current is IndexCardSelectionMode ||
+              current is IndexCardsLoaded && previous is IndexCardSelectionMode,
+          builder: (final context, final state) {
+            if (state is! IndexCardSelectionMode) {
+              return Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                            child: CardSearchBar(
+                                indexCardOverviewBloc:
+                                    context.read<IndexCardOverviewBloc>(),
+                                query: getQuery(state))),
+                        AddCardButton(deck: deck)
+                      ]));
+            } else {
+              return const SizedBox.shrink();
+            }
+          });
+
+  Widget _buildIndexCardsContainer() =>
+      BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
+          builder: (final context, final state) {
+        if (state is IndexCardsLoading) {
+          return Center(
+            child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+              mainTheme.colorScheme.primary,
+            )),
+          );
+        } else if (state is IndexCardSelectionMode) {
+          return IndexCardsContainer(state: state, deck: deck);
+        } else if (state is IndexCardsLoaded) {
+          return IndexCardsContainer(
+            state: state,
+            deck: deck,
+          );
+        } else if (state is IndexCardsError) {
+          return ErrorDisplayWidget(errorMessage: state.message);
+        } else {
+          return const ErrorDisplayWidget(
+              errorMessage: 'Something went wrong!');
+        }
+      });
+
+  Widget _buildFloatingButton() =>
+      BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
+          builder: (final context, final state) {
+        if (state is IndexCardsLoaded && state.indexCards.isNotEmpty) {
+          return FloatingActionButton(
+            heroTag: 'playButton',
+            backgroundColor: mainTheme.colorScheme.primary,
+            child: const Icon(Icons.play_arrow),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (final context) => LearningFunctionRoute(deck: deck),
+                ),
+              );
+            },
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      });
 }
 
 /// Contains the index cards of current deck.

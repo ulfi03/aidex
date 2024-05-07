@@ -65,79 +65,74 @@ class IndexCardItemWidget extends StatelessWidget {
   }
 
   @override
-  Widget build(final BuildContext context) {
-    final iconSize = MediaQuery.of(context).size.width / 4;
-
-    return GestureDetector(
-      onTap: (_state is IndexCardSelectionMode)
-          ? () => updateSelection(context)
-          : () => onTap(context),
-      onLongPress: (_state is IndexCardSelectionMode)
-          ? () => {}
-          : () => updateSelection(context),
-      child: Container(
-        key: containerKey,
-        height: 65,
-        padding: const EdgeInsets.all(8),
-        margin: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width / 32,
-          vertical: MediaQuery.of(context).size.width / 64,
-        ),
-        decoration: BoxDecoration(
-          color: () {
-            if (_state is IndexCardSelectionMode) {
-              return (_state.isThisCardSelected(indexCard.indexCardId!))
-                  ? mainTheme.colorScheme.onSurfaceVariant
-                  : mainTheme.colorScheme.surface;
-            } else {
-              return mainTheme.colorScheme.surface;
-            }
-          }(),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            if (_state is IndexCardSelectionMode)
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Icon(
-                  key: checkIconKey,
-                  (_state.isThisCardSelected(indexCard.indexCardId!))
-                      ? Icons.check_circle_outline
-                      : Icons.circle_outlined,
-                  size: iconSize * 0.25,
-                  color: mainTheme.colorScheme.primary,
+  Widget build(final BuildContext context) => GestureDetector(
+        onTap: (_state is IndexCardSelectionMode)
+            ? () => updateSelection(context)
+            : () => onTap(context),
+        onLongPress: (_state is IndexCardSelectionMode)
+            ? () => {}
+            : () => updateSelection(context),
+        child: Container(
+          key: containerKey,
+          height: 65,
+          padding: const EdgeInsets.all(8),
+          margin: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width / 32,
+            vertical: MediaQuery.of(context).size.width / 64,
+          ),
+          decoration: BoxDecoration(
+            color: () {
+              if (_state is IndexCardSelectionMode) {
+                return (_state.isThisCardSelected(indexCard.indexCardId!))
+                    ? mainTheme.colorScheme.onSurfaceVariant
+                    : mainTheme.colorScheme.surface;
+              } else {
+                return mainTheme.colorScheme.surface;
+              }
+            }(),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            children: [
+              if (_state is IndexCardSelectionMode)
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Icon(
+                    key: checkIconKey,
+                    (_state.isThisCardSelected(indexCard.indexCardId!))
+                        ? Icons.check_circle_outline
+                        : Icons.circle_outlined,
+                    color: mainTheme.colorScheme.primary,
+                  ),
+                ),
+              Stack(alignment: Alignment.center, children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: mainTheme.colorScheme.background,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                const RotationTransition(
+                  turns: AlwaysStoppedAnimation(15 / 360),
+                  child: IndexCardIcon(size: 30),
+                ),
+              ]),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Text(
+                    indexCard.question,
+                    textAlign: TextAlign.start,
+                    style: mainTheme.textTheme.bodyMedium,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
                 ),
               ),
-            Stack(alignment: Alignment.center, children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: mainTheme.colorScheme.background,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              const RotationTransition(
-                turns: AlwaysStoppedAnimation(15 / 360),
-                child: IndexCardIcon(size: 30),
-              ),
-            ]),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: Text(
-                  indexCard.question,
-                  textAlign: TextAlign.start,
-                  style: mainTheme.textTheme.bodyMedium,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 }
