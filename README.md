@@ -316,7 +316,8 @@ BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
 <!-- @formatter:on-->
 
 This BlocBuilder manages how the UI part that contains the list of Index cards (red) is displayed
-One can see that the UI changes based on the state and that 4 cases are distinguished.
+One can see that the UI changes based on the current state that BlocBuilder receives from `IndexCardOverviewBloc`  and
+that 4 cases are distinguished.
 
 <table>
    <tr>
@@ -334,7 +335,9 @@ One can see that the UI changes based on the state and that 4 cases are distingu
 </table>
 
 For `IndexCardSelectionMode` and `IndexCardsLoaded` the, state is passed down to `IndexCardsContainer`. This class is
-responsible for displaying the list of indexCards, having access to each `indexCard` -`IndexCardItemWidget` itself.
+responsible for building the list of indexCards, having access to each `indexCard` -`IndexCardItemWidget` itself.
+Whether a single IndexCardItemWidget is selected (showing the check-icon + appearing grey) or not is determined inside
+the `IndexCardItemWidget`.
 
 ## Code Example
 
