@@ -15,16 +15,15 @@
 4. [Getting Started](#getting-started)
 5. [Project Structure](#project-structure)
 6. [Bloc Architecture](#bloc-architecture)
-7. [Example](#example)  
-   7.1 [Select IndexCards and delete them](#select-indexcards-and-delete-them)  
-   7.1.1 [IndexCardItemWidget](#indexcarditemwidget)  
-   7.1.2 [IndexCardOverviewBloc](#indexcardoverviewbloc)  
-   7.1.3 [BlocBuilder (IndexCardOverview)](#blocbuilder-indexcardoverview)
-7. [Code Example](#code-example)
-8. [AIDex Server](#AIDex-server)
-8. [Dependencies](#dependencies)
-9. [License](#license)
-10. [Contact](#contact)
+7. [Example](#example---indexcardoverview)  
+   7.1 [IndexCardItemWidget](#indexcarditemwidget)  
+   7.2 [IndexCardOverviewBloc](#indexcardoverviewbloc)  
+   7.3 [BlocBuilder (IndexCardOverview)](#blocbuilder-indexcardoverview)
+8. [Code Example](#code-example)
+9. [AIDex Server](#AIDex-server)
+10. [Dependencies](#dependencies)
+11. [License](#license)
+12. [Contact](#contact)
 
 ## Introduction
 
@@ -153,13 +152,18 @@ data component, and then streams the resulting states back to the UI.
 
 Index cards are organized within [`Decks`](lib/data/model/deck.dart) in the AIDex app.
 The [`IndexCardOverview`](lib/ui/deck-view/index_cards_overview_widget.dart) widget displays all the index cards within
-a [`Deck`](lib/data/model/deck.dart). Users are able to select and delete those index cards. The following example
+a [`Deck`](lib/data/model/deck.dart).
+
+<img src="doc/data-model/datamodel.drawio.svg" alt="Relation Deck-IndexCards" height="150">
+
+Users are able to select and delete those index cards. The following example
 demonstrates how the BLoC architecture
 is used to manage the selection and deletion of index cards.
 
 The following table shows the different states of
 the [`IndexCardOverview`](lib/ui/deck-view/index_cards_overview_widget.dart) and how they are displayed in the UI.
 
+<a name="indexCardOverviewStates"></a>
 <table>
    <tr>
     <th><p>IndexCardsLoading</p></th>
@@ -175,39 +179,121 @@ the [`IndexCardOverview`](lib/ui/deck-view/index_cards_overview_widget.dart) and
   </tr>
 </table>
 
+In the BLoC architecture states and events are objects being exchanged between the BLoC and the UI. The BLoC emits
+states causing the UI to rebuild. During the rebuild the UI can access the data of the current state and change the
+display accordingly. The BlocBuilder is a widget that performs these rebuilds in the Flutter widget-tree. To change the
+state the UI itself can trigger events which are captured by the BLoC. The BLoC is responsible for handling these events
+and emitting subsequent states.
+
 This table shows all the states, events, and their attributes used
 in [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart):
 
-| Events                     | Attributes                        | Description                                         | States                 | Attributes                                                        | Description                                                    |
-|----------------------------|-----------------------------------|-----------------------------------------------------|------------------------|-------------------------------------------------------------------|----------------------------------------------------------------|
-| FetchIndexCards            |                                   | Fetches index cards from the data source.           | IndexCardInitial       |                                                                   | The initial state of the index card.                           |
-| UpdateSelectedIndexCards   | `List<int> indexCardIds`          | Updates the list of selected index cards.           | IndexCardsLoading      | `String query`                                                    | Represents the loading state when fetching index cards.        |
-| ExitIndexCardSelectionMode |                                   | Exits the index card selection mode.                | IndexCardsLoaded       | `List<IndexCard> indexCards`, <br/>`String query`                 | Represents the state when index cards are successfully loaded. |
-| RemoveIndexCardsById       | `List<int> selectedIndexCardsIds` | Removes selected index cards by their IDs.          | IndexCardSelectionMode | `List<int> indexCardIds`, `List<IndexCard> indexCards`            | Represents the state when an index card is selected.           |
-| AddIndexCard               | `IndexCard indexCard`             | Adds a new index card.                              |                        | `function`: <br/>`bool isThisCardSelected(final int indexCardId)` |                                                                |
-| SearchIndexCards           | `String query`                    | Searches for index cards based on a query.          | IndexCardsError        | `String message`                                                  | Represents the state when an error occurs.                     |
-| SortIndexCards             | `bool sortAsc`                    | Sorts index cards in ascending or descending order. |                        |                                                                   |                                                                |
+<div style="display: flex; justify-content: space-between;">
+<table style="width: 45%; float: left;">
+  <thead>
+    <tr>
+      <th>Events</th>
+      <th>Attributes</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FetchIndexCards</td>
+      <td></td>
+      <td>Fetch index cards from the database.</td>
+    </tr>
+    <tr>
+      <td>UpdateSelectedIndexCards</td>
+      <td>List&lt;int&gt; indexCardIds</td>
+      <td>Update the list of selected index cards.</td>
+    </tr>
+    <tr>
+      <td>ExitIndexCardSelectionMode</td>
+      <td></td>
+      <td>Exit the index card selection mode.</td>
+    </tr>
+    <tr>
+      <td>RemoveIndexCardsById</td>
+      <td>List&lt;int&gt; selectedIndexCardsIds</td>
+      <td>Remove selected index cards by their IDs.</td>
+    </tr>
+    <tr>
+      <td>AddIndexCard</td>
+      <td>IndexCard indexCard</td>
+      <td>Add a new index card.</td>
+    </tr>
+    <tr>
+      <td>SearchIndexCards</td>
+      <td>String query</td>
+      <td>Search for index cards based on a query.</td>
+    </tr>
+    <tr>
+      <td>SortIndexCards</td>
+      <td>bool sortAsc</td>
+      <td>Sort index cards in ascending or descending order.</td>
+    </tr>
+  </tbody>
+</table>
 
-One of the key functionalities of the BLoC architecture is that if you read the state of the BLoC in your UI, then you
-can access the
-attributes of this state. Reading the values of the attributes the UI changes its display accordingly. The UI itself can
-trigger Events which are captured by the BLoC. Given an Event you can access the attributes of the Events when they are
-triggered. The business logic is then able to do its logic with these values triggering a certain state with different
-attributes and the cycle repeats.
+<div style="width: 10%; float: left;"></div>
 
-The [index_card_item_widget.dart](lib/ui/deck-view/index_card_item_widget.dart) file contains
-the [`IndexCardItemWidget`](lib/ui/deck-view/index_card_item_widget.dart)
+<table style="width: 45%; float: right;">
+  <thead>
+    <tr>
+      <th>States</th>
+      <th>Attributes</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>IndexCardInitial</td>
+      <td></td>
+      <td>The initial state of the index cards overview (contains no index cards).</td>
+    </tr>
+    <tr>
+      <td>IndexCardsLoading</td>
+      <td>String query</td>
+      <td>Represents the loading state when fetching index cards.</td>
+    </tr>
+    <tr>
+      <td>IndexCardsLoaded</td>
+      <td>List&lt;IndexCard&gt; indexCards, <br/>String query</td>
+      <td>Represents the state when index cards are successfully loaded.</td>
+    </tr>
+    <tr>
+      <td>IndexCardSelectionMode</td>
+      <td>List&lt;int&gt; indexCardIds, List&lt;IndexCard&gt; indexCards</td>
+      <td>Represents the state for selecting index cards.</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>function: <br/>bool isThisCardSelected(final int indexCardId)</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>IndexCardsError</td>
+      <td>String message</td>
+      <td>Represents the state when an error occurs.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+The [`IndexCardItemWidget`](lib/ui/deck-view/index_card_item_widget.dart)
 class, which is a widget used to display an
 index card item in [index_cards_overview_widget.dart](lib/ui/deck-view/index_cards_overview_widget.dart). These
 widgets use the BLoC  (Business Logic
 Component) Architecture [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart) to select `indexCards`.
 
-For selecting and deleting index cards the cycle is as follows:
+For selecting and deleting index cards the cycle proceeds as follows:
 
 The [`updateSelection(context)`](lib/ui/deck-view/index_card_item_widget.dart) method triggers the
 Event [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart).
 
-[`updateSelection(context)`](lib/ui/deck-view/index_card_item_widget.dart) itself is triggered given two scenarios:
+[`updateSelection(context)`](lib/ui/deck-view/index_card_item_widget.dart) (
+in [`IndexCardItemWidget`](lib/ui/deck-view/index_cards_overview_widget.dart)) itself is triggered given two scenarios:
 
 1. Only if the BLoCs state is not in [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart):  
    Long-pressing the [`IndexCardItemWidget`](lib/ui/deck-view/index_card_item_widget.dart) will trigger
@@ -394,10 +480,11 @@ BlocBuilder<IndexCardOverviewBloc, IndexCardState>(
 ```
 <!-- @formatter:on-->
 
-This BlocBuilder manages how the UI part that contains the list of Index cards (red) is displayed
+This BlocBuilder manages how the UI part that contains the list of Index cards is displayed
 One can see that the UI changes based on the current state that BlocBuilder receives
 from [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart) and
-that 4 cases are distinguished.
+that 4 cases (IndexCardsLoading, IndexCardSelectionMode, IndexCardsLoaded, IndexCardsError)
+are distinguished.
 
 For [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart)
 and [`IndexCardsLoaded`](lib/bloc/index_cards_overview_bloc.dart) the, state is passed down
