@@ -52,7 +52,7 @@ Include screenshots to showcase the UI and important features.
    <tr>
       <td><img src="doc/screenshots/index-card-overview/index-card-overview_loaded.jpg" alt="Index Card Overview" width="250px"></td>
       <td><img src="doc/screenshots/index-card-overview/index-card-overview_one-selected.jpg" alt="Select IndexCards (for deletion)" width="250px"></td>
-      <td><img src="doc/screenshots/index-card-overview/index-card-overview_delete-dialog.jpg" alt="Select IndexCards (for deletion)" width="250px"></td>
+      <td><img src="doc/screenshots/learning-function.jpg" alt="Select IndexCards (for deletion)" width="250px"></td>
    </tr>
    <tr>
       <td><img src="doc/screenshots/index-card-view/index-card-create-edit_BLoC.jpg" alt="Select IndexCards (for deletion)" width="250px"></td>
