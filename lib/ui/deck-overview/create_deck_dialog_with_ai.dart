@@ -218,10 +218,9 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
                                     height: 20,
                                     child: CircularProgressIndicator(),
                                   ) // Display loading animation with fixed size
-                                : Text(
-                                    'Create',
+                                : const Text(
+                                    'Ok',
                                     key: okButtonTextKey,
-                                    style: mainTheme.textTheme.bodySmall,
                                   ),
                           ),
                         ],

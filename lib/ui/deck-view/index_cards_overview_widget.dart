@@ -76,7 +76,10 @@ class IndexCardOverview extends StatelessWidget {
       );
 
   Widget _buildBody() => Column(
-        children: [_buildSearchBarRow(), _buildIndexCardsContainer()],
+        children: [
+          _buildSearchBarRow(),
+          Expanded(child: _buildIndexCardsContainer())
+        ],
       );
 
   /// Builds the search bar row.
@@ -175,20 +178,19 @@ class IndexCardsContainer extends StatelessWidget {
       : (_state as IndexCardSelectionMode).indexCards;
 
   @override
-  Widget build(final BuildContext context) => Expanded(
-      child: (indexCards.isEmpty)
-          ? Center(
-              child: Text('No index cards found, create one!',
-                  style: mainTheme.textTheme.bodyMedium))
-          : SingleChildScrollView(
-              padding: EdgeInsets.only(
-                  bottom: mainTheme.floatingActionButtonTheme.sizeConstraints!
-                          .maxHeight *
-                      2),
-              child: Wrap(
-                children: _getIndexCardItems(context),
-              ),
-            ));
+  Widget build(final BuildContext context) => (indexCards.isEmpty)
+      ? Center(
+          child: Text('No index cards found, create one!',
+              style: mainTheme.textTheme.bodyMedium))
+      : SingleChildScrollView(
+          padding: EdgeInsets.only(
+              bottom: mainTheme
+                      .floatingActionButtonTheme.sizeConstraints!.maxHeight *
+                  2),
+          child: Wrap(
+            children: _getIndexCardItems(context),
+          ),
+        );
 
   List<Widget> _getIndexCardItems(final BuildContext context) => indexCards
       .map((final indexCard) => IndexCardItemWidget(
