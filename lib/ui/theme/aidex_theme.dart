@@ -6,7 +6,7 @@ final ThemeData mainTheme = ThemeData(
     seedColor: const Color(0xFF20EFC0),
     primary: const Color(0xFF20EFC0),
     onPrimary: Colors.black,
-    secondary: Colors.yellow,
+    secondary: const Color(0xFF00CDBE),
     background: const Color(0xFF414141),
     onBackground: Colors.white,
     surface: const Color(0xFF121212).withOpacity(0.9),
