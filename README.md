@@ -111,10 +111,6 @@ aidex/
 
 ## Dependencies
 
-Flutter - Framework for building the app.
-BLoC - State management.
-OpenAI - AI services.
-
 - [Flutter](https://flutter.dev/) - Framework for building the app.
 - [BLoC](https://bloclibrary.dev/#/) - State management.
 - [OpenAI](https://openai.com/) - AI services.
