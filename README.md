@@ -39,22 +39,21 @@ of a quick and efficient way to create and manage index cards.
 
 Include screenshots to showcase the UI and important features.
 <table>
-  <tr>
-    <td><img src="doc/screenshots/deck-overview.jpg" alt="Deck Overview" width="250px"></td>
-    <td><img src="doc/screenshots/create-deck_modal-bottom-sheet.jpg" alt="Create Deck Modal Bottom Sheet" width="250px"></td>
-    <td><img src="doc/screenshots/create-deck_dialog.jpg" alt="Create Deck Dialog" width="250px"></td>
-  </tr>
-  <tr>
-    <td><img src="doc/screenshots/create-deck_dialog_with-ai.jpg" alt="Create Deck Dialog with AI" width="250px"></td>
-    <td><img src="doc/screenshots/index-card-overview.jpg" alt="Index Card Overview" width="250px"></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td><img src="doc/screenshots/select-IndexCards.png" alt="Select IndexCards (for deletion)" width="250px"></td>
-    <td><img src="doc/screenshots/indexCard_delete_dialog.png" alt="Create Deck Dialog with AI" width="250px"></td>
-    <td></td>
-  </tr>
-
+   <tr>
+      <td><img src="doc/screenshots/deck-overview/deck-overview.jpg" alt="Deck Overview" width="250px"></td>
+      <td><img src="doc/screenshots/deck-overview/create-deck_modal-bottom-sheet.jpg" alt="Create Deck Modal Bottom Sheet" width="250px"></td>
+      <td><img src="doc/screenshots/deck-overview/create-deck_dialog_with-ai.jpg" alt="Create Deck Dialog with AI" width="250px"></td>
+   </tr>
+   <tr>
+      <td><img src="doc/screenshots/index-card-overview/index-card-overview_loaded.jpg" alt="Index Card Overview" width="250px"></td>
+      <td><img src="doc/screenshots/index-card-overview/index-card-overview_one-selected.jpg" alt="Select IndexCards (for deletion)" width="250px"></td>
+      <td><img src="doc/screenshots/index-card-overview/index-card-overview_delete-dialog.jpg" alt="Select IndexCards (for deletion)" width="250px"></td>
+   </tr>
+   <tr>
+      <td><img src="doc/screenshots/index-card-view/index-card-create-edit_BLoC.jpg" alt="Select IndexCards (for deletion)" width="250px"></td>
+      <td><img src="doc/screenshots/index-card-view/index-card-view_question.jpg" alt="Create Deck Dialog with AI" width="250px"></td>
+      <td><img src="doc/screenshots/index-card-view/index-card-view_rotation.jpg" alt="Create Deck Dialog with AI" width="250px"></td>
+   </tr>
 </table>
 
 ## Getting Started
@@ -381,10 +380,10 @@ that 4 cases are distinguished.
     <th><p>IndexCardsError</p></th>
   </tr>
   <tr>
-    <td><p style="color: red">Circle corresponding part red</p><img src="doc/screenshots/deck-overview.jpg" alt="Deck Overview" width="250px"></td>
-    <td><p style="color: red">Circle corresponding part red</p><img src="doc/screenshots/select-IndexCards.png" alt="Select IndexCards (for deletion)" width="250px"></td>
-    <td><p style="color: red">Circle corresponding part red</p><img src="doc/screenshots/index-card-overview.jpg" alt="Index Card Overview" width="250px"></td>
-    <td><p style="color: red">Circle corresponding part red</p><img src="doc/screenshots/indexCard_delete_dialog.png" alt="Create Deck Dialog with AI" width="250px"></td>
+    <td><img src="doc/screenshots/index-card-overview/index-card-overview_loading.jpg" alt="Deck Overview" width="250px"></td>
+    <td><img src="doc/screenshots/index-card-overview/index-card-overview_one-selected.jpg" alt="Select IndexCards (for deletion)" width="250px"></td>
+    <td><img src="doc/screenshots/index-card-overview/index-card-overview_loaded.jpg" alt="Index Card Overview" width="250px"></td>
+    <td><img src="doc/screenshots/index-card-overview/index-card-overview_error.jpg" alt="Create Deck Dialog with AI" width="250px"></td>
   </tr>
 </table>
 
