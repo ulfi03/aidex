@@ -41,8 +41,8 @@ Include screenshots to showcase the UI and important features.
 <table>
    <tr>
       <td><img src="doc/screenshots/deck-overview/deck-overview.jpg" alt="Deck Overview" width="250px"></td>
-      <td><img src="doc/screenshots/deck-overview/create-deck_modal-bottom-sheet.jpg" alt="Create Deck Modal Bottom Sheet" width="250px"></td>
-      <td><img src="doc/screenshots/deck-overview/create-deck_dialog_with-ai.jpg" alt="Create Deck Dialog with AI" width="250px"></td>
+      <td><img src="doc/screenshots/deck-overview/deck-overview_create-deck-modal-bottom-sheet.jpg" alt="Create Deck Modal Bottom Sheet" width="250px"></td>
+      <td><img src="doc/screenshots/deck-overview/deck-overview_create-deck-with-ai.jpg" alt="Create Deck Dialog with AI" width="250px"></td>
    </tr>
    <tr>
       <td><img src="doc/screenshots/index-card-overview/index-card-overview_loaded.jpg" alt="Index Card Overview" width="250px"></td>
