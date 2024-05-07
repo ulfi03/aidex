@@ -41,6 +41,13 @@ final ThemeData mainTheme = ThemeData(
           MaterialStateProperty.all<Color>(const Color(0xFF20EFC0)),
     ),
   ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+      backgroundColor:
+          MaterialStateProperty.all<Color>(const Color(0xFF20EFC0)),
+    ),
+  ),
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     backgroundColor: Color(0xFF20EFC0),
     foregroundColor: Colors.black,
