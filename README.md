@@ -15,6 +15,11 @@
 4. [Getting Started](#getting-started)
 5. [Project Structure](#project-structure)
 6. [Bloc Architecture](#bloc-architecture)
+7. [Example](#example)  
+   7.1 [Select IndexCards and delete them](#select-indexcards-and-delete-them)  
+   7.1.1 [IndexCardItemWidget](#indexcarditemwidget)  
+   7.1.2 [IndexCardOverviewBloc](#indexcardoverviewbloc)  
+   7.1.3 [BlocBuilder (IndexCardOverview)](#blocbuilder-indexcardoverview)
 7. [Code Example](#code-example)
 8. [AIDex Server](#AIDex-server)
 8. [Dependencies](#dependencies)
@@ -144,18 +149,33 @@ data component, and then streams the resulting states back to the UI.
 | Scalability              | BLoC architecture is highly scalable. It works equally well for small and large projects.                               |
 | Integration with Flutter | BLoC architecture works seamlessly with Flutter's reactive model.                                                       |
 
-### Example
+## Example - IndexCardOverview
 
-#### Select IndexCards and delete them
+Index cards are organized within [`Decks`](lib/data/model/deck.dart) in the AIDex app.
+The [`IndexCardOverview`](lib/ui/deck-view/index_cards_overview_widget.dart) widget displays all the index cards within
+a [`Deck`](lib/data/model/deck.dart). Users are able to select and delete those index cards. The following example
+demonstrates how the BLoC architecture
+is used to manage the selection and deletion of index cards.
 
-The [index_card_item_widget.dart](lib/ui/deck-view/index_card_item_widget.dart) file contains
-the [`IndexCardItemWidget`](lib/ui/deck-view/index_card_item_widget.dart)
-class, which is a widget used to display an
-index card item in [index_cards_overview_widget.dart](lib/ui/deck-view/index_cards_overview_widget.dart). These
-widgets use the BLoC  (Business Logic
-Component) Architecture [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart) to select `indexCards`.
+The following table shows the different states of
+the [`IndexCardOverview`](lib/ui/deck-view/index_cards_overview_widget.dart) and how they are displayed in the UI.
 
-The following table shows all the states, events, and their attributes used
+<table>
+   <tr>
+    <th><p>IndexCardsLoading</p></th>
+    <th><p>IndexCardSelectionMode</p></th>
+    <th><p>IndexCardsLoaded</p></th>
+    <th><p>IndexCardsError</p></th>
+  </tr>
+  <tr>
+    <td><img src="doc/screenshots/index-card-overview/index-card-overview_loading.jpg" alt="Deck Overview" width="250px"></td>
+    <td><img src="doc/screenshots/index-card-overview/index-card-overview_one-selected.jpg" alt="Select IndexCards (for deletion)" width="250px"></td>
+    <td><img src="doc/screenshots/index-card-overview/index-card-overview_loaded.jpg" alt="Index Card Overview" width="250px"></td>
+    <td><img src="doc/screenshots/index-card-overview/index-card-overview_error.jpg" alt="Create Deck Dialog with AI" width="250px"></td>
+  </tr>
+</table>
+
+This table shows all the states, events, and their attributes used
 in [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart):
 
 | Events                     | Attributes                        | Description                                         | States                 | Attributes                                                        | Description                                                    |
@@ -175,6 +195,13 @@ trigger Events which are captured by the BLoC. Given an Event you can access the
 triggered. The business logic is then able to do its logic with these values triggering a certain state with different
 attributes and the cycle repeats.
 
+The [index_card_item_widget.dart](lib/ui/deck-view/index_card_item_widget.dart) file contains
+the [`IndexCardItemWidget`](lib/ui/deck-view/index_card_item_widget.dart)
+class, which is a widget used to display an
+index card item in [index_cards_overview_widget.dart](lib/ui/deck-view/index_cards_overview_widget.dart). These
+widgets use the BLoC  (Business Logic
+Component) Architecture [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart) to select `indexCards`.
+
 For selecting and deleting index cards the cycle is as follows:
 
 The [`updateSelection(context)`](lib/ui/deck-view/index_card_item_widget.dart) method triggers the
@@ -182,7 +209,7 @@ Event [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart).
 
 [`updateSelection(context)`](lib/ui/deck-view/index_card_item_widget.dart) itself is triggered given two scenarios:
 
-1. If the BLoCs state is not in [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart):  
+1. Only if the BLoCs state is not in [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart):  
    Long-pressing the [`IndexCardItemWidget`](lib/ui/deck-view/index_card_item_widget.dart) will trigger
    the [`updateSelection(context)`](lib/ui/deck-view/index_card_item_widget.dart) method handled in
    the `onLongPress` parameter
@@ -192,7 +219,7 @@ Event [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart).
    follows.
 
 
-2. If the BLoCs state is already in [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart)):  
+2. Only if the BLoCs state is already in [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart)):  
    Tapping on [`IndexCardItemWidget`](lib/ui/deck-view/index_card_item_widget.dart) will trigger
    the [`updateSelection(context)`](lib/ui/deck-view/index_card_item_widget.dart) method handled in the `onTap`
    parameter
@@ -218,7 +245,7 @@ the [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart) is a typi
 architecture, where the UI components (widgets) dispatch events to the BLoC, and the BLoC updates the state based on
 these events. The widgets then rebuild based on the new state.
 
-##### IndexCardItemWidget
+#### IndexCardItemWidget
 
 ```dart
 void updateSelection(final BuildContext context) {
@@ -280,7 +307,7 @@ selection of index cards
 ```
 <!-- @formatter:on-->
 
-##### IndexCardOverviewBloc
+#### IndexCardOverviewBloc
 
 This is how [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart) catches the dispatched event.
 
@@ -299,7 +326,7 @@ selected index card IDs (`indexCardIds`). IndexCardSelectionMode is further in n
 the list but those are not
 dependent on the Event, therefore they stay the same.
 
-##### BlocBuilder ([`IndexCardOverview`](lib/ui/deck-view/index_cards_overview_widget.dart))
+#### BlocBuilder ([`IndexCardOverview`](lib/ui/deck-view/index_cards_overview_widget.dart))
 
 The [`IndexCardOverview`](lib/ui/deck-view/index_cards_overview_widget.dart) uses the `BlocBuilder` to rebuild the UI
 based on the state of
@@ -372,28 +399,13 @@ One can see that the UI changes based on the current state that BlocBuilder rece
 from [`IndexCardOverviewBloc`](lib/bloc/index_cards_overview_bloc.dart) and
 that 4 cases are distinguished.
 
-<table>
-   <tr>
-    <th><p>IndexCardsLoading</p></th>
-    <th><p>IndexCardSelectionMode</p></th>
-    <th><p>IndexCardsLoaded</p></th>
-    <th><p>IndexCardsError</p></th>
-  </tr>
-  <tr>
-    <td><img src="doc/screenshots/index-card-overview/index-card-overview_loading.jpg" alt="Deck Overview" width="250px"></td>
-    <td><img src="doc/screenshots/index-card-overview/index-card-overview_one-selected.jpg" alt="Select IndexCards (for deletion)" width="250px"></td>
-    <td><img src="doc/screenshots/index-card-overview/index-card-overview_loaded.jpg" alt="Index Card Overview" width="250px"></td>
-    <td><img src="doc/screenshots/index-card-overview/index-card-overview_error.jpg" alt="Create Deck Dialog with AI" width="250px"></td>
-  </tr>
-</table>
-
 For [`IndexCardSelectionMode`](lib/bloc/index_cards_overview_bloc.dart)
 and [`IndexCardsLoaded`](lib/bloc/index_cards_overview_bloc.dart) the, state is passed down
 to [`IndexCardsContainer`](lib/ui/deck-view/index_cards_overview_widget.dart). This class is
 responsible for building the list of indexCards, having access to
 each `indexCard` -[`IndexCardItemWidget`](lib/ui/deck-view/index_card_item_widget.dart) itself.
 Whether a single IndexCardItemWidget is selected (showing the check-icon + appearing grey) or not is determined inside
-the [`IndexCardItemWidget`](lib/ui/deck-view/index_card_item_widget.dart).
+the [`IndexCardItemWidget`](lib/ui/deck-view/index_card_item_widget.dart) based whether this `IndexCard` .
 
 ## Code Example
 
