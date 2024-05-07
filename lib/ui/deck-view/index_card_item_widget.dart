@@ -79,9 +79,9 @@ class IndexCardItemWidget extends StatelessWidget {
         key: containerKey,
         height: 65,
         padding: const EdgeInsets.all(8),
-        margin: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width / 32,
-          vertical: MediaQuery.of(context).size.width / 64,
+        margin: const EdgeInsets.symmetric(
+          horizontal: 5,
+          vertical: 5,
         ),
         decoration: BoxDecoration(
           color: () {
