@@ -236,7 +236,7 @@ class _DeckItemWidgetState extends State<DeckItemWidget> {
           child: CustomTextFormField(
             key: DeckItemWidget.changeDeckNameTextFieldKey,
             controller: textController,
-            maxLength: 21,
+            maxLength: deckNameMaxLength,
             hintText: 'New name',
             validator: deckNameValidator,
           ),

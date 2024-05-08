@@ -19,6 +19,8 @@ class CreateDeckDialogManually extends StatelessWidget {
   ///(Key to) TextField to input the deck name.
   static const Key deckNameTextFieldKey = Key('InputTextField_deckName');
 
+  static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(final BuildContext context) {
     var pickerColor = mainTheme.colorScheme.surface; // Initial color
@@ -37,12 +39,15 @@ class CreateDeckDialogManually extends StatelessWidget {
           Stack(
             alignment: Alignment.topLeft,
             children: [
-              CustomTextFormField(
-                  key: deckNameTextFieldKey,
-                  controller: deckNameController,
-                  maxLength: 21,
-                  hintText: 'deck name',
-                  validator: deckNameValidator),
+              Form(
+                key: _formKey,
+                child: CustomTextFormField(
+                    key: deckNameTextFieldKey,
+                    controller: deckNameController,
+                    maxLength: deckNameMaxLength,
+                    hintText: 'deck name',
+                    validator: deckNameValidator),
+              ),
             ],
           ),
           CustomColorPicker(
@@ -57,10 +62,12 @@ class CreateDeckDialogManually extends StatelessWidget {
             children: [
               CancelButton(onPressed: () => Navigator.pop(context)),
               OkButton(onPressed: () async {
-                context.read<DeckOverviewBloc>().add(AddDeck(
-                    deck: Deck(
-                        name: deckNameController.text, color: pickerColor)));
-                Navigator.pop(context);
+                if (_formKey.currentState!.validate()) {
+                  context.read<DeckOverviewBloc>().add(AddDeck(
+                      deck: Deck(
+                          name: deckNameController.text, color: pickerColor)));
+                  Navigator.pop(context);
+                }
               }),
             ],
           ),

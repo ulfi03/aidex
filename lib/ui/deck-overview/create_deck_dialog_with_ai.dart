@@ -4,6 +4,7 @@ import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/components/basic_error_dialog.dart';
 import 'package:aidex/ui/components/custom_buttons.dart';
 import 'package:aidex/ui/components/custom_color_picker.dart';
+import 'package:aidex/ui/deck-overview/deck_validators.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:aidex/ui/utilities.dart';
 import 'package:file_picker/file_picker.dart';
@@ -98,7 +99,7 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
                       key: deckNameTextFieldKey,
                       autovalidateMode: AutovalidateMode.always,
                       controller: deckNameController,
-                      maxLength: 21,
+                      maxLength: deckNameMaxLength,
                       validator: (final value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a deck name';
@@ -210,19 +211,25 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
                               onPressed: () => Navigator.pop(context),
                             ),
                           ),
-                          OkButton(
-                            onPressed: _getOnPressed(context, state),
-                            child: state is CreateDeckDialogOnAiLoading
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(),
-                                  ) // Display loading animation with fixed size
-                                : const Text(
-                                    'Ok',
-                                    key: okButtonTextKey,
-                                  ),
-                          ),
+                          if (state is CreateDeckDialogOnAiLoading)
+                            TextButton(
+                                onPressed: null,
+                                style: mainTheme.textButtonTheme.style!
+                                    .copyWith(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(mainTheme
+                                                .colorScheme.primary
+                                                .withOpacity(0.25))),
+                                child: const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(),
+                                ))
+                          else
+                            OkButton(
+                              key: okButtonKey,
+                              onPressed: _getOnPressed(context, state),
+                            ),
                         ],
                       ),
                     )),
