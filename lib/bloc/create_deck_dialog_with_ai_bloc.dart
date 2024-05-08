@@ -69,10 +69,10 @@ class CreateDeckDialogWithAiBloc
   }
 
   //static const String _localServerUrl =
-    //  'http://10.0.2.2:5000/create_index_cards_from_files';
+  //  'http://10.0.2.2:5000/create_index_cards_from_files';
 
-  static const String _remoteServerUrl 
-  = 'https://aidex-server.onrender.com/create_index_cards_from_files';
+  static const String _remoteServerUrl =
+      'https://aidex-server.onrender.com/create_index_cards_from_files';
 
   final DeckRepository _deckRepository;
   final IndexCardRepository _indexCardRepository;

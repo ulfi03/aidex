@@ -210,19 +210,25 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
                               onPressed: () => Navigator.pop(context),
                             ),
                           ),
-                          OkButton(
-                            onPressed: _getOnPressed(context, state),
-                            child: state is CreateDeckDialogOnAiLoading
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(),
-                                  ) // Display loading animation with fixed size
-                                : const Text(
-                                    'Ok',
-                                    key: okButtonTextKey,
-                                  ),
-                          ),
+                          if (state is CreateDeckDialogOnAiLoading)
+                            TextButton(
+                                onPressed: null,
+                                style: mainTheme.textButtonTheme.style!
+                                    .copyWith(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(mainTheme
+                                                .colorScheme.primary
+                                                .withOpacity(0.25))),
+                                child: const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(),
+                                ))
+                          else
+                            OkButton(
+                              key: okButtonKey,
+                              onPressed: _getOnPressed(context, state),
+                            ),
                         ],
                       ),
                     )),
