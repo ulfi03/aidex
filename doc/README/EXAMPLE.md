@@ -156,8 +156,34 @@ Imagine the following scenario:
 
 
 The first event the UI triggers is `UpdateSelectedIndexCards`. This event is triggered when the user long-presses an
-index card and
-causes the BLoC to update the list of selected index cards. The BLoC then emits the `IndexCardSelectionMode` state,
+index card and causes the BLoC to update the list of selected index cards.
+
+This is handled the following way in the [`IndexCardItemWidget`](../../lib/ui/deck-view/index_card_item_widget.dart).
+Hereby the `updateSelection(context)` function is called via long-press the first time.
+
+<!-- @formatter:off-->
+```dart
+void updateSelection(final BuildContext context) {
+    //Since the method is called for the first time the BLoC isn't in IndexCardSelectionMode yet
+    //-> no selected index cards yet -> create an empty list []
+    final List<int> selectedIndexCardIds =
+        (_state is IndexCardSelectionMode) ? _state.indexCardIds : [];
+    //Add the id of the long-pressed IndexCard to the empty list
+    if (!selectedIndexCardIds.contains(indexCard.indexCardId)) {
+      selectedIndexCardIds.add(indexCard.indexCardId!);
+    } else { // is not triggered in this case
+      selectedIndexCardIds.remove(indexCard.indexCardId);
+    }
+    //Trigger the UpdateSelectedIndexCards event with a list containing the long-pressed index card
+    //-> currently only the long-pressed index card is selected [long-pressed-index-card-id]
+    context.read<IndexCardOverviewBloc>().add(
+          UpdateSelectedIndexCards(indexCardIds: selectedIndexCardIds),
+        );
+  }
+```
+<!-- @formatter:on-->
+
+The BLoC then emits the `IndexCardSelectionMode` state,
 which contains the list of selected index cards.
 
 <div style="display: flex; justify-content: center">
@@ -190,6 +216,31 @@ deck.
     <img src="../screenshots/index-card-overview/index-card-overview_two-selected.jpg" width="200" alt="index-card-overview_two-selected">
 </div>
 
+In this state the `updateSelection(context)` function is called everytime the user selects/deselects an index card by
+tapping
+it. Given our example the user taps on an additional index card ("How do Linters work") to select it as well.
+
+<!-- @formatter:off-->
+```dart
+void updateSelection(final BuildContext context) {
+    //Get the current selected index cards from the state (since the BLoC is already in the IndexCardSelectionMode) = [long-pressed-index-card-id]
+    final List<int> selectedIndexCardIds =
+        (_state is IndexCardSelectionMode) ? _state.indexCardIds : [];
+    //Case: tapped index card is not selected yet-> add its id to the list -> [long-pressed-index-card-id, tapped-index-card-id]
+    if (!selectedIndexCardIds.contains(indexCard.indexCardId)) {
+      selectedIndexCardIds.add(indexCard.indexCardId!);
+    } else { //Case: tapped Index card is already selected -> User wants to deselect the index card -> remove its id from the list (not the case in this example)
+      selectedIndexCardIds.remove(indexCard.indexCardId);
+    }
+    //Trigger the UpdateSelectedIndexCards event with the updated list of selected index cards
+    //-> [long-pressed-index-card-id, tapped-index-card-id]
+    context.read<IndexCardOverviewBloc>().add(
+          UpdateSelectedIndexCards(indexCardIds: selectedIndexCardIds),
+        );
+  }
+```
+<!-- @formatter:on-->
+
 The second event the UI triggers is `UpdateSelectedIndexCards` too. The BLoC behaves the same way as before and emits
 the
 `IndexCardSelectionMode` state again. This state contains the updated list of selected index cards.
@@ -203,7 +254,8 @@ the
 </div>
 
 The third event the UI triggers is `RemoveIndexCardsById`. This event is triggered when the user taps the delete button
-and causes the BLoC to remove the selected index cards from the database. The BLoC itself triggers the `FetchIndexCards`
+and causes the BLoC to remove the selected index cards (which he got from the `IndexCardSelectionMode` state) from the
+database. The BLoC itself triggers the `FetchIndexCards`
 event to reload the index cards from the database and emits the `IndexCardsLoaded` state to update the UI.
 
 <div style="display: flex; justify-content: center">
