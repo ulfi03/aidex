@@ -44,7 +44,7 @@ class CreateDeckDialogManually extends StatelessWidget {
                 child: CustomTextFormField(
                     key: deckNameTextFieldKey,
                     controller: deckNameController,
-                    maxLength: 21,
+                    maxLength: deckNameMaxLength,
                     hintText: 'deck name',
                     validator: deckNameValidator),
               ),

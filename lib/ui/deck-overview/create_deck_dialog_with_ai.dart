@@ -4,6 +4,7 @@ import 'package:aidex/data/model/deck.dart';
 import 'package:aidex/ui/components/basic_error_dialog.dart';
 import 'package:aidex/ui/components/custom_buttons.dart';
 import 'package:aidex/ui/components/custom_color_picker.dart';
+import 'package:aidex/ui/deck-overview/deck_validators.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:aidex/ui/utilities.dart';
 import 'package:file_picker/file_picker.dart';
@@ -98,7 +99,7 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
                       key: deckNameTextFieldKey,
                       autovalidateMode: AutovalidateMode.always,
                       controller: deckNameController,
-                      maxLength: 21,
+                      maxLength: deckNameMaxLength,
                       validator: (final value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a deck name';

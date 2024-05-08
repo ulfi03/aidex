@@ -1,10 +1,13 @@
+/// This file contains the validators for the deck name
+const int deckNameMaxLength = 30;
+
 /// validator for deck name
 String? deckNameValidator(final String? value) {
   if (value == null || value.isEmpty) {
     return 'Cannot be empty';
   }
-  if (value.length > 30) {
-    return 'must be less than 30 characters';
+  if (value.length > deckNameMaxLength) {
+    return 'must be at most $deckNameMaxLength characters';
   }
   if (value.startsWith(' ')) {
     return 'cannot start with a space';
