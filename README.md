@@ -7,6 +7,8 @@
 [![BLoC](https://img.shields.io/badge/BLoC-State_Management-blue.svg)](https://bloclibrary.dev/#/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-ChatGPT-blue.svg)](https://openai.com/)
 
+---
+
 ## Table of Contents
 
 1. [Introduction](#introduction)
@@ -14,9 +16,17 @@
 3. [Screenshots](#screenshots)
 4. [Getting Started](#getting-started)
 5. [Project Structure](#project-structure)
-6. [Dependencies](#dependencies)
-8. [License](#license)
-9. [Contact](#contact)
+10. [Dependencies](#dependencies)
+11. [License](#license)
+12. [Contact](#contact)
+
+## Useful Links
+
+- [Basic Concepts](doc/README/BASIC_CONCEPTS.md)
+- [Code Example](doc/README/EXAMPLE.md)
+- [AIDex Server](doc/README/AIDEX_SERVER.md)
+
+---
 
 ## Introduction
 
@@ -24,9 +34,12 @@ AIDex is a mobile application designed to facilitate the generation of index car
 ChatGPT to generate content for the index cards, making it an ideal tool for students, researchers, and anyone in need
 of a quick and efficient way to create and manage index cards.
 
+<img src="doc/README/images/AIDex-System-Overview.drawio.svg" width="800px" alt="AIDex-System-overview">
+
 ## Features
 
-- User-friendly interface for creating, managing, and sorting index cards.
+- User-friendly interface for creating, managing, and searching index cards.
+- Learning function to help users memorize the content of the index cards.
 - Integration with ChatGPT for efficient content generation.
 - BLoC architecture pattern for clean, manageable codebase.
 
@@ -34,16 +47,21 @@ of a quick and efficient way to create and manage index cards.
 
 Include screenshots to showcase the UI and important features.
 <table>
-  <tr>
-    <td><img src="doc/screenshots/deck-overview.jpg" alt="Deck Overview" width="250px"></td>
-    <td><img src="doc/screenshots/create-deck_modal-bottom-sheet.jpg" alt="Create Deck Modal Bottom Sheet" width="250px"></td>
-    <td><img src="doc/screenshots/create-deck_dialog.jpg" alt="Create Deck Dialog" width="250px"></td>
-  </tr>
-  <tr>
-    <td><img src="doc/screenshots/create-deck_dialog_with-ai.jpg" alt="Create Deck Dialog with AI" width="250px"></td>
-    <td><img src="doc/screenshots/index-card-overview.jpg" alt="Index Card Overview" width="250px"></td>
-    <td></td>
-  </tr>
+   <tr>
+      <td><img src="doc/screenshots/deck-overview/deck-overview.jpg" alt="Deck Overview" width="250px"></td>
+      <td><img src="doc/screenshots/deck-overview/deck-overview_create-deck-modal-bottom-sheet.jpg" alt="Create Deck Modal Bottom Sheet" width="250px"></td>
+      <td><img src="doc/screenshots/deck-overview/deck-overview_create-deck-with-ai.jpg" alt="Create Deck Dialog with AI" width="250px"></td>
+   </tr>
+   <tr>
+      <td><img src="doc/screenshots/index-card-overview/index-card-overview_loaded.jpg" alt="Index Card Overview loaded" width="250px"></td>
+      <td><img src="doc/screenshots/index-card-overview/index-card-overview_one-selected.jpg" alt="One index card selected" width="250px"></td>
+      <td><img src="doc/screenshots/learning-function.jpg" alt="Learning Function" width="250px"></td>
+   </tr>
+   <tr>
+      <td><img src="doc/screenshots/index-card-view/index-card-create-edit_BLoC.jpg" alt="Create/Edit index card" width="250px"></td>
+      <td><img src="doc/screenshots/index-card-view/index-card-view_question.jpg" alt="View index card question" width="250px"></td>
+      <td><img src="doc/screenshots/index-card-view/index-card-view_rotation.jpg" alt="View index card answer" width="250px"></td>
+   </tr>
 </table>
 
 ## Getting Started
@@ -102,10 +120,6 @@ aidex/
 ```
 
 ## Dependencies
-
-Flutter - Framework for building the app.
-BLoC - State management.
-OpenAI - AI services.
 
 - [Flutter](https://flutter.dev/) - Framework for building the app.
 - [BLoC](https://bloclibrary.dev/#/) - State management.
