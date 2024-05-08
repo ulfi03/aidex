@@ -30,7 +30,7 @@ card structures. The server is hosted on [https://aidex-server.onrender.com](htt
 
 ## 2. Project Structure
 
-The project structure is hosted on GitHub at [risky-dev-11/aidex_server](https://github.com/risky-dev-11/aidex_server).
+The project is hosted on GitHub at [risky-dev-11/aidex_server](https://github.com/risky-dev-11/aidex_server).
 It comprises the following two key components:
 
 - `app.py`: Main application file containing Flask routes and server setup.
