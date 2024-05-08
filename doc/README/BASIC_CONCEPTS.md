@@ -1,5 +1,18 @@
 # Basic Concepts
 
+---
+
+## Table of Contents
+
+- [Flutter](#flutter)
+    - [Widget Tree](#widget-tree)
+    - [Example](#example)
+- [BLoC Architecture](#bloc-architecture)
+    - [Benefits](#benefits)
+- [Data Component](#data-component)
+
+---
+
 ## Flutter
 
 Flutter is an open-source UI software development kit created by Google. It is used to develop applications for Android,
@@ -55,7 +68,7 @@ display accordingly. The BlocBuilder is a widget that performs these rebuilds in
 state the UI itself can trigger events which are captured by the BLoC. The BLoC is responsible for handling these events
 and emitting subsequent states.
 
-### Benfits
+### Benefits
 
 | Benefit                  | Description                                                                                                             |
 |--------------------------|-------------------------------------------------------------------------------------------------------------------------|

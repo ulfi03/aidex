@@ -7,6 +7,8 @@
 [![BLoC](https://img.shields.io/badge/BLoC-State_Management-blue.svg)](https://bloclibrary.dev/#/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-ChatGPT-blue.svg)](https://openai.com/)
 
+---
+
 ## Table of Contents
 
 1. [Introduction](#introduction)
@@ -23,6 +25,8 @@
 - [Basic Concepts](doc/README/BASIC_CONCEPTS.md)
 - [Code Example](doc/README/EXAMPLE.md)
 - [AIDex Server](doc/README/AIDEX_SERVER.md)
+
+---
 
 ## Introduction
 

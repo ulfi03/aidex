@@ -1,6 +1,16 @@
 # Code Example
 
+---
+
+## Table of Contents
+
+- [The Index Card Overview](#the-index-card-overview)
+- [From an Event to a State](#from-an-event-to-a-state)
+- [Rebuilding the UI with BlocBuilder](#rebuilding-the-ui-with-blocbuilder)
+
 ## The Index Card Overview
+
+---
 
 In the AIDex app index cards are organized within [`Decks`](../../lib/data/model/deck.dart).
 The [`IndexCardOverview`](../../lib/ui/deck-view/index_cards_overview_widget.dart) widget displays a list of

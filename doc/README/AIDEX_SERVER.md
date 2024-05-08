@@ -4,7 +4,7 @@ Overview of the AIDEX server, its functionalities, and key components.
 
 ---
 
-### Table of Contents
+## Table of Contents
 
 1. [Introduction](#1-introduction)
 2. [Project Structure](#2-project-structure)
@@ -22,13 +22,13 @@ Overview of the AIDEX server, its functionalities, and key components.
 
 ---
 
-### 1. Introduction
+## 1. Introduction
 
 AIDEX Server is a Flask-based web application designed to generate index cards from various file types such as PDFs,
 DOCX files, and plain text. It leverages OpenAI's GPT-3.5 model to extract relevant information and format it into index
 card structures. The server is hosted on [https://aidex-server.onrender.com](https://aidex-server.onrender.com).
 
-### 2. Project Structure
+## 2. Project Structure
 
 The project structure is hosted on GitHub at [risky-dev-11/aidex_server](https://github.com/risky-dev-11/aidex_server).
 It comprises the following two key components:
@@ -36,9 +36,9 @@ It comprises the following two key components:
 - `app.py`: Main application file containing Flask routes and server setup.
 - `requirements.txt`: Lists dependencies required by the application.
 
-### 3. HTTP-Endpoints
+## 3. HTTP-Endpoints
 
-#### 1. `/create_index_cards_from_files`
+### 1. `/create_index_cards_from_files`
 
 - **Method:** POST
 - **Description:** Accepts files uploaded by the user along with an OpenAI API key and user UUID. It extracts text from
@@ -50,7 +50,7 @@ It comprises the following two key components:
     - `user_uuid`: Unique identifier for the user. // This variable is currently not used for any functionality
 - **Response:** JSON object containing generated index cards or error information.
 
-#### 2. `/create_index_cards_from_text`
+### 2. `/create_index_cards_from_text`
 
 // This functionality is currently not implemented!
 
@@ -59,9 +59,9 @@ It comprises the following two key components:
 - **Parameters:** None
 - **Response:** JSON object with a "Hello World!" response.
 
-### 4. Functions
+## 4. Functions
 
-#### 1. `extract_text`
+### 1. `extract_text`
 
 This function retrieves the text from the file, send by the user.
 
@@ -75,7 +75,7 @@ def extract_text(file: FileStorage):
     return text
 ```
 
-#### 2. schedule_chatgpt_requests
+### 2. schedule_chatgpt_requests
 
 This function is one of the core elements of the server.
 
@@ -137,7 +137,7 @@ return formatted_responses
 
 Python's `concurrent.futures` module significantly improves the response time of our webserver.
 
-#### 3. ClientResponse
+### 3. ClientResponse
 
 This is the `ClientResponse` class used to define a general scheme for the client response.
 
@@ -155,7 +155,7 @@ class ClientResponse:
         }
 ```
 
-#### 4. validate_response
+### 4. validate_response
 
 This function validates the chatbots' response.
 
@@ -163,7 +163,7 @@ This function validates the chatbots' response.
 def validate_response(response):
 ```
 
-#### 5. validate_index_card
+### 5. validate_index_card
 
 This function validates each index card and removes them, if a check fails.
 
@@ -171,7 +171,7 @@ This function validates each index card and removes them, if a check fails.
 def validate_index_card(json_data):
 ```
 
-#### 6. ai_create_index_cards_from_plain_text
+### 6. ai_create_index_cards_from_plain_text
 
 This functionality is currently not implemented!
 
@@ -180,8 +180,8 @@ def ai_create_index_cards_from_plain_text(plain_text, api_key):
     return generated_index_cards or error_message
 ```
 
-#### 5. Constants
+### 5. Constants
 
-##### QUESTION_LABEL: Constant string representing the label for the question part of an index card.
+#### QUESTION_LABEL: Constant string representing the label for the question part of an index card.
 
-##### ANSWER_LABEL: Constant string representing the label for the answer part of an index card.
+#### ANSWER_LABEL: Constant string representing the label for the answer part of an index card.
