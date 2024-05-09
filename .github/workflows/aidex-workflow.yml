@@ -1,6 +1,6 @@
 name: AIDex CI/CD
 run-name:
-  "👨‍💻${{ github.actor }} is testing (event: ${{ github.event }})"
+  "👨‍💻${{ github.actor }} is testing (event: ${{ github.event_name }})"
 on:
   pull_request:
     types:
