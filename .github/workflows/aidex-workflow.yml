@@ -1,8 +1,16 @@
 name: AIDex CI/CD
 run-name: 👨‍💻${{ github.actor }} is testing commit "${{ github.event.head_commit.message }}"
-on: [ push ]
+on:
+  pull_request:
+    types:
+      - opened # Run the workflow on PR creation
+      - synchronize # Re-run the workflow on PR updates
+      - reopened # Re-run the workflow on PR re-opening
+  push:
+    branches:
+      - main
+      - develop
 jobs:
-
   build-android:
     runs-on: ubuntu-latest
     steps:
@@ -40,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        api-level: [ 28, 30, 32, 34 ]
+        api-level: [ 28, 34 ]
       fail-fast: true
     steps:
       - name: Free Disk Space (Ubuntu)
