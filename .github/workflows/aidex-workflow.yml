@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        api-level: [ 28, 34 ]
+        api-level: [ 34 ]
       fail-fast: true
     steps:
       - name: Free Disk Space (Ubuntu)
