@@ -20,7 +20,7 @@
 11. [License](#license)
 12. [Contact](#contact)
 
-## Useful Links
+## Understanding the Project and its Components
 
 - [Basic Concepts](doc/README/BASIC_CONCEPTS.md)
 - [Code Example](doc/README/EXAMPLE.md)
