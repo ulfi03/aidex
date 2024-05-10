@@ -1,3 +1,4 @@
+import 'package:aidex/bloc/index_card_view_bloc.dart';
 import 'package:aidex/bloc/index_cards_overview_bloc.dart';
 import 'package:aidex/data/model/index_card.dart';
 import 'package:aidex/ui/components/delete_dialog.dart';
@@ -17,17 +18,25 @@ class DeleteIndexCardsDialog extends DeleteDialog {
               '${indexCardIds.length > 1 ? 'Index Cards' : 'Index Card'}',
         );
 
-  /// The slected index cards to be deleted.
+  /// The selected index cards to be deleted.
   final List<int> indexCardIds;
 
   @override
   void onDelete(final BuildContext context) {
-    context
-        .read<IndexCardOverviewBloc>()
-        .add(RemoveIndexCardsById(selectedIndexCardsIds: indexCardIds));
-    context
-        .read<IndexCardOverviewBloc>()
-        .add(const ExitIndexCardSelectionMode());
+    if (context.read<IndexCardOverviewBloc?>() != null &&
+        context.read<IndexCardOverviewBloc>().state is IndexCardSelectionMode) {
+      context
+          .read<IndexCardOverviewBloc>()
+          .add(RemoveIndexCardsById(selectedIndexCardsIds: indexCardIds));
+      context
+          .read<IndexCardOverviewBloc>()
+          .add(const ExitIndexCardSelectionMode());
+    } else if (context.read<IndexCardViewBloc?>() != null &&
+        context.read<IndexCardViewBloc>().state is IndexCardViewing) {
+      context
+          .read<IndexCardViewBloc>()
+          .add(DeleteIndexCard(indexCardId: indexCardIds.first));
+    }
     Navigator.pop(context);
   }
 }

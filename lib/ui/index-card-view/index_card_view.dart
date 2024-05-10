@@ -5,6 +5,7 @@ import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/components/app_bar_components.dart';
 import 'package:aidex/ui/components/custom_flip_card.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
+import 'package:aidex/ui/deck-view/index_card_delete_dialog.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
@@ -98,10 +99,16 @@ class IndexCardView extends StatelessWidget {
             .add(FetchIndexCard(indexCardId: indexCard.indexCardId!)));
   }
 
-  void _onDelete(final BuildContext context, final int indexCardId) {
-    context
-        .read<IndexCardViewBloc>()
-        .add(DeleteIndexCard(indexCardId: indexCardId));
+  Future<void> _onDelete(
+      final BuildContext context, final int indexCardId) async {
+    final IndexCardViewBloc indexCardViewBloc =
+        context.read<IndexCardViewBloc>();
+    await showDialog(
+      context: context,
+      builder: (final context) => BlocProvider.value(
+          value: indexCardViewBloc,
+          child: DeleteIndexCardsDialog(indexCardIds: [indexCardId])),
+    );
   }
 
 // ################################################################# Body
