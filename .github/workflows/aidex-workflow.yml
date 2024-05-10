@@ -1,0 +1,104 @@
+name: AIDex CI/CD
+run-name:
+  "👨‍💻${{ github.actor }} is testing (event: ${{ github.event_name }})"
+on:
+  pull_request:
+    types:
+      - opened # Run the workflow on PR creation
+      - synchronize # Re-run the workflow on PR updates
+      - reopened # Re-run the workflow on PR re-opening
+  push:
+    branches:
+      - main
+      - develop
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking out repository ${{ github.repository }} on branch ${{ github.ref }} ...
+        uses: actions/checkout@v4
+      - name: Listing source files ...
+        run: |
+          ls ${{ github.workspace }}/lib -R
+          echo "Listing test files ..."
+          ls ${{ github.workspace }}/test -R
+      - name: Listing test files ...
+        run: |
+          ls ${{ github.workspace }}/test -R
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+          check-latest: true
+      - name: Setting up Flutter ...
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.3'
+          channel: 'stable'
+      - run: flutter --version
+      - run: flutter analyze
+      - run: flutter pub get
+      - run: flutter test
+      - run: flutter build apk
+      - run: flutter build appbundle
+      - run: echo "job status is ${{ job.status }}."
+
+  integration-tests-android:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        api-level: [ 28 ]
+      fail-fast: true
+    steps:
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
+          android: false
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+      - name: Checking out repository ${{ github.repository }} on branch ${{ github.ref }} ...
+        uses: actions/checkout@v4
+      - name: Listing source files ...
+        run: |
+          ls ${{ github.workspace }}/lib -R
+          echo "Listing test files ..."
+          ls ${{ github.workspace }}/test -R
+      - name: Listing test files ...
+        run: |
+          ls ${{ github.workspace }}/test -R
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+          check-latest: true
+      - name: Setting up Flutter ...
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.3'
+          channel: 'stable'
+      - run: flutter --version
+      - run: flutter pub get
+      - name: Enable KVM group permissions for integration tests ...
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Run integration tests ...
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          arch: x86_64
+          profile: Nexus 6
+          disable-animations: false
+          force-avd-creation: false
+          emulator-options: -no-window
+          script: flutter test integration_test
+      - run: echo "job status is ${{ job.status }}."

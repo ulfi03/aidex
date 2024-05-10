@@ -86,7 +86,7 @@ linter:
     - deprecated_member_use_from_same_package
     - diagnostic_describe_all_properties: false
     - directives_ordering
-    - discarded_futures
+    - discarded_futures: false
     - do_not_use_environment
     - empty_catches
     - empty_constructor_bodies
@@ -124,7 +124,7 @@ linter:
     - noop_primitive_operations
     - null_check_on_nullable_type_parameter
     - null_closures
-    - omit_local_variable_types
+    - omit_local_variable_types: false
     - one_member_abstracts
     - only_throw_errors
     - overridden_fields
