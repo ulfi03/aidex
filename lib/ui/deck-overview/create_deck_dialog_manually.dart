@@ -26,6 +26,7 @@ class CreateDeckDialogManually extends StatelessWidget {
     var pickerColor = mainTheme.colorScheme.surface; // Initial color
     final deckNameController = TextEditingController();
     return AlertDialog(
+      scrollable: true,
       backgroundColor: mainTheme.colorScheme.background,
       title: Text(
           key: showCreateDeckDialogTitleKey,
