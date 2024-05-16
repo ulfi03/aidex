@@ -5,7 +5,7 @@ import 'package:aidex/data/repo/index_card_repository.dart';
 import 'package:aidex/ui/components/app_bar_components.dart';
 import 'package:aidex/ui/components/custom_flip_card.dart';
 import 'package:aidex/ui/components/error_display_widget.dart';
-import 'package:aidex/ui/deck-view/index_card_delete_dialog.dart';
+import 'package:aidex/ui/index-card-view/index_card_view_delete_dialog.dart';
 import 'package:aidex/ui/routes.dart';
 import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +107,7 @@ class IndexCardView extends StatelessWidget {
       context: context,
       builder: (final context) => BlocProvider.value(
           value: indexCardViewBloc,
-          child: DeleteIndexCardsDialog(indexCardIds: [indexCardId])),
+          child: IndexCardViewDeleteDialog(indexCardId: indexCardId)),
     );
   }
 
