@@ -49,6 +49,7 @@ class RichTextEditorWidget extends StatelessWidget {
           Expanded(
             child: QuillEditor.basic(
               configurations: QuillEditorConfigurations(
+                padding: const EdgeInsets.all(8),
                 readOnly: _readonly,
                 showCursor: !_readonly,
                 controller: _controller.quillController,
