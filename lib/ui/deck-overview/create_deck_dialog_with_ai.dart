@@ -65,6 +65,7 @@ class CreateDeckDialogWithAiState extends State<CreateDeckDialogWithAi> {
   Widget build(final BuildContext context) => Stack(
         children: [
           AlertDialog(
+            scrollable: true,
             backgroundColor: mainTheme.colorScheme.background,
             title: Row(
               crossAxisAlignment: CrossAxisAlignment.end,

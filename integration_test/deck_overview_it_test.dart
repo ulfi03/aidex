@@ -7,6 +7,7 @@ import 'package:aidex/ui/deck-overview/create_deck_dialog_manually.dart';
 import 'package:aidex/ui/deck-overview/create_deck_modal_bottom_sheet.dart';
 import 'package:aidex/ui/deck-overview/deck_item_widget.dart';
 import 'package:aidex/ui/deck-overview/deck_overview_widget.dart';
+import 'package:aidex/ui/theme/aidex_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -30,7 +31,7 @@ void main() {
   Future<void> pumpDeckOverviewWidget(final WidgetTester tester) async {
     await tester.pumpWidget(RepositoryProvider.value(
         value: deckRepository,
-        child: const MaterialApp(home: DeckOverviewPage())));
+        child: MaterialApp(theme: mainTheme, home: const DeckOverviewPage())));
 
     await tester.pumpAndSettle();
   }

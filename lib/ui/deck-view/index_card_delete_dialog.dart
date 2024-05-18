@@ -17,7 +17,7 @@ class DeleteIndexCardsDialog extends DeleteDialog {
               '${indexCardIds.length > 1 ? 'Index Cards' : 'Index Card'}',
         );
 
-  /// The slected index cards to be deleted.
+  /// The selected index cards to be deleted.
   final List<int> indexCardIds;
 
   @override
